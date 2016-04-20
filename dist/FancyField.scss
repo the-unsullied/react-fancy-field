@@ -1,0 +1,47 @@
+.u-1/1 {
+  width: 100%;
+}
+
+.fancy-field {
+  position: relative;
+}
+
+.fancy-field__input {
+  border: none;
+  border-bottom: 1px solid $fancy-field-border-color;
+  &:focus {
+    outline: none !important;
+  }
+  font-weight: 100;
+  line-height: 2;
+  @include media-query(palm) {
+    font-size: 1.125rem;
+  }
+}
+
+.fancy-field__input--error {
+  border-bottom-color: $fancy-field-error-color;
+}
+
+.fancy-field__label {
+  position: absolute;
+  left: 1px;
+  top: 0px;
+  color: $fancy-field-label-color;
+  font-weight: 100;
+  font-size: .625rem;
+  text-transform: uppercase;
+  @include vendor(transition, all 0.3s ease);
+  opacity: 0;
+}
+
+.fancy-field__label--error {
+  color: $fancy-field-error-color;
+}
+
+.fancy-field--has-content {
+  .fancy-field__label {
+    opacity: 1;
+    top: -11px;
+  }
+}
