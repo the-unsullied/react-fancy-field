@@ -94,7 +94,7 @@ export default React.createClass({
       </div>
       {/*http://stackoverflow.com/questions/15738259/disabling-chrome-autofill*/}
       <input autoComplete="new-password"
-             className={classnames('u-1/1', 'fancy-field__input', {'fancy-field__input--error': shouldShowError})}
+             className={classnames('full-width', 'fancy-field__input', {'fancy-field__input--error': shouldShowError})}
              name={this.props.name}
              value={value}
              type={this.props.type || 'text'}
