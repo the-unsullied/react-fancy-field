@@ -1,6 +1,58 @@
-$fancy-field-error-color:  $red !default;
-$fancy-field-border-color: $border-color !default;
-$fancy-field-label-color:  $grey !default;
+$fancy-field-error-color:  #ea4858 !default;
+$fancy-field-border-color: #cccccc !default;
+$fancy-field-label-color:  #999999 !default;
+
+$fancy-field-breakpoints: (
+    "palm"          "screen and (max-width: 525px)",
+    "lap"           "screen and (min-width: 526px) and (max-width: 768px)",
+    "lap-and-up"    "screen and (min-width: 769px)",
+    "portable"      "screen and (max-width: 768px)",
+    "desk"          "screen and (min-width: 769px)",
+    "retina"        "(-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi), (min-resolution: 2dppx)"
+) !default;
+
+@mixin fancy-field-vendor($prop, $val) {
+  -webkit-#{$prop}: #{$val};
+  -ms-#{$prop}: #{$val};
+  -moz-#{$prop}: #{$val};
+  -o-#{$prop}: #{$val};
+  #{$prop}: #{$val};
+}
+
+@mixin fancy-field-media-query($mq) {
+
+    $breakpoint-found: false;
+
+    // Loop through the list of breakpoints we’ve provided in our settings file.
+    @each $breakpoint in $fancy-field-breakpoints {
+
+        // Grab the alias and the condition from their respective locations in
+        // the list.
+        $alias:     nth($breakpoint, 1);
+        $condition: nth($breakpoint, 2);
+
+        // If the media query we’ve specified has an alias and a condition...
+        @if $mq == $alias and $condition {
+
+            // ...tell the mixin that we’ve found it...
+            $breakpoint-found: true;
+
+            // ...and spit it out here.
+            @media #{$condition} {
+                @content;
+            }
+
+        }
+
+    }
+
+    // If the user specifies a non-exitent alias, send them a warning.
+    @if $breakpoint-found == false{
+        @warn "Oops! Breakpoint ‘#{$mq}’ does not exist."
+    }
+
+}
+
 
 .full-width {
   width: 100%;
@@ -18,7 +70,7 @@ $fancy-field-label-color:  $grey !default;
   }
   font-weight: 100;
   line-height: 2;
-  @include media-query(palm) {
+  @include fancy-field-media-query(palm) {
     font-size: 1.125rem;
   }
 }
@@ -35,7 +87,7 @@ $fancy-field-label-color:  $grey !default;
   font-weight: 100;
   font-size: .625rem;
   text-transform: uppercase;
-  @include vendor(transition, all 0.3s ease);
+  @include fancy-field-vendor(transition, all 0.3s ease);
   opacity: 0;
 }
 

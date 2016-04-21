@@ -15,7 +15,7 @@ A modern styled input field with animating effects built for React. Has built in
 
 **placeholder** {String} placeholder of input.
 
-**validator** {String} 
+**validator** {String} If falsy, field is valid. If is string, field is *invalid* and string will be error message.
 
 **initialVal** {String} initial string or number that is contained in the input field.
 

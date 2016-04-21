@@ -6,8 +6,8 @@ Component that stands in as styled input
 @param {Integer} triggerValidation updating counter to trigger validation
 @param {String} label label of input
 @param {String} placeholder placeholder of input
-@param {String} validator
-@param initialVal
+@param {String} validator If falsy, field is valid. If is string, field is *invalid* and string will be error message.
+@param initialVal initial string or number that is contained in the input field.
 @param {Method} onChange method that is called on change
 */
 
@@ -15,6 +15,29 @@ import React from 'react';
 import classnames from 'classnames';
 
 export default React.createClass({
+  getDefaultProps: function() {
+    return {
+      name: '',
+      type: 'text',
+      triggerValidation: 0,
+      label: '',
+      placeholder: '',
+      validator: null,
+      initialVal: '',
+      onChange: () => {}
+    };
+  },
+
+  propTypes: {
+    name: React.PropTypes.string,
+    type: React.PropTypes.string,
+    triggerValidation: React.PropTypes.number,
+    label: React.PropTypes.string,
+    placeholder: React.PropTypes.string,
+    validator: React.PropTypes.string,
+    initialVal: React.PropTypes.string,
+    onChange: React.PropTypes.func
+  },
 
   getInitialState() {
     return {

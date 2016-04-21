@@ -10,5 +10,7 @@ sass.render({
         console.log('css file written to disk')
       }
     });
+  } else {
+    console.log(error);
   }
 });

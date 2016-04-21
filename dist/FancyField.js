@@ -22,12 +22,36 @@ Component that stands in as styled input
 @param {Integer} triggerValidation updating counter to trigger validation
 @param {String} label label of input
 @param {String} placeholder placeholder of input
-@param {String} validator
-@param initialVal
+@param {String} validator If falsy, field is valid. If is string, field is *invalid* and string will be error message.
+@param initialVal initial string or number that is contained in the input field.
 @param {Method} onChange method that is called on change
 */
 
 exports.default = _react2.default.createClass({
+  getDefaultProps: function getDefaultProps() {
+    return {
+      name: '',
+      type: 'text',
+      triggerValidation: 0,
+      label: '',
+      placeholder: '',
+      validator: null,
+      initialVal: '',
+      onChange: function onChange() {}
+    };
+  },
+
+  propTypes: {
+    name: _react2.default.PropTypes.string,
+    type: _react2.default.PropTypes.string,
+    triggerValidation: _react2.default.PropTypes.number,
+    label: _react2.default.PropTypes.string,
+    placeholder: _react2.default.PropTypes.string,
+    validator: _react2.default.PropTypes.string,
+    initialVal: _react2.default.PropTypes.string,
+    onChange: _react2.default.PropTypes.func
+  },
+
   getInitialState: function getInitialState() {
     return {
       value: this.props.initialVal || '',
