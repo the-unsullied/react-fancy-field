@@ -13,6 +13,8 @@ A modern styled input field with animating effects built for React. Has built in
 
 **label** {String} label of input
 
+**classes** {String} class(es) to put on to the <FancyButton /> element.
+
 **placeholder** {String} placeholder of input.
 
 **validator** {Method} If returns false, field is valid. If is returns string, field is *invalid* and string will be error message.

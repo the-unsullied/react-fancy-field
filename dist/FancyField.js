@@ -37,6 +37,7 @@ exports.default = _react2.default.createClass({
       placeholder: '',
       validator: null,
       initialVal: '',
+      classes: '',
       onChange: function onChange() {}
     };
   },
@@ -48,6 +49,7 @@ exports.default = _react2.default.createClass({
     label: _react2.default.PropTypes.string,
     placeholder: _react2.default.PropTypes.string,
     validator: _react2.default.PropTypes.func,
+    classes: _react2.default.PropTypes.string,
     initialVal: _react2.default.PropTypes.string,
     onChange: _react2.default.PropTypes.func
   },
@@ -127,7 +129,7 @@ exports.default = _react2.default.createClass({
 
     return _react2.default.createElement(
       'div',
-      { className: (0, _classnames2.default)('fancy-field', { 'fancy-field--has-content': value.length || hasAttemptedInput }) },
+      { className: (0, _classnames2.default)('fancy-field', this.props.classes, { 'fancy-field--has-content': value.length || hasAttemptedInput }) },
       _react2.default.createElement(
         'div',
         { className: (0, _classnames2.default)("fancy-field__label", { 'fancy-field__label--error': shouldShowError }) },

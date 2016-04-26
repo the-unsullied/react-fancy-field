@@ -24,6 +24,7 @@ export default React.createClass({
       placeholder: '',
       validator: null,
       initialVal: '',
+      classes: '',
       onChange: () => {}
     };
   },
@@ -35,6 +36,7 @@ export default React.createClass({
     label: React.PropTypes.string,
     placeholder: React.PropTypes.string,
     validator: React.PropTypes.func,
+    classes: React.PropTypes.string,
     initialVal: React.PropTypes.string,
     onChange: React.PropTypes.func
   },
@@ -111,7 +113,7 @@ export default React.createClass({
     const { value, hasAttemptedInput, errorMessage, isValid } = this.state;
     const shouldShowError = hasAttemptedInput && !isValid;
 
-    return <div className={classnames('fancy-field', {'fancy-field--has-content': value.length || hasAttemptedInput})}>
+    return <div className={classnames('fancy-field', this.props.classes, {'fancy-field--has-content': value.length || hasAttemptedInput})}>
       <div className={classnames("fancy-field__label", {'fancy-field__label--error': shouldShowError})}>
         {shouldShowError ? <span>{errorMessage}</span> : <span>{this.props.label}</span>}
       </div>
