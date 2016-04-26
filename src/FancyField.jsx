@@ -34,7 +34,7 @@ export default React.createClass({
     triggerValidation: React.PropTypes.number,
     label: React.PropTypes.string,
     placeholder: React.PropTypes.string,
-    validator: React.PropTypes.string,
+    validator: React.PropTypes.func,
     initialVal: React.PropTypes.string,
     onChange: React.PropTypes.func
   },
