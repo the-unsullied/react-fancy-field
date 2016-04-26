@@ -47,7 +47,7 @@ exports.default = _react2.default.createClass({
     triggerValidation: _react2.default.PropTypes.number,
     label: _react2.default.PropTypes.string,
     placeholder: _react2.default.PropTypes.string,
-    validator: _react2.default.PropTypes.string,
+    validator: _react2.default.PropTypes.func,
     initialVal: _react2.default.PropTypes.string,
     onChange: _react2.default.PropTypes.func
   },
