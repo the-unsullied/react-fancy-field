@@ -146,6 +146,7 @@ exports.default = _react2.default.createClass({
       _react2.default.createElement('input', { autoComplete: 'new-password',
         className: (0, _classnames2.default)('full-width', 'fancy-field__input', { 'fancy-field__input--error': shouldShowError }),
         name: this.props.name,
+        ref: 'fancyField',
         value: value,
         type: this.props.type || 'text',
         placeholder: this.props.placeholder,

@@ -121,6 +121,7 @@ export default React.createClass({
       <input autoComplete="new-password"
              className={classnames('full-width', 'fancy-field__input', {'fancy-field__input--error': shouldShowError})}
              name={this.props.name}
+             ref='fancyField'
              value={value}
              type={this.props.type || 'text'}
              placeholder={this.props.placeholder}
