@@ -21,6 +21,7 @@ export default React.createClass({
       type: 'text',
       triggerValidation: 0,
       label: '',
+      disabled: false,
       placeholder: '',
       validator: null,
       initialVal: '',
@@ -35,6 +36,7 @@ export default React.createClass({
     triggerValidation: React.PropTypes.number,
     label: React.PropTypes.string,
     placeholder: React.PropTypes.string,
+    disabled: React.PropTypes.bool,
     validator: React.PropTypes.func,
     classes: React.PropTypes.string,
     initialVal: React.PropTypes.string,
@@ -123,6 +125,7 @@ export default React.createClass({
              name={this.props.name}
              ref='fancyField'
              value={value}
+             disabled={this.props.disabled}
              type={this.props.type || 'text'}
              placeholder={this.props.placeholder}
              onChange={this.handleChange}
