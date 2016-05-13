@@ -62,6 +62,10 @@ export default React.createClass({
     }
   },
 
+  componentWillReceiveProps(nextProps) {
+    this.setState({ value: nextProps.value || '' });
+  },
+
   handleChange(e) {
     const { value } = e.target;
     const { validator } = this.props;

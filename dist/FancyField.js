@@ -72,6 +72,9 @@ exports.default = _react2.default.createClass({
       this.initValidation(this.state.value, true);
     }
   },
+  componentWillReceiveProps: function componentWillReceiveProps(nextProps) {
+    this.setState({ value: nextProps.value || '' });
+  },
   handleChange: function handleChange(e) {
     var value = e.target.value;
     var validator = this.props.validator;
