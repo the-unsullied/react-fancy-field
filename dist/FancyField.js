@@ -60,7 +60,7 @@ exports.default = _react2.default.createClass({
     return {
       value: this.props.initialVal || '',
       hasAttemptedInput: false,
-      isValid: false,
+      isValid: true,
       errorMessage: ''
     };
   },

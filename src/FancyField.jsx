@@ -47,7 +47,7 @@ export default React.createClass({
     return {
       value: this.props.initialVal || '',
       hasAttemptedInput: false,
-      isValid: false,
+      isValid: true,
       errorMessage: ''
     };
   },
