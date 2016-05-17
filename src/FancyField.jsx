@@ -1,3 +1,4 @@
+//comment
 /**
 Component that stands in as styled input
 @class Fancy Button Component

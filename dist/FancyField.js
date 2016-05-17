@@ -14,6 +14,7 @@ var _classnames2 = _interopRequireDefault(_classnames);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+//comment
 /**
 Component that stands in as styled input
 @class Fancy Button Component
