@@ -8,7 +8,6 @@ Component that stands in as styled input
 @param {String} label label of input
 @param {String} placeholder placeholder of input
 @param {String} validator If falsy, field is valid. If is string, field is *invalid* and string will be error message.
-@param initialVal initial string or number that is contained in the input field.
 @param {Method} onChange method that is called on change
 */
 
@@ -25,7 +24,6 @@ export default React.createClass({
       disabled: false,
       placeholder: '',
       validator: null,
-      initialVal: '',
       classes: '',
       onChange: () => {}
     };
@@ -40,13 +38,12 @@ export default React.createClass({
     disabled: React.PropTypes.bool,
     validator: React.PropTypes.func,
     classes: React.PropTypes.string,
-    initialVal: React.PropTypes.string,
     onChange: React.PropTypes.func
   },
 
   getInitialState() {
     return {
-      value: this.props.initialVal || '',
+      value: this.props.value || '',
       hasAttemptedInput: false,
       isValid: true,
       errorMessage: ''
