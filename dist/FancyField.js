@@ -14,6 +14,7 @@ var _classnames2 = _interopRequireDefault(_classnames);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+//comment
 /**
 Component that stands in as styled input
 @class Fancy Button Component
@@ -23,7 +24,6 @@ Component that stands in as styled input
 @param {String} label label of input
 @param {String} placeholder placeholder of input
 @param {String} validator If falsy, field is valid. If is string, field is *invalid* and string will be error message.
-@param initialVal initial string or number that is contained in the input field.
 @param {Method} onChange method that is called on change
 */
 
@@ -37,7 +37,6 @@ exports.default = _react2.default.createClass({
       disabled: false,
       placeholder: '',
       validator: null,
-      initialVal: '',
       classes: '',
       onChange: function onChange() {}
     };
@@ -52,13 +51,12 @@ exports.default = _react2.default.createClass({
     disabled: _react2.default.PropTypes.bool,
     validator: _react2.default.PropTypes.func,
     classes: _react2.default.PropTypes.string,
-    initialVal: _react2.default.PropTypes.string,
     onChange: _react2.default.PropTypes.func
   },
 
   getInitialState: function getInitialState() {
     return {
-      value: this.props.initialVal || '',
+      value: this.props.value || '',
       hasAttemptedInput: false,
       isValid: true,
       errorMessage: ''
