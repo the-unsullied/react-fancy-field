@@ -85,6 +85,7 @@ $fancy-field-breakpoints: (
   color: $fancy-field-label-color;
   font-weight: 100;
   font-size: .625rem;
+  pointer-events: none;
   text-transform: uppercase;
   @include fancy-field-vendor(transition, all 0.3s ease);
   opacity: 0;

@@ -24,6 +24,7 @@
   color: #999999;
   font-weight: 100;
   font-size: .625rem;
+  pointer-events: none;
   text-transform: uppercase;
   -webkit-transition: all 0.3s ease;
   -ms-transition: all 0.3s ease;
