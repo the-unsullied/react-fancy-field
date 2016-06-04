@@ -7,7 +7,7 @@ Component that stands in as styled input
 @param {Integer} triggerValidation updating counter to trigger validation
 @param {String} label label of input
 @param {String} placeholder placeholder of input
-@param {String} validator If falsy, field is valid. If is string, field is *invalid* and string will be error message.
+@param {Method || Array} validator If falsy, field is valid. If is string, field is *invalid* and string will be error message. If validator is an Array, it will iterate over all validators in array and display all messages.
 @param {Method} onChange method that is called on change
 */
 
@@ -36,7 +36,7 @@ export default React.createClass({
     label: React.PropTypes.string,
     placeholder: React.PropTypes.string,
     disabled: React.PropTypes.bool,
-    validator: React.PropTypes.func,
+    validator: React.PropTypes.any,
     classes: React.PropTypes.string,
     onChange: React.PropTypes.func
   },
@@ -90,8 +90,9 @@ export default React.createClass({
 
   initValidation(value = '', forceValidation = false) {
     const hasAttemptedInput = value.length || forceValidation;
+    const { validator } = this.props;
     if(hasAttemptedInput) {
-      if(typeof this.props.validator === 'function') {
+      if(typeof validator === 'function' || Array.isArray(validator)) {
         this.validate(value);
       }
 
@@ -104,13 +105,16 @@ export default React.createClass({
   },
 
   validate(value) {
-    const errorMessage = this.props.validator(value, this.props.name);
-    const isValid = typeof errorMessage !== 'string';
-    if(isValid) {
-      this.setState({ isValid });
+    const { validator } = this.props;
+    let errorMessage = null;
+    if(Array.isArray(validator)) {
+      errorMessage = validator.reduce((error, _validator) => _validator(value) ? `${_validator(value)} ${error}` : `${error}` , '');
     } else {
-      this.setState({ isValid, errorMessage });
+      errorMessage = validator(value, this.props.name);
     }
+    errorMessage = errorMessage === '' ? null : errorMessage;
+    const isValid = typeof errorMessage !== 'string';
+    this.setState({ isValid, errorMessage });
   },
 
   render() {
