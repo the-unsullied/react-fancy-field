@@ -55,8 +55,11 @@ exports.default = _react2.default.createClass({
   },
 
   getInitialState: function getInitialState() {
+    var value = this.props.value;
+
+    var stateVal = isNaN(parseFloat(value)) && !value ? '' : value;
     return {
-      value: this.props.value || '',
+      value: stateVal,
       hasAttemptedInput: false,
       isValid: true,
       errorMessage: ''
