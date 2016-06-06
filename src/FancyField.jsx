@@ -42,8 +42,10 @@ export default React.createClass({
   },
 
   getInitialState() {
+    const { value } = this.props;
+    let stateVal = isNaN(parseFloat(value)) && !value ? '' : value;
     return {
-      value: this.props.value || '',
+      value: stateVal,
       hasAttemptedInput: false,
       isValid: true,
       errorMessage: ''
