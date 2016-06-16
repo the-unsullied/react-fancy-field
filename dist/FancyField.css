@@ -428,19 +428,6 @@
   .fancy-field__input[disabled] {
     border-bottom-color: #ccc; }
 
-.fancy-field:not(.read-only) .fancy-field__input:focus {
-  outline: none !important;
-  border-bottom-color: #00a8e0; }
-  .fancy-field:not(.read-only) .fancy-field__input:focus + .fancy-field__label {
-    color: #00a8e0; }
-
-.fancy-field:not(.read-only) .fancy-field__input[disabled] {
-  background-color: #f9f9f9;
-  padding-left: 10px; }
-
-.fancy-field__input--error {
-  border-bottom-color: #ea4858; }
-
 .fancy-field__label {
   position: absolute;
   top: 0px;
@@ -456,8 +443,21 @@
   transition: all 0.3s ease;
   opacity: 0; }
 
+.fancy-field:not(.read-only) .fancy-field__input:focus {
+  outline: none !important;
+  border-bottom-color: #00a8e0; }
+  .fancy-field:not(.read-only) .fancy-field__input:focus + .fancy-field__label {
+    color: #00a8e0; }
+
+.fancy-field:not(.read-only) .fancy-field__input[disabled] {
+  background-color: #f9f9f9;
+  padding-left: 10px; }
+
 .fancy-field__label--error {
-  color: #ea4858; }
+  color: #ea4858 !important; }
+
+.fancy-field__input--error {
+  border-bottom-color: #ea4858 !important; }
 
 .fancy-field--has-content .fancy-field__label {
   opacity: 1;

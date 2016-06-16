@@ -81,24 +81,6 @@ $fancy-field-breakpoints: (
   }
 }
 
-.fancy-field:not(.read-only) .fancy-field__input {
-  &:focus {
-    outline: none !important;
-    border-bottom-color: $fancy-field-focus-border-color;
-    & + .fancy-field__label {
-      color: $fancy-field-focus-border-color;
-    }
-  }
-
-  &[disabled] {
-    background-color: $fancy-field-disabled-background-color;
-    padding-left: 10px;
-  }
-}
-.fancy-field__input--error {
-  border-bottom-color: $fancy-field-error-color;
-}
-
 .fancy-field__label {
   position: absolute;
   top: 0px;
@@ -111,8 +93,30 @@ $fancy-field-breakpoints: (
   opacity: 0;
 }
 
+.fancy-field:not(.read-only) {
+  .fancy-field__input {
+    &:focus {
+      outline: none !important;
+      border-bottom-color: $fancy-field-focus-border-color;
+      & + .fancy-field__label {
+        color: $fancy-field-focus-border-color;
+      }
+    }
+
+    &[disabled] {
+      background-color: $fancy-field-disabled-background-color;
+      padding-left: 10px;
+    }
+  }
+}
+
+
 .fancy-field__label--error {
-  color: $fancy-field-error-color;
+  color: $fancy-field-error-color !important;
+}
+
+.fancy-field__input--error {
+  border-bottom-color: $fancy-field-error-color !important;
 }
 
 .fancy-field--has-content .fancy-field__label {
