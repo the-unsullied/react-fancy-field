@@ -9,6 +9,9 @@ Component that stands in as styled input
 @param {String} placeholder placeholder of input
 @param {Method || Array} validator If falsy, field is valid. If is string, field is *invalid* and string will be error message. If validator is an Array, it will iterate over all validators in array and display all messages.
 @param {Method} onChange method that is called on change
+@param {String} tooltip shows a tooltip to left of input value.
+@param {Boolean} required shows that input is required
+@param {Boolean} readOnly disabled state, but does not look disabled. Will look like its editable.
 */
 
 import React from 'react';
@@ -25,7 +28,10 @@ export default React.createClass({
       placeholder: '',
       validator: null,
       classes: '',
-      onChange: () => {}
+      onChange: () => {},
+      tooltip: null,
+      required: false,
+      readOnly: false
     };
   },
 
@@ -38,7 +44,10 @@ export default React.createClass({
     disabled: React.PropTypes.bool,
     validator: React.PropTypes.any,
     classes: React.PropTypes.string,
-    onChange: React.PropTypes.func
+    onChange: React.PropTypes.func,
+    tooltip: React.PropTypes.string,
+    required: React.PropTypes.bool,
+    readOnly: React.PropTypes.bool
   },
 
   getInitialState() {
@@ -90,8 +99,8 @@ export default React.createClass({
     }
   },
 
-  initValidation(value = '', forceValidation = false) {
-    const hasAttemptedInput = value.length || forceValidation;
+  initValidation(value, forceValidation = false) {
+    const hasAttemptedInput = value && value.length || forceValidation;
     const { validator } = this.props;
     if(hasAttemptedInput) {
       if(typeof validator === 'function' || Array.isArray(validator)) {
@@ -120,25 +129,47 @@ export default React.createClass({
   },
 
   render() {
-    const { value, hasAttemptedInput, errorMessage, isValid } = this.state;
+    const { value,
+      hasAttemptedInput,
+      errorMessage,
+      isValid } = this.state;
+    const { tooltip,
+      name,
+      disabled,
+      placeholder,
+      label,
+      type,
+      classes,
+      required,
+      readOnly } = this.props;
     const shouldShowError = hasAttemptedInput && !isValid;
 
-    return <div className={classnames('fancy-field', this.props.classes, {'fancy-field--has-content': value.toString().length || hasAttemptedInput})}>
-      <div className={classnames("fancy-field__label", {'fancy-field__label--error': shouldShowError})}>
-        {shouldShowError ? <span>{errorMessage}</span> : <span>{this.props.label}</span>}
-      </div>
+    const fancyFieldClasses = classnames('fancy-field', classes,
+      {
+        'fancy-field--has-content': value.toString().length || hasAttemptedInput,
+        'has-tooltip': !!tooltip,
+        'required': required && !readOnly && !disabled,
+        'read-only': readOnly
+      });
+    return <div className={fancyFieldClasses}>
       {/*http://stackoverflow.com/questions/15738259/disabling-chrome-autofill*/}
+      { !!tooltip ? <span className='fancy-field__tooltip simptip-position-right simptip-multiline' data-tooltip={tooltip}>
+        <i className='unsullied-icon-help'></i>
+      </span> : null }
       <input autoComplete="new-password"
              className={classnames('full-width', 'fancy-field__input', {'fancy-field__input--error': shouldShowError})}
-             name={this.props.name}
+             name={name}
              ref='fancyField'
              value={value}
-             disabled={this.props.disabled}
-             type={this.props.type || 'text'}
-             placeholder={this.props.placeholder}
+             disabled={disabled || readOnly}
+             type={type || 'text'}
+             placeholder={placeholder}
              onChange={this.handleChange}
              onBlur={this.handleBlur}
              onKeyDown={this.handleEnterKeypress} />
+      <div className={classnames("fancy-field__label", {'fancy-field__label--error': shouldShowError})}>
+       {shouldShowError ? <span>{errorMessage}</span> : <span>{label}</span>}
+      </div>
     </div>
   }
 });

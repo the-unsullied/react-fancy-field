@@ -25,6 +25,9 @@ Component that stands in as styled input
 @param {String} placeholder placeholder of input
 @param {Method || Array} validator If falsy, field is valid. If is string, field is *invalid* and string will be error message. If validator is an Array, it will iterate over all validators in array and display all messages.
 @param {Method} onChange method that is called on change
+@param {String} tooltip shows a tooltip to left of input value.
+@param {Boolean} required shows that input is required
+@param {Boolean} readOnly disabled state, but does not look disabled. Will look like its editable.
 */
 
 exports.default = _react2.default.createClass({
@@ -38,7 +41,10 @@ exports.default = _react2.default.createClass({
       placeholder: '',
       validator: null,
       classes: '',
-      onChange: function onChange() {}
+      onChange: function onChange() {},
+      tooltip: null,
+      required: false,
+      readOnly: false
     };
   },
 
@@ -51,7 +57,10 @@ exports.default = _react2.default.createClass({
     disabled: _react2.default.PropTypes.bool,
     validator: _react2.default.PropTypes.any,
     classes: _react2.default.PropTypes.string,
-    onChange: _react2.default.PropTypes.func
+    onChange: _react2.default.PropTypes.func,
+    tooltip: _react2.default.PropTypes.string,
+    required: _react2.default.PropTypes.bool,
+    readOnly: _react2.default.PropTypes.bool
   },
 
   getInitialState: function getInitialState() {
@@ -98,11 +107,10 @@ exports.default = _react2.default.createClass({
       this.initValidation(e.target.value);
     }
   },
-  initValidation: function initValidation() {
-    var value = arguments.length <= 0 || arguments[0] === undefined ? '' : arguments[0];
+  initValidation: function initValidation(value) {
     var forceValidation = arguments.length <= 1 || arguments[1] === undefined ? false : arguments[1];
 
-    var hasAttemptedInput = value.length || forceValidation;
+    var hasAttemptedInput = value && value.length || forceValidation;
     var validator = this.props.validator;
 
     if (hasAttemptedInput) {
@@ -138,12 +146,44 @@ exports.default = _react2.default.createClass({
     var hasAttemptedInput = _state.hasAttemptedInput;
     var errorMessage = _state.errorMessage;
     var isValid = _state.isValid;
+    var _props = this.props;
+    var tooltip = _props.tooltip;
+    var name = _props.name;
+    var disabled = _props.disabled;
+    var placeholder = _props.placeholder;
+    var label = _props.label;
+    var type = _props.type;
+    var classes = _props.classes;
+    var required = _props.required;
+    var readOnly = _props.readOnly;
 
     var shouldShowError = hasAttemptedInput && !isValid;
 
+    var fancyFieldClasses = (0, _classnames2.default)('fancy-field', classes, {
+      'fancy-field--has-content': value.toString().length || hasAttemptedInput,
+      'has-tooltip': !!tooltip,
+      'required': required && !readOnly && !disabled,
+      'read-only': readOnly
+    });
     return _react2.default.createElement(
       'div',
-      { className: (0, _classnames2.default)('fancy-field', this.props.classes, { 'fancy-field--has-content': value.toString().length || hasAttemptedInput }) },
+      { className: fancyFieldClasses },
+      !!tooltip ? _react2.default.createElement(
+        'span',
+        { className: 'fancy-field__tooltip simptip-position-right simptip-multiline', 'data-tooltip': tooltip },
+        _react2.default.createElement('i', { className: 'unsullied-icon-help' })
+      ) : null,
+      _react2.default.createElement('input', { autoComplete: 'new-password',
+        className: (0, _classnames2.default)('full-width', 'fancy-field__input', { 'fancy-field__input--error': shouldShowError }),
+        name: name,
+        ref: 'fancyField',
+        value: value,
+        disabled: disabled || readOnly,
+        type: type || 'text',
+        placeholder: placeholder,
+        onChange: this.handleChange,
+        onBlur: this.handleBlur,
+        onKeyDown: this.handleEnterKeypress }),
       _react2.default.createElement(
         'div',
         { className: (0, _classnames2.default)("fancy-field__label", { 'fancy-field__label--error': shouldShowError }) },
@@ -154,20 +194,9 @@ exports.default = _react2.default.createClass({
         ) : _react2.default.createElement(
           'span',
           null,
-          this.props.label
+          label
         )
-      ),
-      _react2.default.createElement('input', { autoComplete: 'new-password',
-        className: (0, _classnames2.default)('full-width', 'fancy-field__input', { 'fancy-field__input--error': shouldShowError }),
-        name: this.props.name,
-        ref: 'fancyField',
-        value: value,
-        disabled: this.props.disabled,
-        type: this.props.type || 'text',
-        placeholder: this.props.placeholder,
-        onChange: this.handleChange,
-        onBlur: this.handleBlur,
-        onKeyDown: this.handleEnterKeypress })
+      )
     );
   }
 });

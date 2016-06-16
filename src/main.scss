@@ -1,6 +1,11 @@
-$fancy-field-error-color:  #ea4858 !default;
-$fancy-field-border-color: #cccccc !default;
-$fancy-field-label-color:  #999999 !default;
+$fancy-field-error-color:               #ea4858 !default;
+$fancy-field-border-color:              #85c7ff !default;
+$fancy-field-disabled-border-color:     #ccc !default;
+$fancy-field-disabled-background-color: #f9f9f9 !default;
+$fancy-field-focus-border-color:        #00a8e0 !default;
+$fancy-field-label-color:               #999999 !default;
+$fancy-field-required-color:            red !default;
+@import './../assets/simptip-master/simptip.scss';
 
 $fancy-field-breakpoints: (
     "palm"          "screen and (max-width: 525px)",
@@ -65,16 +70,31 @@ $fancy-field-breakpoints: (
 .fancy-field__input {
   border: none;
   border-bottom: 1px solid $fancy-field-border-color;
-  &:focus {
-    outline: none !important;
-  }
+  display: inline-block;
   font-weight: 100;
   line-height: 2;
   @include fancy-field-media-query(palm) {
     font-size: 1.125rem;
   }
+  &[disabled] {
+    border-bottom-color: $fancy-field-disabled-border-color;
+  }
 }
 
+.fancy-field:not(.read-only) .fancy-field__input {
+  &:focus {
+    outline: none !important;
+    border-bottom-color: $fancy-field-focus-border-color;
+    & + .fancy-field__label {
+      color: $fancy-field-focus-border-color;
+    }
+  }
+
+  &[disabled] {
+    background-color: $fancy-field-disabled-background-color;
+    padding-left: 10px;
+  }
+}
 .fancy-field__input--error {
   border-bottom-color: $fancy-field-error-color;
 }
@@ -95,9 +115,31 @@ $fancy-field-breakpoints: (
   color: $fancy-field-error-color;
 }
 
-.fancy-field--has-content {
-  .fancy-field__label {
-    opacity: 1;
-    top: -16px;
-  }
+.fancy-field--has-content .fancy-field__label {
+  opacity: 1;
+  top: -16px;
+}
+
+.has-tooltip .fancy-field__input {
+  padding-left: 30px;
+}
+
+.fancy-field__tooltip {
+  position: absolute;
+  bottom: -1px;
+  display: inline-block;
+}
+
+.unsullied-icon-help {
+  width: 25px;
+  height: 25px;
+  background-repeat: no-repeat;
+  display: inline-block;
+}
+
+.fancy-field.required:after {
+  content: 'required';
+  font-size: 10px;
+  color: $fancy-field-required-color;
+  position: absolute;
 }
