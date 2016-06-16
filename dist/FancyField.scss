@@ -125,7 +125,7 @@ $fancy-field-breakpoints: (
 }
 
 .has-tooltip .fancy-field__input {
-  padding-left: 30px;
+  padding-left: 30px !important;
 }
 
 .fancy-field__tooltip {
@@ -146,4 +146,6 @@ $fancy-field-breakpoints: (
   font-size: 10px;
   color: $fancy-field-required-color;
   position: absolute;
+  left: 0;
+  bottom: -14px;
 }

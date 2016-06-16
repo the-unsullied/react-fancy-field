@@ -464,7 +464,7 @@
   top: -16px; }
 
 .has-tooltip .fancy-field__input {
-  padding-left: 30px; }
+  padding-left: 30px !important; }
 
 .fancy-field__tooltip {
   position: absolute;
@@ -481,4 +481,6 @@
   content: 'required';
   font-size: 10px;
   color: red;
-  position: absolute; }
+  position: absolute;
+  left: 0;
+  bottom: -14px; }
