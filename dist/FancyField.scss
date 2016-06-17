@@ -1,6 +1,6 @@
 $fancy-field-error-color:               #ea4858 !default;
-$fancy-field-border-color:              #85c7ff !default;
-$fancy-field-disabled-border-color:     #ccc !default;
+$fancy-field-editable-border-color:     #85c7ff !default;
+$fancy-field-border-color:              #ccc !default;
 $fancy-field-disabled-background-color: #f9f9f9 !default;
 $fancy-field-focus-border-color:        #00a8e0 !default;
 $fancy-field-label-color:               #999999 !default;
@@ -76,9 +76,14 @@ $fancy-field-breakpoints: (
   @include fancy-field-media-query(palm) {
     font-size: 1.125rem;
   }
-  &[disabled] {
-    border-bottom-color: $fancy-field-disabled-border-color;
-  }
+}
+
+.fancy-field.is-editable .fancy-field__input {
+  border-bottom-color: $fancy-field-editable-border-color;
+}
+
+.fancy-field__input[disabled] {
+  border-bottom-color: $fancy-field-border-color;
 }
 
 .fancy-field__label {
@@ -109,7 +114,6 @@ $fancy-field-breakpoints: (
     }
   }
 }
-
 
 .fancy-field__label--error {
   color: $fancy-field-error-color !important;

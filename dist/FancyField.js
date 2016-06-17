@@ -28,6 +28,7 @@ Component that stands in as styled input
 @param {String} tooltip shows a tooltip to left of input value.
 @param {Boolean} required shows that input is required
 @param {Boolean} readOnly disabled state, but does not look disabled. Will look like its editable.
+@param {Boolean} isEditable will make field look editable by giving the border a blue underline.
 */
 
 exports.default = _react2.default.createClass({
@@ -44,7 +45,8 @@ exports.default = _react2.default.createClass({
       onChange: function onChange() {},
       tooltip: null,
       required: false,
-      readOnly: false
+      readOnly: false,
+      isEditable: false
     };
   },
 
@@ -60,7 +62,8 @@ exports.default = _react2.default.createClass({
     onChange: _react2.default.PropTypes.func,
     tooltip: _react2.default.PropTypes.string,
     required: _react2.default.PropTypes.bool,
-    readOnly: _react2.default.PropTypes.bool
+    readOnly: _react2.default.PropTypes.bool,
+    isEditable: _react2.default.PropTypes.bool
   },
 
   getInitialState: function getInitialState() {
@@ -156,6 +159,7 @@ exports.default = _react2.default.createClass({
     var classes = _props.classes;
     var required = _props.required;
     var readOnly = _props.readOnly;
+    var isEditable = _props.isEditable;
 
     var shouldShowError = hasAttemptedInput && !isValid;
 
@@ -163,7 +167,8 @@ exports.default = _react2.default.createClass({
       'fancy-field--has-content': value.toString().length || hasAttemptedInput,
       'has-tooltip': !!tooltip,
       'required': required && !readOnly && !disabled,
-      'read-only': readOnly
+      'read-only': readOnly,
+      'is-editable': isEditable
     });
     return _react2.default.createElement(
       'div',

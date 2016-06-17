@@ -12,6 +12,7 @@ Component that stands in as styled input
 @param {String} tooltip shows a tooltip to left of input value.
 @param {Boolean} required shows that input is required
 @param {Boolean} readOnly disabled state, but does not look disabled. Will look like its editable.
+@param {Boolean} isEditable will make field look editable by giving the border a blue underline.
 */
 
 import React from 'react';
@@ -31,7 +32,8 @@ export default React.createClass({
       onChange: () => {},
       tooltip: null,
       required: false,
-      readOnly: false
+      readOnly: false,
+      isEditable: false
     };
   },
 
@@ -47,7 +49,8 @@ export default React.createClass({
     onChange: React.PropTypes.func,
     tooltip: React.PropTypes.string,
     required: React.PropTypes.bool,
-    readOnly: React.PropTypes.bool
+    readOnly: React.PropTypes.bool,
+    isEditable: React.PropTypes.bool
   },
 
   getInitialState() {
@@ -141,7 +144,8 @@ export default React.createClass({
       type,
       classes,
       required,
-      readOnly } = this.props;
+      readOnly,
+      isEditable } = this.props;
     const shouldShowError = hasAttemptedInput && !isValid;
 
     const fancyFieldClasses = classnames('fancy-field', classes,
@@ -149,7 +153,8 @@ export default React.createClass({
         'fancy-field--has-content': value.toString().length || hasAttemptedInput,
         'has-tooltip': !!tooltip,
         'required': required && !readOnly && !disabled,
-        'read-only': readOnly
+        'read-only': readOnly,
+        'is-editable': isEditable
       });
     return <div className={fancyFieldClasses}>
       {/*http://stackoverflow.com/questions/15738259/disabling-chrome-autofill*/}

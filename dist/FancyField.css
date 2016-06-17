@@ -418,15 +418,19 @@
 
 .fancy-field__input {
   border: none;
-  border-bottom: 1px solid #85c7ff;
+  border-bottom: 1px solid #ccc;
   display: inline-block;
   font-weight: 100;
   line-height: 2; }
   @media screen and (max-width: 525px) {
     .fancy-field__input {
       font-size: 1.125rem; } }
-  .fancy-field__input[disabled] {
-    border-bottom-color: #ccc; }
+
+.fancy-field.is-editable .fancy-field__input {
+  border-bottom-color: #85c7ff; }
+
+.fancy-field__input[disabled] {
+  border-bottom-color: #ccc; }
 
 .fancy-field__label {
   position: absolute;
