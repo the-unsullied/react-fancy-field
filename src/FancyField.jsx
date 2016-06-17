@@ -68,28 +68,16 @@ export default React.createClass({
     this.initValidation(this.state.value);
   },
 
-  componentWillUpdate(nextProps) {
-    if(this.props.triggerValidation !== nextProps.triggerValidation) {
-      this.initValidation(this.state.value, true);
-    }
-  },
-
   componentWillReceiveProps(nextProps) {
-    this.setState({ value: nextProps.value || '' });
+    const value = nextProps.value || '';
+    this.setState({ value });
+    if(this.props.triggerValidation !== nextProps.triggerValidation) {
+      this.initValidation(value, true);
+    }
   },
 
   handleChange(e) {
-    const { value } = e.target;
-    const { validator } = this.props;
-    this.setState({ value });
-    if(this.state.hasAttemptedInput || !validator) {
-      if(validator) {
-        this.validate(value);
-      }
-    }
-    if(typeof this.props.onChange === 'function') {
-      this.props.onChange(value, this.props.name);
-    }
+    this.initValidation(e.target.value);
   },
 
   handleBlur(e) {
@@ -119,15 +107,13 @@ export default React.createClass({
   },
 
   validate(value) {
-    const { validator } = this.props;
-    let errorMessage = null;
-    if(Array.isArray(validator)) {
-      errorMessage = validator.reduce((error, _validator) => _validator(value) ? `${_validator(value)} ${error}` : `${error}` , '');
-    } else {
-      errorMessage = validator(value, this.props.name);
-    }
-    errorMessage = errorMessage === '' ? null : errorMessage;
-    const isValid = typeof errorMessage !== 'string';
+    let { validator, name } = this.props;
+
+    if(!validator) { return }
+
+    validator = Array.isArray(validator) ? validator : [validator];
+    const errorMessage = validator.reduce((error, _validator) => _validator(value, name) ? `${_validator(value, name)} ${error}` : `${error}` , '');
+    const isValid = !errorMessage.length;
     this.setState({ isValid, errorMessage });
   },
 
@@ -136,6 +122,7 @@ export default React.createClass({
       hasAttemptedInput,
       errorMessage,
       isValid } = this.state;
+
     const { tooltip,
       name,
       disabled,
@@ -150,7 +137,7 @@ export default React.createClass({
 
     const fancyFieldClasses = classnames('fancy-field', classes,
       {
-        'fancy-field--has-content': value.toString().length || hasAttemptedInput,
+        'fancy-field--has-content': hasAttemptedInput,
         'has-tooltip': !!tooltip,
         'required': required && !readOnly && !disabled,
         'read-only': readOnly,
