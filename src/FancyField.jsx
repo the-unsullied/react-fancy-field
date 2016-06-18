@@ -72,7 +72,8 @@ export default React.createClass({
     const shouldShowError = this.state.shouldShowError || this.props.triggerValidation !== nextProps.triggerValidation;
 
     if(this.props.value !== nextProps.value || shouldShowError) {
-      let value = nextProps.value || '';
+      const nextVal = nextProps.value;
+      let value = this.valueIsValue(nextVal) ? nextVal : '';
       this.initValidation(value, shouldShowError);
     }
   },
@@ -91,6 +92,11 @@ export default React.createClass({
     }
   },
 
+  valueIsValue(value) {
+    // must be a value other than null or undefined, but can be 0
+    return value !== null && value !== undefined && value.toString().length > 0;
+  },
+
   handleUserAction(e) {
     const value = e.target.value || '';
     this.props.onChange(value, this.props.name);
@@ -100,7 +106,7 @@ export default React.createClass({
   },
 
   initValidation(value, shouldShowError = false) {
-    const hasAttemptedInput = this.state.hasAttemptedInput || value && value.toString().length || shouldShowError;
+    const hasAttemptedInput = this.state.hasAttemptedInput || this.valueIsValue(value) || shouldShowError;
     const { validator } = this.props;
     if(hasAttemptedInput) {
       this.validate(value, shouldShowError);

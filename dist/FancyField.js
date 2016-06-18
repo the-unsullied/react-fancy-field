@@ -84,7 +84,8 @@ exports.default = _react2.default.createClass({
     var shouldShowError = this.state.shouldShowError || this.props.triggerValidation !== nextProps.triggerValidation;
 
     if (this.props.value !== nextProps.value || shouldShowError) {
-      var value = nextProps.value || '';
+      var nextVal = nextProps.value;
+      var value = this.valueIsValue(nextVal) ? nextVal : '';
       this.initValidation(value, shouldShowError);
     }
   },
@@ -99,6 +100,10 @@ exports.default = _react2.default.createClass({
       this.handleUserAction(e);
     }
   },
+  valueIsValue: function valueIsValue(value) {
+    // must be a value other than null or undefined, but can be 0
+    return value !== null && value !== undefined && value.toString().length > 0;
+  },
   handleUserAction: function handleUserAction(e) {
     var value = e.target.value || '';
     this.props.onChange(value, this.props.name);
@@ -109,7 +114,7 @@ exports.default = _react2.default.createClass({
   initValidation: function initValidation(value) {
     var shouldShowError = arguments.length <= 1 || arguments[1] === undefined ? false : arguments[1];
 
-    var hasAttemptedInput = this.state.hasAttemptedInput || value && value.toString().length || shouldShowError;
+    var hasAttemptedInput = this.state.hasAttemptedInput || this.valueIsValue(value) || shouldShowError;
     var validator = this.props.validator;
 
     if (hasAttemptedInput) {
