@@ -59,8 +59,8 @@ export default React.createClass({
     return {
       value: stateVal,
       hasAttemptedInput: false,
-      isValid: true,
-      errorMessage: ''
+      errorMessage: '',
+      shouldShowError: false
     };
   },
 
@@ -69,59 +69,61 @@ export default React.createClass({
   },
 
   componentWillReceiveProps(nextProps) {
-    const value = nextProps.value || '';
-    this.setState({ value });
-    if(this.props.triggerValidation !== nextProps.triggerValidation) {
-      this.initValidation(value, true);
+    const shouldShowError = this.state.shouldShowError || this.props.triggerValidation !== nextProps.triggerValidation;
+
+    if(this.props.value !== nextProps.value || shouldShowError) {
+      let value = nextProps.value || '';
+      this.initValidation(value, shouldShowError);
     }
   },
 
   handleChange(e) {
-    this.initValidation(e.target.value);
+    this.props.onChange(e.target.value, this.props.name);
   },
 
   handleBlur(e) {
-    this.initValidation(e.target.value);
+    this.handleUserAction(e);
   },
 
   handleEnterKeypress(e) {
-    if(e.keyCode == 13){
-      this.initValidation(e.target.value);
+    if(e.keyCode == 13 && typeof this.props.onChange === 'function') {
+      this.handleUserAction(e);
     }
   },
 
-  initValidation(value, forceValidation = false) {
-    const hasAttemptedInput = value && value.length || forceValidation;
+  handleUserAction(e) {
+    const value = e.target.value || '';
+    this.props.onChange(value, this.props.name);
+    if(!this.state.shouldShowError) {
+      this.setState({ shouldShowError: true });
+    }
+  },
+
+  initValidation(value, shouldShowError = false) {
+    const hasAttemptedInput = this.state.hasAttemptedInput || value && value.toString().length || shouldShowError;
     const { validator } = this.props;
     if(hasAttemptedInput) {
-      if(typeof validator === 'function' || Array.isArray(validator)) {
-        this.validate(value);
-      }
-
+      this.validate(value, shouldShowError);
       this.setState({ hasAttemptedInput, value });
-
-      if(typeof this.props.onChange === 'function') {
-        this.props.onChange(value, this.props.name);
-      }
     }
   },
 
-  validate(value) {
+  validate(value, shouldShowError) {
     let { validator, name } = this.props;
 
     if(!validator) { return }
 
     validator = Array.isArray(validator) ? validator : [validator];
     const errorMessage = validator.reduce((error, _validator) => _validator(value, name) ? `${_validator(value, name)} ${error}` : `${error}` , '');
-    const isValid = !errorMessage.length;
-    this.setState({ isValid, errorMessage });
+    shouldShowError = shouldShowError || this.state.shouldShowError;
+    this.setState({ errorMessage, shouldShowError });
   },
 
   render() {
     const { value,
       hasAttemptedInput,
-      errorMessage,
-      isValid } = this.state;
+      errorMessage } = this.state;
+    let { shouldShowError } = this.state;
 
     const { tooltip,
       name,
@@ -133,7 +135,8 @@ export default React.createClass({
       required,
       readOnly,
       isEditable } = this.props;
-    const shouldShowError = hasAttemptedInput && !isValid;
+
+    shouldShowError = shouldShowError && !!errorMessage.length;
 
     const fancyFieldClasses = classnames('fancy-field', classes,
       {

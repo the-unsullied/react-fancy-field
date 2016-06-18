@@ -73,98 +73,90 @@ exports.default = _react2.default.createClass({
     return {
       value: stateVal,
       hasAttemptedInput: false,
-      isValid: true,
-      errorMessage: ''
+      errorMessage: '',
+      shouldShowError: false
     };
   },
   componentWillMount: function componentWillMount() {
     this.initValidation(this.state.value);
   },
-  componentWillUpdate: function componentWillUpdate(nextProps) {
-    if (this.props.triggerValidation !== nextProps.triggerValidation) {
-      this.initValidation(this.state.value, true);
-    }
-  },
   componentWillReceiveProps: function componentWillReceiveProps(nextProps) {
-    this.setState({ value: nextProps.value || '' });
+    var shouldShowError = this.state.shouldShowError || this.props.triggerValidation !== nextProps.triggerValidation;
+
+    if (this.props.value !== nextProps.value || shouldShowError) {
+      var value = nextProps.value || '';
+      this.initValidation(value, shouldShowError);
+    }
   },
   handleChange: function handleChange(e) {
-    var value = e.target.value;
-    var validator = this.props.validator;
-
-    this.setState({ value: value });
-    if (this.state.hasAttemptedInput || !validator) {
-      if (validator) {
-        this.validate(value);
-      }
-    }
-    if (typeof this.props.onChange === 'function') {
-      this.props.onChange(value, this.props.name);
-    }
+    this.props.onChange(e.target.value, this.props.name);
   },
   handleBlur: function handleBlur(e) {
-    this.initValidation(e.target.value);
+    this.handleUserAction(e);
   },
   handleEnterKeypress: function handleEnterKeypress(e) {
-    if (e.keyCode == 13) {
-      this.initValidation(e.target.value);
+    if (e.keyCode == 13 && typeof this.props.onChange === 'function') {
+      this.handleUserAction(e);
+    }
+  },
+  handleUserAction: function handleUserAction(e) {
+    var value = e.target.value || '';
+    this.props.onChange(value, this.props.name);
+    if (!this.state.shouldShowError) {
+      this.setState({ shouldShowError: true });
     }
   },
   initValidation: function initValidation(value) {
-    var forceValidation = arguments.length <= 1 || arguments[1] === undefined ? false : arguments[1];
+    var shouldShowError = arguments.length <= 1 || arguments[1] === undefined ? false : arguments[1];
 
-    var hasAttemptedInput = value && value.length || forceValidation;
+    var hasAttemptedInput = this.state.hasAttemptedInput || value && value.toString().length || shouldShowError;
     var validator = this.props.validator;
 
     if (hasAttemptedInput) {
-      if (typeof validator === 'function' || Array.isArray(validator)) {
-        this.validate(value);
-      }
-
+      this.validate(value, shouldShowError);
       this.setState({ hasAttemptedInput: hasAttemptedInput, value: value });
-
-      if (typeof this.props.onChange === 'function') {
-        this.props.onChange(value, this.props.name);
-      }
     }
   },
-  validate: function validate(value) {
-    var validator = this.props.validator;
+  validate: function validate(value, shouldShowError) {
+    var _props = this.props;
+    var validator = _props.validator;
+    var name = _props.name;
 
-    var errorMessage = null;
-    if (Array.isArray(validator)) {
-      errorMessage = validator.reduce(function (error, _validator) {
-        return _validator(value) ? _validator(value) + ' ' + error : '' + error;
-      }, '');
-    } else {
-      errorMessage = validator(value, this.props.name);
+
+    if (!validator) {
+      return;
     }
-    errorMessage = errorMessage === '' ? null : errorMessage;
-    var isValid = typeof errorMessage !== 'string';
-    this.setState({ isValid: isValid, errorMessage: errorMessage });
+
+    validator = Array.isArray(validator) ? validator : [validator];
+    var errorMessage = validator.reduce(function (error, _validator) {
+      return _validator(value, name) ? _validator(value, name) + ' ' + error : '' + error;
+    }, '');
+    shouldShowError = shouldShowError || this.state.shouldShowError;
+    this.setState({ errorMessage: errorMessage, shouldShowError: shouldShowError });
   },
   render: function render() {
     var _state = this.state;
     var value = _state.value;
     var hasAttemptedInput = _state.hasAttemptedInput;
     var errorMessage = _state.errorMessage;
-    var isValid = _state.isValid;
-    var _props = this.props;
-    var tooltip = _props.tooltip;
-    var name = _props.name;
-    var disabled = _props.disabled;
-    var placeholder = _props.placeholder;
-    var label = _props.label;
-    var type = _props.type;
-    var classes = _props.classes;
-    var required = _props.required;
-    var readOnly = _props.readOnly;
-    var isEditable = _props.isEditable;
+    var shouldShowError = this.state.shouldShowError;
+    var _props2 = this.props;
+    var tooltip = _props2.tooltip;
+    var name = _props2.name;
+    var disabled = _props2.disabled;
+    var placeholder = _props2.placeholder;
+    var label = _props2.label;
+    var type = _props2.type;
+    var classes = _props2.classes;
+    var required = _props2.required;
+    var readOnly = _props2.readOnly;
+    var isEditable = _props2.isEditable;
 
-    var shouldShowError = hasAttemptedInput && !isValid;
+
+    shouldShowError = shouldShowError && !!errorMessage.length;
 
     var fancyFieldClasses = (0, _classnames2.default)('fancy-field', classes, {
-      'fancy-field--has-content': value.toString().length || hasAttemptedInput,
+      'fancy-field--has-content': hasAttemptedInput,
       'has-tooltip': !!tooltip,
       'required': required && !readOnly && !disabled,
       'read-only': readOnly,
