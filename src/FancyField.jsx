@@ -79,7 +79,11 @@ export default React.createClass({
   },
 
   handleChange(e) {
-    this.props.onChange(e.target.value, this.props.name);
+    let { value } = e.target;
+    if(this.props.type === 'number') {
+      value = value.replace(/[^0-9\.]+/g,'');
+    }
+    this.props.onChange(value, this.props.name);
   },
 
   handleBlur(e) {
@@ -136,11 +140,12 @@ export default React.createClass({
       disabled,
       placeholder,
       label,
-      type,
       classes,
       required,
       readOnly,
       isEditable } = this.props;
+    let { type } = this.props;
+    type = !type || type === 'number' ? 'text' : type;
 
     shouldShowError = shouldShowError && !!errorMessage.length;
 
@@ -163,7 +168,7 @@ export default React.createClass({
              ref='fancyField'
              value={value}
              disabled={disabled || readOnly}
-             type={type || 'text'}
+             type={type}
              placeholder={placeholder}
              onChange={this.handleChange}
              onBlur={this.handleBlur}

@@ -90,7 +90,12 @@ exports.default = _react2.default.createClass({
     }
   },
   handleChange: function handleChange(e) {
-    this.props.onChange(e.target.value, this.props.name);
+    var value = e.target.value;
+
+    if (this.props.type === 'number') {
+      value = value.replace(/[^0-9\.]+/g, '');
+    }
+    this.props.onChange(value, this.props.name);
   },
   handleBlur: function handleBlur(e) {
     this.handleUserAction(e);
@@ -151,12 +156,13 @@ exports.default = _react2.default.createClass({
     var disabled = _props2.disabled;
     var placeholder = _props2.placeholder;
     var label = _props2.label;
-    var type = _props2.type;
     var classes = _props2.classes;
     var required = _props2.required;
     var readOnly = _props2.readOnly;
     var isEditable = _props2.isEditable;
+    var type = this.props.type;
 
+    type = !type || type === 'number' ? 'text' : type;
 
     shouldShowError = shouldShowError && !!errorMessage.length;
 
@@ -181,7 +187,7 @@ exports.default = _react2.default.createClass({
         ref: 'fancyField',
         value: value,
         disabled: disabled || readOnly,
-        type: type || 'text',
+        type: type,
         placeholder: placeholder,
         onChange: this.handleChange,
         onBlur: this.handleBlur,
