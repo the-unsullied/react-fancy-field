@@ -2,7 +2,7 @@
 
 A modern styled input field with animating effects built for React. Has built in validation effects.
 
-[FancyFieldDemo](https://github.com/the-unsullied/react-fancy-field/blob/demo/fancyfielddemo.gif)
+![FancyFieldDemo](https://github.com/the-unsullied/react-fancy-field/blob/demo/fancyfielddemo.gif)
 
 ## Params
 
