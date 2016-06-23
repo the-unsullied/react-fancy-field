@@ -1,8 +1,46 @@
 # react-fancy-field
 
-A modern styled input field with animating effects built for React. Has built in validation effects.
+*A modern styled input field with animating effects built for React. Has built in validation effects.*
 
 ![FancyFieldDemo](https://github.com/the-unsullied/react-fancy-field/blob/demo/fancyfielddemo.gif)
+
+## Install
+```
+npm install react-fancy-button --save
+```
+
+## Usage
+```
+  import FancyField from 'react-fancy-field';
+
+  React.createClass({
+    getInitialState(){
+      return {
+        note: 'my notes!',
+        isEditing: false,
+        triggerValidation: 0
+      }
+    },
+
+    isFieldRequired(val, name) {
+      return val && typeof val === 'string' && val.length > 0;
+    },
+
+    render() {
+      const { note, isEditing } = this.state;
+      <FancyField value={note}
+        label='Notes'
+        disabled={isEditing}
+        required={true}
+        name='noteInput'
+        triggerValidation={triggerValidation}
+        validator={this.isFieldRequired}
+        onChange={val => this.setState({note: val})}
+        placeholder='Fill in note here...'/>
+      }
+  });
+```
+
 
 ## Params
 
