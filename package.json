@@ -3,13 +3,13 @@
   "version": "0.1.24",
   "description": "A modern styled input field with animating effects built for React.",
   "main": "./dist/FancyField.js",
-  "repository" : {
-    "type" : "git",
-    "url" : "https://github.com/the-unsullied/react-fancy-field"
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/the-unsullied/react-fancy-field"
   },
   "scripts": {
     "build": "rm -rf dist && mkdir -p dist && babel src/FancyField.jsx --out-file dist/FancyField.js && node ./scripts/build-dist && cp src/main.scss dist/FancyField.scss",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "npm run build; ./node_modules/karma/bin/karma start"
   },
   "keywords": [
     "React",
@@ -29,10 +29,25 @@
     "babel-loader": "^6.2.4",
     "babel-plugin-add-module-exports": "^0.1.2",
     "babel-plugin-transform-react-jsx": "^6.7.4",
+    "babel-polyfill": "^6.9.1",
     "babel-preset-es2015": "^6.6.0",
+    "babelify": "^7.3.0",
+    "browserify": "^13.0.1",
+    "chai": "^3.5.0",
     "classnames": "^2.2.3",
+    "karma": "^1.0.0",
+    "karma-browserify": "^5.0.5",
+    "karma-chai-sinon": "^0.1.5",
+    "karma-chrome-launcher": "^1.0.1",
+    "karma-mocha": "^1.0.1",
+    "karma-phantomjs-launcher": "^1.0.1",
+    "mocha": "^2.5.3",
     "node-sass": "^3.4.2",
     "react": "^0.14.8",
-    "react-dom": "^0.14.8"
+    "react-addons-test-utils": "^15.1.0",
+    "react-dom": "^0.14.8",
+    "sinon": "^1.17.4",
+    "sinon-chai": "^2.8.0",
+    "watchify": "^3.7.0"
   }
 }

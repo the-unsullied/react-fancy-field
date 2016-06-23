@@ -30,3 +30,16 @@ A modern styled input field with animating effects built for React. Has built in
 **readOnly** {Boolean} disabled state, but does not look disabled. Will look like its editable.
 
 **isEditable** {Boolean} will make field look editable by giving the border a blue underline.
+
+
+## Tests:
+To run the tests you can either run:
+```
+  npm test
+```
+
+OR
+
+```
+  npm test -- --debug=true // for debug mode in chrome
+```

@@ -28,6 +28,7 @@ export default React.createClass({
       disabled: false,
       placeholder: '',
       validator: null,
+      value: null,
       classes: '',
       onChange: () => {},
       tooltip: null,
@@ -45,6 +46,7 @@ export default React.createClass({
     placeholder: React.PropTypes.string,
     disabled: React.PropTypes.bool,
     validator: React.PropTypes.any,
+    value: React.PropTypes.any,
     classes: React.PropTypes.string,
     onChange: React.PropTypes.func,
     tooltip: React.PropTypes.string,
@@ -65,16 +67,15 @@ export default React.createClass({
   },
 
   componentWillMount() {
-    this.initValidation(this.state.value);
+    this.validate(this.state.value);
   },
 
   componentWillReceiveProps(nextProps) {
     const shouldShowError = this.state.shouldShowError || this.props.triggerValidation !== nextProps.triggerValidation;
-
     if(this.props.value !== nextProps.value || shouldShowError) {
       const nextVal = nextProps.value;
       let value = this.valueIsValue(nextVal) ? nextVal : '';
-      this.initValidation(value, shouldShowError);
+      this.validate(value, shouldShowError);
     }
   },
 
@@ -91,7 +92,7 @@ export default React.createClass({
   },
 
   handleEnterKeypress(e) {
-    if(e.keyCode == 13 && typeof this.props.onChange === 'function') {
+    if(e.keyCode === 13 && typeof this.props.onChange === 'function') {
       this.handleUserAction(e);
     }
   },
@@ -109,22 +110,24 @@ export default React.createClass({
     }
   },
 
-  initValidation(value, shouldShowError = false) {
+  validate(value, shouldShowError = false) {
     const hasAttemptedInput = this.state.hasAttemptedInput || this.valueIsValue(value) || shouldShowError;
     const { validator } = this.props;
     if(hasAttemptedInput) {
-      this.validate(value, shouldShowError);
+      this.setErrorMessage(value, shouldShowError);
       this.setState({ hasAttemptedInput, value });
     }
   },
 
-  validate(value, shouldShowError) {
+  setErrorMessage(value, shouldShowError) {
     let { validator, name } = this.props;
 
     if(!validator) { return }
-
     validator = Array.isArray(validator) ? validator : [validator];
-    const errorMessage = validator.reduce((error, _validator) => _validator(value, name) ? `${_validator(value, name)} ${error}` : `${error}` , '');
+    const errorMessage = validator.reduce((error, _validator) => {
+      const message = _validator(value, name);
+      return message ? `${message} ${error}` : `${error}` ;
+    }, '');
     shouldShowError = shouldShowError || this.state.shouldShowError;
     this.setState({ errorMessage, shouldShowError });
   },

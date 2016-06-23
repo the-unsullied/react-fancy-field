@@ -41,6 +41,7 @@ exports.default = _react2.default.createClass({
       disabled: false,
       placeholder: '',
       validator: null,
+      value: null,
       classes: '',
       onChange: function onChange() {},
       tooltip: null,
@@ -58,6 +59,7 @@ exports.default = _react2.default.createClass({
     placeholder: _react2.default.PropTypes.string,
     disabled: _react2.default.PropTypes.bool,
     validator: _react2.default.PropTypes.any,
+    value: _react2.default.PropTypes.any,
     classes: _react2.default.PropTypes.string,
     onChange: _react2.default.PropTypes.func,
     tooltip: _react2.default.PropTypes.string,
@@ -78,15 +80,14 @@ exports.default = _react2.default.createClass({
     };
   },
   componentWillMount: function componentWillMount() {
-    this.initValidation(this.state.value);
+    this.validate(this.state.value);
   },
   componentWillReceiveProps: function componentWillReceiveProps(nextProps) {
     var shouldShowError = this.state.shouldShowError || this.props.triggerValidation !== nextProps.triggerValidation;
-
     if (this.props.value !== nextProps.value || shouldShowError) {
       var nextVal = nextProps.value;
       var value = this.valueIsValue(nextVal) ? nextVal : '';
-      this.initValidation(value, shouldShowError);
+      this.validate(value, shouldShowError);
     }
   },
   handleChange: function handleChange(e) {
@@ -101,7 +102,7 @@ exports.default = _react2.default.createClass({
     this.handleUserAction(e);
   },
   handleEnterKeypress: function handleEnterKeypress(e) {
-    if (e.keyCode == 13 && typeof this.props.onChange === 'function') {
+    if (e.keyCode === 13 && typeof this.props.onChange === 'function') {
       this.handleUserAction(e);
     }
   },
@@ -116,18 +117,18 @@ exports.default = _react2.default.createClass({
       this.setState({ shouldShowError: true });
     }
   },
-  initValidation: function initValidation(value) {
+  validate: function validate(value) {
     var shouldShowError = arguments.length <= 1 || arguments[1] === undefined ? false : arguments[1];
 
     var hasAttemptedInput = this.state.hasAttemptedInput || this.valueIsValue(value) || shouldShowError;
     var validator = this.props.validator;
 
     if (hasAttemptedInput) {
-      this.validate(value, shouldShowError);
+      this.setErrorMessage(value, shouldShowError);
       this.setState({ hasAttemptedInput: hasAttemptedInput, value: value });
     }
   },
-  validate: function validate(value, shouldShowError) {
+  setErrorMessage: function setErrorMessage(value, shouldShowError) {
     var _props = this.props;
     var validator = _props.validator;
     var name = _props.name;
@@ -136,10 +137,10 @@ exports.default = _react2.default.createClass({
     if (!validator) {
       return;
     }
-
     validator = Array.isArray(validator) ? validator : [validator];
     var errorMessage = validator.reduce(function (error, _validator) {
-      return _validator(value, name) ? _validator(value, name) + ' ' + error : '' + error;
+      var message = _validator(value, name);
+      return message ? message + ' ' + error : '' + error;
     }, '');
     shouldShowError = shouldShowError || this.state.shouldShowError;
     this.setState({ errorMessage: errorMessage, shouldShowError: shouldShowError });
