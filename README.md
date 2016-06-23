@@ -70,6 +70,15 @@ npm install react-fancy-button --save
 
 **isEditable** {Boolean} will make field look editable by giving the border a blue underline.
 
+## Tooltip
+To have a working tooltip you must include the [svg image](https://github.com/the-unsullied/react-fancy-field/blob/master/assets/unsullied-help.svg) in your application. Then add the background property to your css:
+
+```
+.unsullied-icon-help {
+  background-image: url('/path/to/img/unsullied-help.svg');
+  @include vendor('transform', scale(0.75)); // can omit this or edit scale multiplier as necessary
+}
+```
 
 ## Tests:
 To run the tests you can either run:
