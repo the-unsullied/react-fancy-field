@@ -88,11 +88,12 @@ export default React.createClass({
   },
 
   handleBlur(e) {
-    this.handleUserAction(e);
+    const { onBlur } = this.props;
+    this.handleUserAction(e, onBlur);
   },
 
   handleEnterKeypress(e) {
-    if(e.keyCode === 13 && typeof this.props.onChange === 'function') {
+    if(e.keyCode == 13 && typeof this.props.onChange === 'function') {
       this.handleUserAction(e);
     }
   },
@@ -102,12 +103,22 @@ export default React.createClass({
     return value !== null && value !== undefined && value.toString().length > 0;
   },
 
-  handleUserAction(e) {
+  handleUserAction(e, onBlur) {
+    const { name } = this.props;
     const value = e.target.value || '';
-    this.props.onChange(value, this.props.name);
+    if(onBlur) {
+      onBlur(value, name);
+    } else {
+      this.props.onChange(value, name);
+    }
     if(!this.state.shouldShowError) {
       this.setState({ shouldShowError: true });
     }
+  },
+
+  valueIsValue(value) {
+    // must be a value other than null or undefined, but can be 0
+    return value !== null && value !== undefined && value.toString().length > 0;
   },
 
   validate(value, shouldShowError = false) {

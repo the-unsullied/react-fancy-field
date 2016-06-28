@@ -136,6 +136,21 @@ context('FancyField', () => {
       Simulate.keyDown(component.refs.fancyField, {key: "Enter", keyCode: 13, which: 13}));
     });
 
+    it('should call onBlur if passed into component instead of onChange', () => {
+      const validator = sinon.stub().returns('invalid meow');
+      const onBlur = sinon.spy();
+      const onChange = sinon.spy();
+      const {parent, component} = createComponent({value: '', validator, onBlur, onChange}, true);
+
+      parent.setState({value: 'meow'});
+      Simulate.blur(component.refs.fancyField);
+      expect(component.state.shouldShowError).to.be.true;
+      expect(component.state.errorMessage).to.equal('invalid meow ');
+      expect(onChange.called).to.be.false;
+      expect(onBlur.calledOnce).to.be.true;
+      expect(onBlur.calledWith('meow')).to.be.true;
+    });
+
     it('should show show the error message in place of label', () => {
       const validator = sinon.stub().returns('invalid meow');
       const onChange = sinon.spy();
