@@ -161,7 +161,7 @@ export default React.createClass({
     let { type } = this.props;
     type = !type || type === 'number' ? 'text' : type;
 
-    shouldShowError = shouldShowError && !!errorMessage.length;
+    shouldShowError = shouldShowError && !!errorMessage.length && !disabled;
 
     const fancyFieldClasses = classnames('fancy-field', classes,
       {

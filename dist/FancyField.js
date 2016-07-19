@@ -176,7 +176,7 @@ exports.default = _react2.default.createClass((_React$createClass = {
 
   type = !type || type === 'number' ? 'text' : type;
 
-  shouldShowError = shouldShowError && !!errorMessage.length;
+  shouldShowError = shouldShowError && !!errorMessage.length && !disabled;
 
   var fancyFieldClasses = (0, _classnames2.default)('fancy-field', classes, {
     'fancy-field--has-content': hasAttemptedInput,
