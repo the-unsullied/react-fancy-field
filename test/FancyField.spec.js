@@ -1,3 +1,5 @@
+/* */
+"format cjs";
 import React from 'react';
 import { findDOMNode } from 'react-dom';
 import { renderIntoDocument, findRenderedComponentWithType, Simulate } from 'react-addons-test-utils';
@@ -94,7 +96,7 @@ context('FancyField', () => {
       parent.setState({value: 'meow'});
       expect(validator.calledOnce).to.be.true;
       expect(validator.calledWith('meow')).to.be.true;
-      expect(component.state.errorMessage).to.equal('invalid meow ');
+      expect(component.state.errorMessage).to.equal('invalid meow');
       expect(component.state.shouldShowError).to.be.false;
     });
 
@@ -110,7 +112,7 @@ context('FancyField', () => {
       expect(validator2.calledOnce).to.be.true;
       expect(validator1.calledWith('meow')).to.be.true;
       expect(validator2.calledWith('meow')).to.be.true;
-      expect(component.state.errorMessage).to.equal('invalid orange invalid meow ');
+      expect(component.state.errorMessage).to.equal('invalid orange');
       expect(component.state.shouldShowError).to.be.false;
     });
 
@@ -122,7 +124,7 @@ context('FancyField', () => {
       parent.setState({value: 'meow'});
       simulation(component);
       expect(component.state.shouldShowError).to.be.true;
-      expect(component.state.errorMessage).to.equal('invalid meow ');
+      expect(component.state.errorMessage).to.equal('invalid meow');
       expect(onChange.calledOnce).to.be.true;
       expect(onChange.calledWith('meow')).to.be.true;
     }
@@ -133,7 +135,7 @@ context('FancyField', () => {
 
     it('should show error on hit of enter', () => {
       showErrorTest((component) =>
-      Simulate.keyDown(component.refs.fancyField, {key: "Enter", keyCode: 13, which: 13}));
+        Simulate.keyDown(component.refs.fancyField, {key: "Enter", keyCode: 13, which: 13}));
     });
 
     it('should call onBlur if passed into component instead of onChange', () => {
@@ -145,7 +147,7 @@ context('FancyField', () => {
       parent.setState({value: 'meow'});
       Simulate.blur(component.refs.fancyField);
       expect(component.state.shouldShowError).to.be.true;
-      expect(component.state.errorMessage).to.equal('invalid meow ');
+      expect(component.state.errorMessage).to.equal('invalid meow');
       expect(onChange.called).to.be.false;
       expect(onBlur.calledOnce).to.be.true;
       expect(onBlur.calledWith('meow')).to.be.true;
@@ -160,7 +162,7 @@ context('FancyField', () => {
       Simulate.blur(component.refs.fancyField);
       const errorMessage = findDOMNode(component).querySelector('.fancy-field__label--error');
       expect(errorMessage).to.exist;
-      expect(errorMessage.textContent).to.equal('invalid meow ');
+      expect(errorMessage.textContent).to.equal('invalid meow');
     });
 
 

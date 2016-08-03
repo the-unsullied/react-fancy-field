@@ -149,11 +149,13 @@ exports.default = _react2.default.createClass((_React$createClass = {
   if (!validator) {
     return;
   }
+
   validator = Array.isArray(validator) ? validator : [validator];
   var errorMessage = validator.reduce(function (error, _validator) {
     var message = _validator(value, name);
-    return message ? message + ' ' + error : '' + error;
+    return message ? message : error;
   }, '');
+
   shouldShowError = shouldShowError || this.state.shouldShowError;
   this.setState({ errorMessage: errorMessage, shouldShowError: shouldShowError });
 }), _defineProperty(_React$createClass, 'render', function render() {
@@ -185,6 +187,7 @@ exports.default = _react2.default.createClass((_React$createClass = {
     'read-only': readOnly,
     'is-editable': isEditable
   });
+
   return _react2.default.createElement(
     'div',
     { className: fancyFieldClasses },
