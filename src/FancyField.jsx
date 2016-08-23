@@ -134,11 +134,13 @@ export default React.createClass({
     let { validator, name } = this.props;
 
     if(!validator) { return }
+
     validator = Array.isArray(validator) ? validator : [validator];
     const errorMessage = validator.reduce((error, _validator) => {
       const message = _validator(value, name);
-      return message ? `${message} ${error}` : `${error}` ;
+      return message ? message : error;
     }, '');
+
     shouldShowError = shouldShowError || this.state.shouldShowError;
     this.setState({ errorMessage, shouldShowError });
   },
@@ -171,6 +173,7 @@ export default React.createClass({
         'read-only': readOnly,
         'is-editable': isEditable
       });
+
     return <div className={fancyFieldClasses}>
       {/*http://stackoverflow.com/questions/15738259/disabling-chrome-autofill*/}
       { !!tooltip ? <span className='fancy-field__tooltip simptip-position-right simptip-multiline' data-tooltip={tooltip}>
