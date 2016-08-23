@@ -6,7 +6,7 @@
 
 ## Install
 ```
-npm install react-fancy-button --save
+npm install react-fancy-field --save
 ```
 
 ## Usage
