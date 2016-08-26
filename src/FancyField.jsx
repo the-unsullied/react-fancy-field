@@ -176,7 +176,7 @@ export default React.createClass({
 
     return <div className={fancyFieldClasses}>
       {/*http://stackoverflow.com/questions/15738259/disabling-chrome-autofill*/}
-      { !!tooltip ? <span className='fancy-field__tooltip simptip-position-right simptip-multiline' data-tooltip={tooltip}>
+      { !!tooltip ? <span className='fancy-field__tooltip simptip-position-top simptip-multiline' data-tooltip={tooltip}>
         <i className='unsullied-icon-help'></i>
       </span> : null }
       <input autoComplete="new-password"

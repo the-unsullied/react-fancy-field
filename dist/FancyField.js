@@ -193,7 +193,7 @@ exports.default = _react2.default.createClass((_React$createClass = {
     { className: fancyFieldClasses },
     !!tooltip ? _react2.default.createElement(
       'span',
-      { className: 'fancy-field__tooltip simptip-position-right simptip-multiline', 'data-tooltip': tooltip },
+      { className: 'fancy-field__tooltip simptip-position-top simptip-multiline', 'data-tooltip': tooltip },
       _react2.default.createElement('i', { className: 'unsullied-icon-help' })
     ) : null,
     _react2.default.createElement('input', { autoComplete: 'new-password',
