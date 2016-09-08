@@ -31,6 +31,7 @@ Component that stands in as styled input
 @param {Boolean} required shows that input is required
 @param {Boolean} readOnly disabled state, but does not look disabled. Will look like its editable.
 @param {Boolean} isEditable will make field look editable by giving the border a blue underline.
+@param {JSX} icon any image that should appear to the left of the field
 */
 
 exports.default = _react2.default.createClass((_React$createClass = {
@@ -49,7 +50,8 @@ exports.default = _react2.default.createClass((_React$createClass = {
       tooltip: null,
       required: false,
       readOnly: false,
-      isEditable: false
+      isEditable: false,
+      icon: null
     };
   },
 
@@ -67,7 +69,8 @@ exports.default = _react2.default.createClass((_React$createClass = {
     tooltip: _react2.default.PropTypes.string,
     required: _react2.default.PropTypes.bool,
     readOnly: _react2.default.PropTypes.bool,
-    isEditable: _react2.default.PropTypes.bool
+    isEditable: _react2.default.PropTypes.bool,
+    icon: _react2.default.PropTypes.any
   },
 
   getInitialState: function getInitialState() {
@@ -166,6 +169,7 @@ exports.default = _react2.default.createClass((_React$createClass = {
   var shouldShowError = this.state.shouldShowError;
   var _props2 = this.props;
   var tooltip = _props2.tooltip;
+  var icon = _props2.icon;
   var name = _props2.name;
   var disabled = _props2.disabled;
   var placeholder = _props2.placeholder;
@@ -195,6 +199,11 @@ exports.default = _react2.default.createClass((_React$createClass = {
       'span',
       { className: 'fancy-field__tooltip simptip-position-top simptip-multiline', 'data-tooltip': tooltip },
       _react2.default.createElement('i', { className: 'unsullied-icon-help' })
+    ) : null,
+    !!icon ? _react2.default.createElement(
+      'span',
+      { className: 'fancy-field__icon' },
+      icon
     ) : null,
     _react2.default.createElement('input', { autoComplete: 'new-password',
       className: (0, _classnames2.default)('full-width', 'fancy-field__input', { 'fancy-field__input--error': shouldShowError }),

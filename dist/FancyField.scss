@@ -132,7 +132,8 @@ $fancy-field-breakpoints: (
   padding-left: 30px !important;
 }
 
-.fancy-field__tooltip {
+.fancy-field__tooltip,
+.fancy-field__icon {
   position: absolute;
   bottom: -1px;
   display: inline-block;

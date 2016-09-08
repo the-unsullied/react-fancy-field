@@ -13,6 +13,7 @@ Component that stands in as styled input
 @param {Boolean} required shows that input is required
 @param {Boolean} readOnly disabled state, but does not look disabled. Will look like its editable.
 @param {Boolean} isEditable will make field look editable by giving the border a blue underline.
+@param {JSX} icon any image that should appear to the left of the field
 */
 
 import React from 'react';
@@ -34,7 +35,8 @@ export default React.createClass({
       tooltip: null,
       required: false,
       readOnly: false,
-      isEditable: false
+      isEditable: false,
+      icon: null
     };
   },
 
@@ -52,7 +54,8 @@ export default React.createClass({
     tooltip: React.PropTypes.string,
     required: React.PropTypes.bool,
     readOnly: React.PropTypes.bool,
-    isEditable: React.PropTypes.bool
+    isEditable: React.PropTypes.bool,
+    icon: React.PropTypes.any
   },
 
   getInitialState() {
@@ -152,6 +155,7 @@ export default React.createClass({
     let { shouldShowError } = this.state;
 
     const { tooltip,
+      icon,
       name,
       disabled,
       placeholder,
@@ -178,6 +182,9 @@ export default React.createClass({
       {/*http://stackoverflow.com/questions/15738259/disabling-chrome-autofill*/}
       { !!tooltip ? <span className='fancy-field__tooltip simptip-position-top simptip-multiline' data-tooltip={tooltip}>
         <i className='unsullied-icon-help'></i>
+      </span> : null }
+      { !!icon ? <span className='fancy-field__icon'>
+        { icon }
       </span> : null }
       <input autoComplete="new-password"
              className={classnames('full-width', 'fancy-field__input', {'fancy-field__input--error': shouldShowError})}
