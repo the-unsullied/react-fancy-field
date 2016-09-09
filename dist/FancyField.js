@@ -186,7 +186,7 @@ exports.default = _react2.default.createClass((_React$createClass = {
 
   var fancyFieldClasses = (0, _classnames2.default)('fancy-field', classes, {
     'fancy-field--has-content': hasAttemptedInput,
-    'has-tooltip': !!tooltip,
+    'has-icon': !!tooltip || !icon,
     'required': required && !readOnly && !disabled,
     'read-only': readOnly,
     'is-editable': isEditable

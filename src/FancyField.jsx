@@ -172,7 +172,7 @@ export default React.createClass({
     const fancyFieldClasses = classnames('fancy-field', classes,
       {
         'fancy-field--has-content': hasAttemptedInput,
-        'has-tooltip': !!tooltip,
+        'has-icon': !!tooltip || !icon,
         'required': required && !readOnly && !disabled,
         'read-only': readOnly,
         'is-editable': isEditable
