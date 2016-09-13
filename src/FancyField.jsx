@@ -18,8 +18,17 @@ Component that stands in as styled input
 
 import React from 'react';
 import classnames from 'classnames';
+import immutable, {fromJS} from 'immutable';
+
+const fromTypeahead = 'FROM_TYPEAHEAD';
+
+function isImmutable(obj) {
+  return obj !== null && typeof obj === "object" && !!obj.toJSON;
+}
 
 export default React.createClass({
+  listEl: null,
+
   getDefaultProps: function() {
     return {
       name: '',
@@ -36,7 +45,8 @@ export default React.createClass({
       required: false,
       readOnly: false,
       isEditable: false,
-      icon: null
+      icon: null,
+      typeaheadOptions: []
     };
   },
 
@@ -55,7 +65,8 @@ export default React.createClass({
     required: React.PropTypes.bool,
     readOnly: React.PropTypes.bool,
     isEditable: React.PropTypes.bool,
-    icon: React.PropTypes.any
+    icon: React.PropTypes.any,
+    typeaheadOptions: React.PropTypes.any
   },
 
   getInitialState() {
@@ -65,7 +76,9 @@ export default React.createClass({
       value: stateVal,
       hasAttemptedInput: false,
       errorMessage: '',
-      shouldShowError: false
+      shouldShowError: false,
+      isFocused: false,
+      arrowSelectedTypeaheadOpt: null
     };
   },
 
@@ -74,30 +87,102 @@ export default React.createClass({
   },
 
   componentWillReceiveProps(nextProps) {
-    const shouldShowError = this.state.shouldShowError || this.props.triggerValidation !== nextProps.triggerValidation;
-    if(this.props.value !== nextProps.value || shouldShowError) {
+    const { triggerValidation, value, typeaheadOptions } = this.props;
+    const nextTypeaheadOpts = nextProps.typeaheadOptions;
+    const shouldShowError = this.state.shouldShowError || triggerValidation !== nextProps.triggerValidation;
+    const hasTypeaheadOpts = !!typeaheadOptions && (isImmutable(typeaheadOptions) ? typeaheadOptions.size > 0 : typeaheadOptions.length > 0);
+    const willHaveTypeaheadOpts = !!nextTypeaheadOpts && (isImmutable(nextTypeaheadOpts) ?  nextTypeaheadOpts.size > 0 : nextTypeaheadOpts.length > 0);
+    const hasEmptyTypeaheadOpts = hasTypeaheadOpts && !willHaveTypeaheadOpts;
+    const isSameTypeaheadOpts = immutable.is(fromJS(typeaheadOptions), fromJS(nextTypeaheadOpts));
+
+    if(value !== nextProps.value || shouldShowError) {
       const nextVal = nextProps.value;
       let value = this.valueIsValue(nextVal) ? nextVal : '';
       this.validate(value, shouldShowError);
     }
+    if(hasEmptyTypeaheadOpts || !isSameTypeaheadOpts) {
+      this.setState({ arrowSelectedTypeaheadOpt: null });
+    }
   },
 
-  handleChange(e) {
-    let { value } = e.target;
-    if(this.props.type === 'number') {
-      value = value.replace(/[^0-9\.]+/g,'');
+  handleChange(e, typeaheadOpt) {
+    let value;
+    if(e === fromTypeahead) {
+      value = typeaheadOpt
+    } else {
+       value = e.target.value;
+       if(this.props.type === 'number') {
+         value = value.replace(/[^0-9\.]+/g,'');
+       }
     }
+    this.handleFocus(e);
+
     this.props.onChange(value, this.props.name);
   },
 
   handleBlur(e) {
     const { onBlur } = this.props;
+    this.setState({
+      isFocused: false,
+      arrowSelectedTypeaheadOpt: null
+    });
     this.handleUserAction(e, onBlur);
   },
 
+  handleFocus(e) {
+    this.setState({ isFocused: true });
+  },
+
   handleEnterKeypress(e) {
-    if(e.keyCode == 13 && typeof this.props.onChange === 'function') {
+    const { typeaheadOptions } = this.props;
+    const isEnter = e.keyCode === 13;
+    const hasTypeaheadOpts = isImmutable(typeaheadOptions) ? typeaheadOptions.size > 0 : typeaheadOptions.length > 0;
+
+    if(this.state.isFocused && hasTypeaheadOpts) {
+      this.arrowSelectElementInTypeahead(e);
+    } else if(isEnter && typeof this.props.onChange === 'function') {
       this.handleUserAction(e);
+    }
+  },
+
+  arrowSelectElementInTypeahead(e) {
+    const { listEl } = this;
+    const { typeaheadOptions } = this.props;
+    const { arrowSelectedTypeaheadOpt } = this.state;
+    const idKey = this.props.idKey || 'id';
+    const isArrowDown = e.keyCode === 40;
+    const isArrowUp = e.keyCode === 38;
+    const isEscape = e.keyCode === 27;
+    const isEnter = e.keyCode === 13;
+    const listItems = listEl.querySelectorAll('li');
+    const activeClassName = 'fancy-field__typeahead-opt--active';
+
+    if(isArrowDown || isArrowUp) {
+      let selection;
+      if(!!arrowSelectedTypeaheadOpt) {
+        const { nextSibling, previousSibling } = arrowSelectedTypeaheadOpt
+        selection = isArrowDown ? nextSibling : previousSibling;
+        if(!selection) {
+          return;
+        }
+        arrowSelectedTypeaheadOpt.className = '';
+      } else {
+        const index = isArrowDown ? 0 : listItems.length - 1;
+        selection = listItems[index];
+      }
+      selection.className = activeClassName;
+      selection.scrollIntoView();
+      this.setState({ arrowSelectedTypeaheadOpt: selection });
+    } else if(isEscape) {
+      this.handleBlur(e);
+    } else if(isEnter) {
+      const isTypeaheadOptionsImmutable = isImmutable(typeaheadOptions);
+      const { id } = arrowSelectedTypeaheadOpt.dataset;
+      const opt = typeaheadOptions.find(opt => {
+        return isTypeaheadOptionsImmutable ? opt.get(idKey) === id : opt[idKey] === id;
+      });
+      this.handleChange(fromTypeahead, opt);
+      this.setState({ arrowSelectedTypeaheadOpt: null });
     }
   },
 
@@ -151,7 +236,8 @@ export default React.createClass({
   render() {
     const { value,
       hasAttemptedInput,
-      errorMessage } = this.state;
+      errorMessage,
+      isFocused } = this.state;
     let { shouldShowError } = this.state;
 
     const { tooltip,
@@ -163,11 +249,13 @@ export default React.createClass({
       classes,
       required,
       readOnly,
+      typeaheadOptions,
       isEditable } = this.props;
     let { type } = this.props;
     type = !type || type === 'number' ? 'text' : type;
 
     shouldShowError = shouldShowError && !!errorMessage.length && !disabled;
+    const hasTypeaheadOpts = typeaheadOptions && (isImmutable(typeaheadOptions) ? typeaheadOptions.size > 0 : typeaheadOptions.length > 0);
 
     const fancyFieldClasses = classnames('fancy-field', classes,
       {
@@ -175,7 +263,8 @@ export default React.createClass({
         'has-icon': !!tooltip || !!icon,
         'required': required && !readOnly && !disabled,
         'read-only': readOnly,
-        'is-editable': isEditable
+        'is-editable': isEditable,
+        'has-typeahead': hasTypeaheadOpts
       });
 
     return <div className={fancyFieldClasses}>
@@ -196,10 +285,38 @@ export default React.createClass({
              placeholder={placeholder}
              onChange={this.handleChange}
              onBlur={this.handleBlur}
+             onFocus={this.handleFocus}
              onKeyDown={this.handleEnterKeypress} />
       <div className={classnames("fancy-field__label", {'fancy-field__label--error': shouldShowError})}>
        {shouldShowError ? <span>{errorMessage}</span> : <span>{label}</span>}
       </div>
+      { hasTypeaheadOpts ?
+        <div className={classnames("fancy-field__typeahead", {'fancy-field__typeahead--hidden': !isFocused})}
+            ref='fancyFieldTypeaheadContainer'>
+          { this.renderTypeaheadBody() }
+        </div>
+      : null}
+    </div>
+  },
+
+  renderTypeaheadBody() {
+    const { typeaheadOptions } = this.props;
+    const idKey = this.props.idKey || 'id';
+    const labelKey = this.props.labelKey || 'label';
+    const _isImmutable = isImmutable(typeaheadOptions);
+
+    return <div className='fancy-field__typeahead-body'>
+      <ul ref={listEl => this.listEl = listEl}>
+        {typeaheadOptions.map(opt => {
+          const id = _isImmutable ? opt.get(idKey) : opt[idKey];
+          const label = _isImmutable ? opt.get(labelKey) : opt[labelKey];
+          return <li key={id}
+            data-id={id}
+            onClick={() => this.handleChange(fromTypeahead, opt)}>
+            { label }
+          </li>
+        })}
+      </ul>
     </div>
   }
 });

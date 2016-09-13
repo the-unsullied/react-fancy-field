@@ -489,3 +489,28 @@
   position: absolute;
   left: 0;
   bottom: -14px; }
+
+.fancy-field__typeahead {
+  position: absolute;
+  background: white;
+  width: 100%;
+  z-index: 1;
+  border-bottom: 1px solid #ccc;
+  border-right: 1px solid #ccc;
+  border-left: 1px solid #ccc; }
+  .fancy-field__typeahead ul {
+    list-style: none;
+    margin: 0;
+    max-height: 140px;
+    overflow: scroll; }
+    .fancy-field__typeahead ul li {
+      padding: 5px 0 5px 15px;
+      cursor: pointer; }
+      .fancy-field__typeahead ul li:hover, .fancy-field__typeahead ul li.fancy-field__typeahead-opt--active {
+        color: black;
+        background: #f2fafd; }
+
+.fancy-field__typeahead--hidden {
+  height: 0;
+  overflow: hidden;
+  border: none; }

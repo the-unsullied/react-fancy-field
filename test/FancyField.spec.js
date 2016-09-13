@@ -4,6 +4,7 @@ import React from 'react';
 import { findDOMNode } from 'react-dom';
 import { renderIntoDocument, findRenderedComponentWithType, Simulate } from 'react-addons-test-utils';
 import FancyField from './../dist/FancyField';
+import {fromJS, List, Map} from 'immutable';
 
 const noop = () => {};
 
@@ -23,7 +24,8 @@ const createComponent = function(props = {}, shouldReturnParent) {
     tooltip: null,
     required: false,
     readOnly: false,
-    isEditable: false
+    isEditable: false,
+    typeaheadOptions: []
   }, props);
 
   const Parent = React.createFactory(React.createClass({
@@ -55,6 +57,41 @@ context('FancyField', () => {
       const component = createComponent({readOnly: true});
       expect(component.refs.fancyField.hasAttribute('disabled')).to.be.true;
       expect(component.refs.fancyField.parentNode.classList.contains('read-only')).to.be.true;
+    });
+
+    describe('has typeaheadOptions', () => {
+      it('should display them', () => {
+        const component = createComponent({ typeaheadOptions: [{
+          id: '1', label: 'meow'
+        }, {
+          id: '2', label: 'orange'
+        }]});
+        expect(component.refs.fancyFieldTypeaheadContainer).to.exist;
+
+        const typeaheadItems = component.refs.fancyFieldTypeaheadContainer.querySelectorAll('li');
+        expect(typeaheadItems.length).to.equal(2);
+        expect(typeaheadItems[0].textContent).to.equal('meow');
+        expect(typeaheadItems[1].textContent).to.equal('orange');
+        expect(typeaheadItems[0].dataset.id).to.equal('1');
+        expect(typeaheadItems[1].dataset.id).to.equal('2');
+      });
+
+      it('should display immutable lists', () => {
+        const component = createComponent({ typeaheadOptions: fromJS([{
+            id: '1', label: 'meow'
+          }, {
+            id: '2', label: 'orange'
+          }])
+        });
+        expect(component.refs.fancyFieldTypeaheadContainer).to.exist;
+
+        const typeaheadItems = component.refs.fancyFieldTypeaheadContainer.querySelectorAll('li');
+        expect(typeaheadItems.length).to.equal(2);
+        expect(typeaheadItems[0].textContent).to.equal('meow');
+        expect(typeaheadItems[1].textContent).to.equal('orange');
+        expect(typeaheadItems[0].dataset.id).to.equal('1');
+        expect(typeaheadItems[1].dataset.id).to.equal('2');
+      });
     });
   });
 
@@ -165,6 +202,113 @@ context('FancyField', () => {
       expect(errorMessage.textContent).to.equal('invalid meow');
     });
 
+    describe('typeaheadOptions', () => {
+      it('should give class active to different option items when arrow up and down through items', () => {
+        const component = createComponent({ typeaheadOptions: fromJS([{
+            id: '1', label: 'meow'
+          }, {
+            id: '2', label: 'orange'
+          }])
+        });
+        const { fancyField, fancyFieldTypeaheadContainer } = component.refs;
+        const typeaheadItems = fancyFieldTypeaheadContainer.querySelectorAll('li');
+        Simulate.focus(fancyField);
+        expect(component.state.isFocused).to.be.true;
+        Simulate.keyDown(fancyField, {keyCode: 40});
+        expect(typeaheadItems[0].classList.contains('fancy-field__typeahead-opt--active')).to.be.true;
+        expect(typeaheadItems[1].classList.contains('fancy-field__typeahead-opt--active')).to.be.false;
+        Simulate.keyDown(fancyField, {keyCode: 40});
+        expect(typeaheadItems[0].classList.contains('fancy-field__typeahead-opt--active')).to.be.false;
+        expect(typeaheadItems[1].classList.contains('fancy-field__typeahead-opt--active')).to.be.true;
+        Simulate.keyDown(fancyField, {keyCode: 38});
+        expect(typeaheadItems[0].classList.contains('fancy-field__typeahead-opt--active')).to.be.true;
+        expect(typeaheadItems[1].classList.contains('fancy-field__typeahead-opt--active')).to.be.false;
+        Simulate.keyDown(fancyField, {keyCode: 38});
+        expect(typeaheadItems[0].classList.contains('fancy-field__typeahead-opt--active')).to.be.true;
+        expect(typeaheadItems[1].classList.contains('fancy-field__typeahead-opt--active')).to.be.false;
+        Simulate.keyDown(fancyField, {keyCode: 38});
+        expect(typeaheadItems[0].classList.contains('fancy-field__typeahead-opt--active')).to.be.true;
+        expect(typeaheadItems[1].classList.contains('fancy-field__typeahead-opt--active')).to.be.false;
+      });
+
+      it('should hide the typeahead options if user clicks escape', () => {
+        const component = createComponent({ typeaheadOptions: fromJS([{
+            id: '1', label: 'meow'
+          }, {
+            id: '2', label: 'orange'
+          }])
+        });
+        const { fancyField, fancyFieldTypeaheadContainer } = component.refs;
+        const typeaheadItems = fancyFieldTypeaheadContainer.querySelectorAll('li');
+        Simulate.focus(fancyField);
+        Simulate.keyDown(fancyField, {keyCode: 40});
+        expect(typeaheadItems[0].classList.contains('fancy-field__typeahead-opt--active')).to.be.true;
+        expect(typeaheadItems[1].classList.contains('fancy-field__typeahead-opt--active')).to.be.false;
+        Simulate.keyDown(fancyField, {keyCode: 27});
+        expect(fancyFieldTypeaheadContainer.classList.contains('fancy-field__typeahead--hidden')).to.be.true;
+        expect(component.state.isFocused).to.be.false;
+      });
+
+
+      it('should select item on item click', () => {
+        const onChange = sinon.spy();
+        const component = createComponent({ onChange, typeaheadOptions: fromJS([{
+            id: '1', label: 'meow'
+          }, {
+            id: '2', label: 'orange'
+          }])
+        });
+        const { fancyField, fancyFieldTypeaheadContainer } = component.refs;
+        const typeaheadItems = fancyFieldTypeaheadContainer.querySelectorAll('li');
+        Simulate.focus(fancyField);
+        Simulate.click(typeaheadItems[0]);
+        expect(onChange.calledOnce).to.be.true;
+        expect(onChange.calledWith(component.props.typeaheadOptions.get(0), '')).to.be.true;
+      });
+
+      it('should select item on item arrow down, then enter press', () => {
+        const onChange = sinon.spy();
+        const component = createComponent({ onChange, typeaheadOptions: fromJS([{
+            id: '1', label: 'meow'
+          }, {
+            id: '2', label: 'orange'
+          }])
+        });
+        const { fancyField, fancyFieldTypeaheadContainer } = component.refs;
+        const typeaheadItems = fancyFieldTypeaheadContainer.querySelectorAll('li');
+        Simulate.focus(fancyField);
+        Simulate.keyDown(fancyField, {keyCode: 40});
+        Simulate.keyDown(fancyField, {keyCode: 13});
+        expect(onChange.calledOnce).to.be.true;
+        expect(onChange.calledWith(component.props.typeaheadOptions.get(0), '')).to.be.true;
+      });
+
+      it('should update the arrowSelectedTypeaheadOpt when typeaheadOptions change or are empty', () => {
+        const {parent, component} = createComponent({ typeaheadOptions: fromJS([{
+            id: '1', label: 'meow'
+          }, {
+            id: '2', label: 'orange'
+          }])
+        }, true);
+        const { fancyField, fancyFieldTypeaheadContainer } = component.refs;
+
+        Simulate.focus(fancyField);
+        Simulate.keyDown(fancyField, {keyCode: 40});
+        expect(component.state.arrowSelectedTypeaheadOpt.dataset.id).to.equal('1');
+        parent.setState({ typeaheadOptions: fromJS([{
+            id: '11', label: 'woof'
+          }, {
+            id: '12', label: 'apple'
+          }])
+        });
+        expect(component.state.arrowSelectedTypeaheadOpt).to.be.null;
+        Simulate.focus(fancyField);
+        Simulate.keyDown(fancyField, {keyCode: 40});
+        expect(component.state.arrowSelectedTypeaheadOpt.dataset.id).to.equal('11');
+        parent.setState({ typeaheadOptions: null });
+        expect(component.state.arrowSelectedTypeaheadOpt).to.be.null;
+      });
+    });
 
   });
   describe('tooltip', () => {

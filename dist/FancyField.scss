@@ -5,6 +5,9 @@ $fancy-field-disabled-background-color: #f9f9f9 !default;
 $fancy-field-focus-border-color:        #00a8e0 !default;
 $fancy-field-label-color:               #999999 !default;
 $fancy-field-required-color:            red !default;
+$fancy-field-typeahead-focus-color:     #f2fafd !default;
+$fancy-field-typeahead-focus-text-color: black !default;
+$fancy-field-typeahead-bg-color: white !default;
 @import './../assets/simptip-master/simptip.scss';
 
 $fancy-field-breakpoints: (
@@ -153,4 +156,37 @@ $fancy-field-breakpoints: (
   position: absolute;
   left: 0;
   bottom: -14px;
+}
+
+.fancy-field__typeahead {
+  position: absolute;
+  background: $fancy-field-typeahead-bg-color;
+  width: 100%;
+  z-index: 1;
+  border-bottom: 1px solid $fancy-field-border-color;
+  border-right: 1px solid $fancy-field-border-color;
+  border-left: 1px solid $fancy-field-border-color;
+
+  ul {
+    list-style: none;
+    margin: 0;
+    max-height: 140px;
+    overflow: scroll;
+
+    li {
+      padding: 5px 0 5px 15px;
+      cursor: pointer;
+      &:hover,
+      &.fancy-field__typeahead-opt--active {
+        color: $fancy-field-typeahead-focus-text-color;
+        background: $fancy-field-typeahead-focus-color;
+      }
+    }
+  }
+}
+
+.fancy-field__typeahead--hidden {
+  height: 0;
+  overflow: hidden;
+  border: none;
 }
