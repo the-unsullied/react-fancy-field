@@ -122,10 +122,13 @@ export default React.createClass({
 
   handleBlur(e) {
     const { onBlur } = this.props;
-    this.setState({
-      isFocused: false,
-      arrowSelectedTypeaheadOpt: null
-    });
+    // need time for typeahead item to be clicked, before hiding the typeahead
+    setTimeout(() => {
+      this.setState({
+        isFocused: false,
+        arrowSelectedTypeaheadOpt: null
+      });
+    }, 100);
     this.handleUserAction(e, onBlur);
   },
 

@@ -142,12 +142,17 @@ exports.default = _react2.default.createClass((_React$createClass = {
     this.props.onChange(value, this.props.name);
   },
   handleBlur: function handleBlur(e) {
-    var onBlur = this.props.onBlur;
+    var _this = this;
 
-    this.setState({
-      isFocused: false,
-      arrowSelectedTypeaheadOpt: null
-    });
+    var onBlur = this.props.onBlur;
+    // need time for typeahead item to be clicked, before hiding the typeahead
+
+    setTimeout(function () {
+      _this.setState({
+        isFocused: false,
+        arrowSelectedTypeaheadOpt: null
+      });
+    }, 100);
     this.handleUserAction(e, onBlur);
   },
   handleFocus: function handleFocus(e) {
@@ -166,7 +171,7 @@ exports.default = _react2.default.createClass((_React$createClass = {
     }
   },
   arrowSelectElementInTypeahead: function arrowSelectElementInTypeahead(e) {
-    var _this = this;
+    var _this2 = this;
 
     var listEl = this.listEl;
     var typeaheadOptions = this.props.typeaheadOptions;
@@ -208,8 +213,8 @@ exports.default = _react2.default.createClass((_React$createClass = {
         var opt = typeaheadOptions.find(function (opt) {
           return isTypeaheadOptionsImmutable ? opt.get(idKey) === id : opt[idKey] === id;
         });
-        _this.handleChange(fromTypeahead, opt);
-        _this.setState({ arrowSelectedTypeaheadOpt: null });
+        _this2.handleChange(fromTypeahead, opt);
+        _this2.setState({ arrowSelectedTypeaheadOpt: null });
       })();
     }
   },
@@ -342,7 +347,7 @@ exports.default = _react2.default.createClass((_React$createClass = {
     ) : null
   );
 }), _defineProperty(_React$createClass, 'renderTypeaheadBody', function renderTypeaheadBody() {
-  var _this2 = this;
+  var _this3 = this;
 
   var typeaheadOptions = this.props.typeaheadOptions;
 
@@ -356,7 +361,7 @@ exports.default = _react2.default.createClass((_React$createClass = {
     _react2.default.createElement(
       'ul',
       { ref: function ref(listEl) {
-          return _this2.listEl = listEl;
+          return _this3.listEl = listEl;
         } },
       typeaheadOptions.map(function (opt) {
         var id = _isImmutable ? opt.get(idKey) : opt[idKey];
@@ -366,7 +371,7 @@ exports.default = _react2.default.createClass((_React$createClass = {
           { key: id,
             'data-id': id,
             onClick: function onClick() {
-              return _this2.handleChange(fromTypeahead, opt);
+              return _this3.handleChange(fromTypeahead, opt);
             } },
           label
         );
