@@ -75,7 +75,7 @@ $fancy-field-breakpoints: (
   border-bottom: 1px solid $fancy-field-border-color;
   display: inline-block;
   font-weight: 100;
-  line-height: 2;
+  height: 2em;
   @include fancy-field-media-query(palm) {
     font-size: 1.125rem;
   }
