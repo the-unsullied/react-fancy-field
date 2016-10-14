@@ -5,8 +5,8 @@ Component that stands in as styled input
 @param {String} name name of input
 @param {String} type type of input (text, number, etc..)
 @param {Integer} triggerValidation updating counter to trigger validation
-@param {String} label label of input
-@param {String} placeholder placeholder of input
+@param {Any} label label of input
+@param {Any} placeholder placeholder of input
 @param {Method || Array} validator If falsy, field is valid. If is string, field is *invalid* and string will be error message. If validator is an Array, it will iterate over all validators in array and display all messages.
 @param {Method} onChange method that is called on change
 @param {String} tooltip shows a tooltip to left of input value.
@@ -54,8 +54,8 @@ export default React.createClass({
     name: React.PropTypes.string,
     type: React.PropTypes.string,
     triggerValidation: React.PropTypes.number,
-    label: React.PropTypes.string,
-    placeholder: React.PropTypes.string,
+    label: React.PropTypes.any,
+    placeholder: React.PropTypes.any,
     disabled: React.PropTypes.bool,
     validator: React.PropTypes.any,
     value: React.PropTypes.any,
