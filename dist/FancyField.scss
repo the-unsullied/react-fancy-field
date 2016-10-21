@@ -101,7 +101,7 @@ $fancy-field-breakpoints: (
   opacity: 0;
 }
 
-.fancy-field:not(.read-only) {
+.fancy-field {
   .fancy-field__input {
     &:focus {
       outline: none !important;

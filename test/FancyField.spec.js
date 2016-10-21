@@ -53,11 +53,6 @@ context('FancyField', () => {
       const component = createComponent({disabled: true});
       expect(component.refs.fancyField.hasAttribute('disabled')).to.be.true;
     });
-    it('should have disabled property if readOnly and have read-only class', () => {
-      const component = createComponent({readOnly: true});
-      expect(component.refs.fancyField.hasAttribute('disabled')).to.be.true;
-      expect(component.refs.fancyField.parentNode.classList.contains('read-only')).to.be.true;
-    });
 
     describe('has typeaheadOptions', () => {
       it('should display them', () => {
@@ -231,7 +226,7 @@ context('FancyField', () => {
         expect(typeaheadItems[1].classList.contains('fancy-field__typeahead-opt--active')).to.be.false;
       });
 
-      it('should hide the typeahead options if user clicks escape', () => {
+      it('should hide the typeahead options if user clicks escape', (done) => {
         const component = createComponent({ typeaheadOptions: fromJS([{
             id: '1', label: 'meow'
           }, {
@@ -245,8 +240,11 @@ context('FancyField', () => {
         expect(typeaheadItems[0].classList.contains('fancy-field__typeahead-opt--active')).to.be.true;
         expect(typeaheadItems[1].classList.contains('fancy-field__typeahead-opt--active')).to.be.false;
         Simulate.keyDown(fancyField, {keyCode: 27});
-        expect(fancyFieldTypeaheadContainer.classList.contains('fancy-field__typeahead--hidden')).to.be.true;
-        expect(component.state.isFocused).to.be.false;
+        setTimeout(() => {
+          expect(fancyFieldTypeaheadContainer.classList.contains('fancy-field__typeahead--hidden')).to.be.true;
+          expect(component.state.isFocused).to.be.false;
+          done();
+        }, 200);
       });
 
 

@@ -66,7 +66,7 @@ npm install react-fancy-field --save
 
 **required** {Boolean} indicator to show that input is required
 
-**readOnly** {Boolean} disabled state, but does not look disabled. Will look like its editable.
+**readOnly** {Boolean} determine if input should be read-only
 
 **isEditable** {Boolean} will make field look editable by giving the border a blue underline.
 

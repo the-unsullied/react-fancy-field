@@ -19,7 +19,7 @@ Component that stands in as styled input
 @param {Method} onChange method that is called on change
 @param {String} tooltip shows a tooltip to left of input value.
 @param {Boolean} required shows that input is required
-@param {Boolean} readOnly disabled state, but does not look disabled. Will look like its editable.
+@param {Boolean} readOnly determine if input should be read-only.
 @param {Boolean} isEditable will make field look editable by giving the border a blue underline.
 @param {JSX} icon any image that should appear to the left of the field
 */
@@ -266,6 +266,14 @@ exports.default = _react2.default.createClass((_React$createClass = {
 
   shouldShowError = shouldShowError || this.state.shouldShowError;
   this.setState({ errorMessage: errorMessage, shouldShowError: shouldShowError });
+}), _defineProperty(_React$createClass, 'setupReadonly', function setupReadonly() {
+  if (this.refs.fancyField) {
+    if (readOnly) {
+      this.refs.fancyField.setAttribute('readonly', 'readonly');
+    } else {
+      this.refs.fancyField.removeAttribute('readonly');
+    }
+  }
 }), _defineProperty(_React$createClass, 'render', function render() {
   var _state = this.state;
   var value = _state.value;
@@ -295,11 +303,12 @@ exports.default = _react2.default.createClass((_React$createClass = {
   var fancyFieldClasses = (0, _classnames2.default)('fancy-field', classes, {
     'fancy-field--has-content': hasAttemptedInput,
     'has-icon': !!tooltip || !!icon,
-    'required': required && !readOnly && !disabled,
-    'read-only': readOnly,
+    'required': required && !disabled,
     'is-editable': isEditable,
     'has-typeahead': hasTypeaheadOpts
   });
+
+  this.setupReadonly();
 
   return _react2.default.createElement(
     'div',
@@ -319,7 +328,7 @@ exports.default = _react2.default.createClass((_React$createClass = {
       name: name,
       ref: 'fancyField',
       value: value,
-      disabled: disabled || readOnly,
+      disabled: disabled,
       type: type,
       placeholder: placeholder,
       onChange: this.handleChange,

@@ -11,7 +11,7 @@ Component that stands in as styled input
 @param {Method} onChange method that is called on change
 @param {String} tooltip shows a tooltip to left of input value.
 @param {Boolean} required shows that input is required
-@param {Boolean} readOnly disabled state, but does not look disabled. Will look like its editable.
+@param {Boolean} readOnly determine if input should be read-only.
 @param {Boolean} isEditable will make field look editable by giving the border a blue underline.
 @param {JSX} icon any image that should appear to the left of the field
 */
@@ -236,6 +236,16 @@ export default React.createClass({
     this.setState({ errorMessage, shouldShowError });
   },
 
+  setupReadonly() {
+    if(this.refs.fancyField) {
+      if(readOnly) {
+        this.refs.fancyField.setAttribute('readonly', 'readonly');
+      } else {
+        this.refs.fancyField.removeAttribute('readonly');
+      }
+    }
+  },
+
   render() {
     const { value,
       hasAttemptedInput,
@@ -264,11 +274,12 @@ export default React.createClass({
       {
         'fancy-field--has-content': hasAttemptedInput,
         'has-icon': !!tooltip || !!icon,
-        'required': required && !readOnly && !disabled,
-        'read-only': readOnly,
+        'required': required && !disabled,
         'is-editable': isEditable,
         'has-typeahead': hasTypeaheadOpts
       });
+
+    this.setupReadonly();
 
     return <div className={fancyFieldClasses}>
       {/*http://stackoverflow.com/questions/15738259/disabling-chrome-autofill*/}
@@ -283,7 +294,7 @@ export default React.createClass({
              name={name}
              ref='fancyField'
              value={value}
-             disabled={disabled || readOnly}
+             disabled={disabled}
              type={type}
              placeholder={placeholder}
              onChange={this.handleChange}

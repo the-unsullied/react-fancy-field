@@ -447,13 +447,13 @@
   transition: all 0.3s ease;
   opacity: 0; }
 
-.fancy-field:not(.read-only) .fancy-field__input:focus {
+.fancy-field .fancy-field__input:focus {
   outline: none !important;
   border-bottom-color: #00a8e0; }
-  .fancy-field:not(.read-only) .fancy-field__input:focus + .fancy-field__label {
+  .fancy-field .fancy-field__input:focus + .fancy-field__label {
     color: #00a8e0; }
 
-.fancy-field:not(.read-only) .fancy-field__input[disabled] {
+.fancy-field .fancy-field__input[disabled] {
   background-color: #f9f9f9;
   padding-left: 10px; }
 
