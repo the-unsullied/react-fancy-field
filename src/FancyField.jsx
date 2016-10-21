@@ -13,6 +13,7 @@ Component that stands in as styled input
 @param {Boolean} required shows that input is required
 @param {Boolean} readOnly determine if input should be read-only.
 @param {Boolean} isEditable will make field look editable by giving the border a blue underline.
+@param {Boolean} isIconRight puts icon to right instead of left
 @param {JSX} icon any image that should appear to the left of the field
 */
 
@@ -46,6 +47,7 @@ export default React.createClass({
       readOnly: false,
       isEditable: false,
       icon: null,
+      isIconRight: false,
       typeaheadOptions: []
     };
   },
@@ -66,6 +68,7 @@ export default React.createClass({
     readOnly: React.PropTypes.bool,
     isEditable: React.PropTypes.bool,
     icon: React.PropTypes.any,
+    isIconRight: React.PropTypes.bool,
     typeaheadOptions: React.PropTypes.any
   },
 
@@ -237,6 +240,7 @@ export default React.createClass({
   },
 
   setupReadonly() {
+    const { readOnly } = this.props;
     if(this.refs.fancyField) {
       if(readOnly) {
         this.refs.fancyField.setAttribute('readonly', 'readonly');
@@ -255,13 +259,13 @@ export default React.createClass({
 
     const { tooltip,
       icon,
+      isIconRight,
       name,
       disabled,
       placeholder,
       label,
       classes,
       required,
-      readOnly,
       typeaheadOptions,
       isEditable } = this.props;
     let { type } = this.props;
@@ -269,11 +273,13 @@ export default React.createClass({
 
     shouldShowError = shouldShowError && !!errorMessage.length && !disabled;
     const hasTypeaheadOpts = typeaheadOptions && (isImmutable(typeaheadOptions) ? typeaheadOptions.size > 0 : typeaheadOptions.length > 0);
+    const hasIcon = !!tooltip || !!icon;
 
     const fancyFieldClasses = classnames('fancy-field', classes,
       {
         'fancy-field--has-content': hasAttemptedInput,
-        'has-icon': !!tooltip || !!icon,
+        'has-icon': hasIcon,
+        'has-icon--right': hasIcon && isIconRight,
         'required': required && !disabled,
         'is-editable': isEditable,
         'has-typeahead': hasTypeaheadOpts

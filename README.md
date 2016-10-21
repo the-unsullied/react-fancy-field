@@ -68,6 +68,8 @@ npm install react-fancy-field --save
 
 **readOnly** {Boolean} determine if input should be read-only
 
+**isIconRight** {Boolean} puts icon to right
+
 **isEditable** {Boolean} will make field look editable by giving the border a blue underline.
 
 **icon** {JSX} any image that should appear to the left of the field

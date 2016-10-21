@@ -21,6 +21,7 @@ Component that stands in as styled input
 @param {Boolean} required shows that input is required
 @param {Boolean} readOnly determine if input should be read-only.
 @param {Boolean} isEditable will make field look editable by giving the border a blue underline.
+@param {Boolean} isIconRight puts icon to right instead of left
 @param {JSX} icon any image that should appear to the left of the field
 */
 
@@ -66,6 +67,7 @@ exports.default = _react2.default.createClass((_React$createClass = {
       readOnly: false,
       isEditable: false,
       icon: null,
+      isIconRight: false,
       typeaheadOptions: []
     };
   },
@@ -86,6 +88,7 @@ exports.default = _react2.default.createClass((_React$createClass = {
     readOnly: _react2.default.PropTypes.bool,
     isEditable: _react2.default.PropTypes.bool,
     icon: _react2.default.PropTypes.any,
+    isIconRight: _react2.default.PropTypes.bool,
     typeaheadOptions: _react2.default.PropTypes.any
   },
 
@@ -267,6 +270,8 @@ exports.default = _react2.default.createClass((_React$createClass = {
   shouldShowError = shouldShowError || this.state.shouldShowError;
   this.setState({ errorMessage: errorMessage, shouldShowError: shouldShowError });
 }), _defineProperty(_React$createClass, 'setupReadonly', function setupReadonly() {
+  var readOnly = this.props.readOnly;
+
   if (this.refs.fancyField) {
     if (readOnly) {
       this.refs.fancyField.setAttribute('readonly', 'readonly');
@@ -284,13 +289,13 @@ exports.default = _react2.default.createClass((_React$createClass = {
   var _props3 = this.props;
   var tooltip = _props3.tooltip;
   var icon = _props3.icon;
+  var isIconRight = _props3.isIconRight;
   var name = _props3.name;
   var disabled = _props3.disabled;
   var placeholder = _props3.placeholder;
   var label = _props3.label;
   var classes = _props3.classes;
   var required = _props3.required;
-  var readOnly = _props3.readOnly;
   var typeaheadOptions = _props3.typeaheadOptions;
   var isEditable = _props3.isEditable;
   var type = this.props.type;
@@ -299,10 +304,12 @@ exports.default = _react2.default.createClass((_React$createClass = {
 
   shouldShowError = shouldShowError && !!errorMessage.length && !disabled;
   var hasTypeaheadOpts = typeaheadOptions && (isImmutable(typeaheadOptions) ? typeaheadOptions.size > 0 : typeaheadOptions.length > 0);
+  var hasIcon = !!tooltip || !!icon;
 
   var fancyFieldClasses = (0, _classnames2.default)('fancy-field', classes, {
     'fancy-field--has-content': hasAttemptedInput,
-    'has-icon': !!tooltip || !!icon,
+    'has-icon': hasIcon,
+    'has-icon--right': hasIcon && isIconRight,
     'required': required && !disabled,
     'is-editable': isEditable,
     'has-typeahead': hasTypeaheadOpts

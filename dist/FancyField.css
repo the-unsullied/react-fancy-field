@@ -470,6 +470,13 @@
 .has-icon .fancy-field__input {
   padding-left: 30px !important; }
 
+.has-icon.has-icon--right .fancy-field__input {
+  padding-left: 0 !important;
+  padding-right: 30px !important; }
+
+.has-icon.has-icon--right .fancy-field__icon {
+  right: 0; }
+
 .fancy-field__tooltip,
 .fancy-field__icon {
   position: absolute;

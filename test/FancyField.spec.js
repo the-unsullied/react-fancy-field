@@ -54,6 +54,13 @@ context('FancyField', () => {
       expect(component.refs.fancyField.hasAttribute('disabled')).to.be.true;
     });
 
+    it.only('should be readonly if readonly is true', () => {
+      const {parent, component} = createComponent({readOnly: false}, true);
+      expect(component.refs.fancyField.hasAttribute('readonly')).to.be.false;
+      parent.setState({readOnly: true});
+      expect(component.refs.fancyField.hasAttribute('readonly')).to.be.true;
+    });
+
     describe('has typeaheadOptions', () => {
       it('should display them', () => {
         const component = createComponent({ typeaheadOptions: [{
