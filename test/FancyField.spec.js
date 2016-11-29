@@ -43,22 +43,22 @@ context('FancyField', () => {
   describe('initial load', () => {
     it('should load', () => {
       const component = createComponent();
-      expect(component.refs.fancyField).to.exist;
+      expect(component.fancyFieldEl).to.exist;
     });
     it('should have fancy-field--has-content class if there is a value', () => {
       const component = createComponent({ value: 'banana'});
-      expect(component.refs.fancyField.parentNode.classList.contains('fancy-field--has-content')).to.be.true;
+      expect(component.fancyFieldEl.parentNode.classList.contains('fancy-field--has-content')).to.be.true;
     });
     it('should have disabled property if disabled', () => {
       const component = createComponent({disabled: true});
-      expect(component.refs.fancyField.hasAttribute('disabled')).to.be.true;
+      expect(component.fancyFieldEl.hasAttribute('disabled')).to.be.true;
     });
 
-    it.only('should be readonly if readonly is true', () => {
+    it('should be readonly if readonly is true', () => {
       const {parent, component} = createComponent({readOnly: false}, true);
-      expect(component.refs.fancyField.hasAttribute('readonly')).to.be.false;
+      expect(component.fancyFieldEl.hasAttribute('readonly')).to.be.false;
       parent.setState({readOnly: true});
-      expect(component.refs.fancyField.hasAttribute('readonly')).to.be.true;
+      expect(component.fancyFieldEl.hasAttribute('readonly')).to.be.true;
     });
 
     describe('has typeaheadOptions', () => {
@@ -102,7 +102,7 @@ context('FancyField', () => {
       const onChange = sinon.spy();
       const component = createComponent({ onChange });
       component.setState({value: 'meow'});
-      Simulate.change(component.refs.fancyField);
+      Simulate.change(component.fancyFieldEl);
       expect(onChange.calledOnce).to.be.true;
       expect(onChange.calledWith('meow')).to.be.true;
     });
@@ -113,7 +113,7 @@ context('FancyField', () => {
         const component = createComponent({ onChange, type: 'number' });
 
         component.setState({value: 'meow567'});
-        Simulate.change(component.refs.fancyField);
+        Simulate.change(component.fancyFieldEl);
         expect(onChange.calledOnce).to.be.true;
         expect(onChange.calledWith('567')).to.be.true;
       });
@@ -169,12 +169,12 @@ context('FancyField', () => {
     }
 
     it('should show error on blur', () => {
-      showErrorTest((component) => Simulate.blur(component.refs.fancyField));
+      showErrorTest((component) => Simulate.blur(component.fancyFieldEl));
     });
 
     it('should show error on hit of enter', () => {
       showErrorTest((component) =>
-        Simulate.keyDown(component.refs.fancyField, {key: "Enter", keyCode: 13, which: 13}));
+        Simulate.keyDown(component.fancyFieldEl, {key: "Enter", keyCode: 13, which: 13}));
     });
 
     it('should call onBlur if passed into component instead of onChange', () => {
@@ -184,7 +184,7 @@ context('FancyField', () => {
       const {parent, component} = createComponent({value: '', validator, onBlur, onChange}, true);
 
       parent.setState({value: 'meow'});
-      Simulate.blur(component.refs.fancyField);
+      Simulate.blur(component.fancyFieldEl);
       expect(component.state.shouldShowError).to.be.true;
       expect(component.state.errorMessage).to.equal('invalid meow');
       expect(onChange.called).to.be.false;
@@ -198,7 +198,7 @@ context('FancyField', () => {
       const {parent, component} = createComponent({value: '', validator, onChange}, true);
 
       parent.setState({value: 'meow'});
-      Simulate.blur(component.refs.fancyField);
+      Simulate.blur(component.fancyFieldEl);
       const errorMessage = findDOMNode(component).querySelector('.fancy-field__label--error');
       expect(errorMessage).to.exist;
       expect(errorMessage.textContent).to.equal('invalid meow');
@@ -212,7 +212,8 @@ context('FancyField', () => {
             id: '2', label: 'orange'
           }])
         });
-        const { fancyField, fancyFieldTypeaheadContainer } = component.refs;
+        const { fancyFieldTypeaheadContainer } = component.refs;
+        const fancyField = component.fancyFieldEl;
         const typeaheadItems = fancyFieldTypeaheadContainer.querySelectorAll('li');
         Simulate.focus(fancyField);
         expect(component.state.isFocused).to.be.true;
@@ -240,7 +241,8 @@ context('FancyField', () => {
             id: '2', label: 'orange'
           }])
         });
-        const { fancyField, fancyFieldTypeaheadContainer } = component.refs;
+        const { fancyFieldTypeaheadContainer } = component.refs;
+        const fancyField = component.fancyFieldEl;
         const typeaheadItems = fancyFieldTypeaheadContainer.querySelectorAll('li');
         Simulate.focus(fancyField);
         Simulate.keyDown(fancyField, {keyCode: 40});
@@ -263,7 +265,8 @@ context('FancyField', () => {
             id: '2', label: 'orange'
           }])
         });
-        const { fancyField, fancyFieldTypeaheadContainer } = component.refs;
+        const { fancyFieldTypeaheadContainer } = component.refs;
+        const fancyField = component.fancyFieldEl;
         const typeaheadItems = fancyFieldTypeaheadContainer.querySelectorAll('li');
         Simulate.focus(fancyField);
         Simulate.click(typeaheadItems[0]);
@@ -279,7 +282,8 @@ context('FancyField', () => {
             id: '2', label: 'orange'
           }])
         });
-        const { fancyField, fancyFieldTypeaheadContainer } = component.refs;
+        const { fancyFieldTypeaheadContainer } = component.refs;
+        const fancyField = component.fancyFieldEl;
         const typeaheadItems = fancyFieldTypeaheadContainer.querySelectorAll('li');
         Simulate.focus(fancyField);
         Simulate.keyDown(fancyField, {keyCode: 40});
@@ -295,7 +299,8 @@ context('FancyField', () => {
             id: '2', label: 'orange'
           }])
         }, true);
-        const { fancyField, fancyFieldTypeaheadContainer } = component.refs;
+        const { fancyFieldTypeaheadContainer } = component.refs;
+        const fancyField = component.fancyFieldEl;
 
         Simulate.focus(fancyField);
         Simulate.keyDown(fancyField, {keyCode: 40});
