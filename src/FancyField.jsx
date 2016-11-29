@@ -14,6 +14,7 @@ Component that stands in as styled input
 @param {Boolean} readOnly determine if input should be read-only.
 @param {Boolean} isEditable will make field look editable by giving the border a blue underline.
 @param {Boolean} isIconRight puts icon to right instead of left
+@param {Boolean} autoFocus will autofocus on input if true
 @param {JSX} icon any image that should appear to the left of the field
 */
 
@@ -29,6 +30,7 @@ function isImmutable(obj) {
 
 export default React.createClass({
   listEl: null,
+  fancyFieldEl: null,
 
   getDefaultProps: function() {
     return {
@@ -48,6 +50,7 @@ export default React.createClass({
       isEditable: false,
       icon: null,
       isIconRight: false,
+      autoFocus: false,
       typeaheadOptions: []
     };
   },
@@ -69,6 +72,7 @@ export default React.createClass({
     isEditable: React.PropTypes.bool,
     icon: React.PropTypes.any,
     isIconRight: React.PropTypes.bool,
+    autoFocus: React.PropTypes.bool,
     typeaheadOptions: React.PropTypes.any
   },
 
@@ -241,11 +245,11 @@ export default React.createClass({
 
   setupReadonly() {
     const { readOnly } = this.props;
-    if(this.refs.fancyField) {
+    if(this.fancyFieldEl) {
       if(readOnly) {
-        this.refs.fancyField.setAttribute('readonly', 'readonly');
+        this.fancyFieldEl.setAttribute('readonly', 'readonly');
       } else {
-        this.refs.fancyField.removeAttribute('readonly');
+        this.fancyFieldEl.removeAttribute('readonly');
       }
     }
   },
@@ -266,6 +270,7 @@ export default React.createClass({
       label,
       classes,
       required,
+      autoFocus,
       typeaheadOptions,
       isEditable } = this.props;
     let { type } = this.props;
@@ -298,14 +303,15 @@ export default React.createClass({
       <input autoComplete="new-password"
              className={classnames('full-width', 'fancy-field__input', {'fancy-field__input--error': shouldShowError})}
              name={name}
-             ref='fancyField'
              value={value}
              disabled={disabled}
              type={type}
+             ref={(el) => this.fancyFieldEl = el}
              placeholder={placeholder}
              onChange={this.handleChange}
              onBlur={this.handleBlur}
              onFocus={this.handleFocus}
+             autoFocus={autoFocus}
              onKeyDown={this.handleEnterKeypress} />
       <div className={classnames("fancy-field__label", {'fancy-field__label--error': shouldShowError})}>
        {shouldShowError ? <span>{errorMessage}</span> : <span>{label}</span>}

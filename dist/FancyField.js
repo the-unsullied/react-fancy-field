@@ -22,6 +22,7 @@ Component that stands in as styled input
 @param {Boolean} readOnly determine if input should be read-only.
 @param {Boolean} isEditable will make field look editable by giving the border a blue underline.
 @param {Boolean} isIconRight puts icon to right instead of left
+@param {Boolean} autoFocus will autofocus on input if true
 @param {JSX} icon any image that should appear to the left of the field
 */
 
@@ -49,6 +50,7 @@ function isImmutable(obj) {
 
 exports.default = _react2.default.createClass((_React$createClass = {
   listEl: null,
+  fancyFieldEl: null,
 
   getDefaultProps: function getDefaultProps() {
     return {
@@ -68,6 +70,7 @@ exports.default = _react2.default.createClass((_React$createClass = {
       isEditable: false,
       icon: null,
       isIconRight: false,
+      autoFocus: false,
       typeaheadOptions: []
     };
   },
@@ -89,6 +92,7 @@ exports.default = _react2.default.createClass((_React$createClass = {
     isEditable: _react2.default.PropTypes.bool,
     icon: _react2.default.PropTypes.any,
     isIconRight: _react2.default.PropTypes.bool,
+    autoFocus: _react2.default.PropTypes.bool,
     typeaheadOptions: _react2.default.PropTypes.any
   },
 
@@ -272,14 +276,16 @@ exports.default = _react2.default.createClass((_React$createClass = {
 }), _defineProperty(_React$createClass, 'setupReadonly', function setupReadonly() {
   var readOnly = this.props.readOnly;
 
-  if (this.refs.fancyField) {
+  if (this.fancyFieldEl) {
     if (readOnly) {
-      this.refs.fancyField.setAttribute('readonly', 'readonly');
+      this.fancyFieldEl.setAttribute('readonly', 'readonly');
     } else {
-      this.refs.fancyField.removeAttribute('readonly');
+      this.fancyFieldEl.removeAttribute('readonly');
     }
   }
 }), _defineProperty(_React$createClass, 'render', function render() {
+  var _this3 = this;
+
   var _state = this.state;
   var value = _state.value;
   var hasAttemptedInput = _state.hasAttemptedInput;
@@ -296,6 +302,7 @@ exports.default = _react2.default.createClass((_React$createClass = {
   var label = _props3.label;
   var classes = _props3.classes;
   var required = _props3.required;
+  var autoFocus = _props3.autoFocus;
   var typeaheadOptions = _props3.typeaheadOptions;
   var isEditable = _props3.isEditable;
   var type = this.props.type;
@@ -333,14 +340,17 @@ exports.default = _react2.default.createClass((_React$createClass = {
     _react2.default.createElement('input', { autoComplete: 'new-password',
       className: (0, _classnames2.default)('full-width', 'fancy-field__input', { 'fancy-field__input--error': shouldShowError }),
       name: name,
-      ref: 'fancyField',
       value: value,
       disabled: disabled,
       type: type,
+      ref: function ref(el) {
+        return _this3.fancyFieldEl = el;
+      },
       placeholder: placeholder,
       onChange: this.handleChange,
       onBlur: this.handleBlur,
       onFocus: this.handleFocus,
+      autoFocus: autoFocus,
       onKeyDown: this.handleEnterKeypress }),
     _react2.default.createElement(
       'div',
@@ -363,7 +373,7 @@ exports.default = _react2.default.createClass((_React$createClass = {
     ) : null
   );
 }), _defineProperty(_React$createClass, 'renderTypeaheadBody', function renderTypeaheadBody() {
-  var _this3 = this;
+  var _this4 = this;
 
   var typeaheadOptions = this.props.typeaheadOptions;
 
@@ -377,7 +387,7 @@ exports.default = _react2.default.createClass((_React$createClass = {
     _react2.default.createElement(
       'ul',
       { ref: function ref(listEl) {
-          return _this3.listEl = listEl;
+          return _this4.listEl = listEl;
         } },
       typeaheadOptions.map(function (opt) {
         var id = _isImmutable ? opt.get(idKey) : opt[idKey];
@@ -387,7 +397,7 @@ exports.default = _react2.default.createClass((_React$createClass = {
           { key: id,
             'data-id': id,
             onClick: function onClick() {
-              return _this3.handleChange(fromTypeahead, opt);
+              return _this4.handleChange(fromTypeahead, opt);
             } },
           label
         );
