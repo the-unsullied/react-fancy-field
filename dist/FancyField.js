@@ -23,6 +23,7 @@ Component that stands in as styled input
 @param {Boolean} isEditable will make field look editable by giving the border a blue underline.
 @param {Boolean} isIconRight puts icon to right instead of left
 @param {Boolean} autoFocus will autofocus on input if true
+@param {String} autocomplete name field
 @param {JSX} icon any image that should appear to the left of the field
 */
 
@@ -71,6 +72,7 @@ exports.default = _react2.default.createClass((_React$createClass = {
       icon: null,
       isIconRight: false,
       autoFocus: false,
+      autoComplete: null,
       typeaheadOptions: []
     };
   },
@@ -93,6 +95,7 @@ exports.default = _react2.default.createClass((_React$createClass = {
     icon: _react2.default.PropTypes.any,
     isIconRight: _react2.default.PropTypes.bool,
     autoFocus: _react2.default.PropTypes.bool,
+    autoComplete: _react2.default.PropTypes.string,
     typeaheadOptions: _react2.default.PropTypes.any
   },
 
@@ -304,6 +307,7 @@ exports.default = _react2.default.createClass((_React$createClass = {
   var required = _props3.required;
   var autoFocus = _props3.autoFocus;
   var typeaheadOptions = _props3.typeaheadOptions;
+  var autoComplete = _props3.autoComplete;
   var isEditable = _props3.isEditable;
   var type = this.props.type;
 
@@ -337,7 +341,7 @@ exports.default = _react2.default.createClass((_React$createClass = {
       { className: 'fancy-field__icon' },
       icon
     ) : null,
-    _react2.default.createElement('input', { autoComplete: 'new-password',
+    _react2.default.createElement('input', { autoComplete: autoComplete || "new-password",
       className: (0, _classnames2.default)('full-width', 'fancy-field__input', { 'fancy-field__input--error': shouldShowError }),
       name: name,
       value: value,

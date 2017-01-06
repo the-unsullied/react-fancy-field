@@ -15,6 +15,7 @@ Component that stands in as styled input
 @param {Boolean} isEditable will make field look editable by giving the border a blue underline.
 @param {Boolean} isIconRight puts icon to right instead of left
 @param {Boolean} autoFocus will autofocus on input if true
+@param {String} autocomplete name field
 @param {JSX} icon any image that should appear to the left of the field
 */
 
@@ -51,6 +52,7 @@ export default React.createClass({
       icon: null,
       isIconRight: false,
       autoFocus: false,
+      autoComplete: null,
       typeaheadOptions: []
     };
   },
@@ -73,6 +75,7 @@ export default React.createClass({
     icon: React.PropTypes.any,
     isIconRight: React.PropTypes.bool,
     autoFocus: React.PropTypes.bool,
+    autoComplete: React.PropTypes.string,
     typeaheadOptions: React.PropTypes.any
   },
 
@@ -272,6 +275,7 @@ export default React.createClass({
       required,
       autoFocus,
       typeaheadOptions,
+      autoComplete,
       isEditable } = this.props;
     let { type } = this.props;
     type = !type || type === 'number' ? 'text' : type;
@@ -300,7 +304,7 @@ export default React.createClass({
       { !!icon ? <span className='fancy-field__icon'>
         { icon }
       </span> : null }
-      <input autoComplete="new-password"
+      <input autoComplete={autoComplete || "new-password"}
              className={classnames('full-width', 'fancy-field__input', {'fancy-field__input--error': shouldShowError})}
              name={name}
              value={value}
