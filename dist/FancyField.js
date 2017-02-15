@@ -25,6 +25,7 @@ Component that stands in as styled input
 @param {Boolean} autoFocus will autofocus on input if true
 @param {String} autocomplete name field
 @param {JSX} icon any image that should appear to the left of the field
+@param {String} ariaLabel aria-label property on input.
 */
 
 var _react = require('react');
@@ -73,7 +74,8 @@ exports.default = _react2.default.createClass((_React$createClass = {
       isIconRight: false,
       autoFocus: false,
       autoComplete: null,
-      typeaheadOptions: []
+      typeaheadOptions: [],
+      ariaLabel: ''
     };
   },
 
@@ -96,7 +98,8 @@ exports.default = _react2.default.createClass((_React$createClass = {
     isIconRight: _react2.default.PropTypes.bool,
     autoFocus: _react2.default.PropTypes.bool,
     autoComplete: _react2.default.PropTypes.string,
-    typeaheadOptions: _react2.default.PropTypes.any
+    typeaheadOptions: _react2.default.PropTypes.any,
+    ariaLabel: _react2.default.PropTypes.any
   },
 
   getInitialState: function getInitialState() {
@@ -307,6 +310,7 @@ exports.default = _react2.default.createClass((_React$createClass = {
   var required = _props3.required;
   var autoFocus = _props3.autoFocus;
   var typeaheadOptions = _props3.typeaheadOptions;
+  var ariaLabel = _props3.ariaLabel;
   var autoComplete = _props3.autoComplete;
   var isEditable = _props3.isEditable;
   var type = this.props.type;
@@ -347,6 +351,7 @@ exports.default = _react2.default.createClass((_React$createClass = {
       value: value,
       disabled: disabled,
       type: type,
+      'aria-label': ariaLabel,
       ref: function ref(el) {
         return _this3.fancyFieldEl = el;
       },
