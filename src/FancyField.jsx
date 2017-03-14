@@ -17,6 +17,7 @@ Component that stands in as styled input
 @param {Boolean} autoFocus will autofocus on input if true
 @param {String} autocomplete name field
 @param {JSX} icon any image that should appear to the left of the field
+@param {Any|String} tabIndex tabIndex for input field
 @param {String} ariaLabel aria-label property on input.
 */
 
@@ -55,7 +56,8 @@ export default React.createClass({
       autoFocus: false,
       autoComplete: null,
       typeaheadOptions: [],
-      ariaLabel: ''
+      ariaLabel: '',
+      tabIndex: ''
     };
   },
 
@@ -79,7 +81,8 @@ export default React.createClass({
     autoFocus: React.PropTypes.bool,
     autoComplete: React.PropTypes.string,
     typeaheadOptions: React.PropTypes.any,
-    ariaLabel: React.PropTypes.any
+    ariaLabel: React.PropTypes.any,
+    tabIndex: React.PropTypes.string
   },
 
   getInitialState() {
@@ -280,6 +283,7 @@ export default React.createClass({
       typeaheadOptions,
       ariaLabel,
       autoComplete,
+      tabIndex,
       isEditable } = this.props;
     let { type } = this.props;
     type = !type || type === 'number' ? 'text' : type;
@@ -314,6 +318,7 @@ export default React.createClass({
              value={value}
              disabled={disabled}
              type={type}
+             tabIndex={tabIndex}
              aria-label={ariaLabel}
              ref={(el) => this.fancyFieldEl = el}
              placeholder={placeholder}
