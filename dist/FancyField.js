@@ -251,6 +251,7 @@ exports.default = _react2.default.createClass((_React$createClass = {
     var name = _props3.name;
     var onChange = _props3.onChange;
     var onBlur = _props3.onBlur;
+    var onEnter = _props3.onEnter;
 
     var value = e.target.value || '';
     switch (type) {

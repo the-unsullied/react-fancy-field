@@ -217,7 +217,7 @@ export default React.createClass({
   },
 
   handleUserAction(e, type) {
-    const { name, onChange, onBlur } = this.props;
+    const { name, onChange, onBlur, onEnter } = this.props;
     const value = e.target.value || '';
     switch(type) {
       case 'blur':
