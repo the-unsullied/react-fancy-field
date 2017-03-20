@@ -77,6 +77,7 @@ exports.default = _react2.default.createClass((_React$createClass = {
       autoComplete: null,
       typeaheadOptions: [],
       ariaLabel: '',
+      ariaHidden: false,
       tabIndex: ''
     };
   },
@@ -102,6 +103,7 @@ exports.default = _react2.default.createClass((_React$createClass = {
     autoComplete: _react2.default.PropTypes.string,
     typeaheadOptions: _react2.default.PropTypes.any,
     ariaLabel: _react2.default.PropTypes.any,
+    ariaHidden: _react2.default.PropTypes.bool,
     tabIndex: _react2.default.PropTypes.string
   },
 
@@ -160,30 +162,36 @@ exports.default = _react2.default.createClass((_React$createClass = {
   handleBlur: function handleBlur(e) {
     var _this = this;
 
-    var onBlur = this.props.onBlur;
     // need time for typeahead item to be clicked, before hiding the typeahead
-
     setTimeout(function () {
       _this.setState({
         isFocused: false,
         arrowSelectedTypeaheadOpt: null
       });
     }, 100);
-    this.handleUserAction(e, onBlur);
+    this.handleUserAction(e, 'blur');
   },
   handleFocus: function handleFocus(e) {
     this.setState({ isFocused: true });
   },
   handleEnterKeypress: function handleEnterKeypress(e) {
-    var typeaheadOptions = this.props.typeaheadOptions;
+    var _props2 = this.props;
+    var typeaheadOptions = _props2.typeaheadOptions;
+    var onChange = _props2.onChange;
+    var onEnter = _props2.onEnter;
 
-    var isEnter = e.keyCode === 13;
+    var isEnter = e.key === 'Enter';
     var hasTypeaheadOpts = isImmutable(typeaheadOptions) ? typeaheadOptions.size > 0 : typeaheadOptions.length > 0;
 
     if (this.state.isFocused && hasTypeaheadOpts) {
       this.arrowSelectElementInTypeahead(e);
-    } else if (isEnter && typeof this.props.onChange === 'function') {
-      this.handleUserAction(e);
+    } else if (isEnter) {
+      if (typeof onChange === 'function') {
+        this.handleUserAction(e, 'change');
+      }
+      if (typeof onEnter === 'function') {
+        this.handleUserAction(e, 'enter');
+      }
     }
   },
   arrowSelectElementInTypeahead: function arrowSelectElementInTypeahead(e) {
@@ -238,14 +246,23 @@ exports.default = _react2.default.createClass((_React$createClass = {
     // must be a value other than null or undefined, but can be 0
     return value !== null && value !== undefined && value.toString().length > 0;
   },
-  handleUserAction: function handleUserAction(e, onBlur) {
-    var name = this.props.name;
+  handleUserAction: function handleUserAction(e, type) {
+    var _props3 = this.props;
+    var name = _props3.name;
+    var onChange = _props3.onChange;
+    var onBlur = _props3.onBlur;
 
     var value = e.target.value || '';
-    if (onBlur) {
-      onBlur(value, name);
-    } else {
-      this.props.onChange(value, name);
+    switch (type) {
+      case 'blur':
+        onBlur(value, name);
+        break;
+      case 'change':
+        onChange(value, name);
+        break;
+      case 'enter':
+        onEnter(value, name);
+        break;
     }
     if (!this.state.shouldShowError) {
       this.setState({ shouldShowError: true });
@@ -265,9 +282,9 @@ exports.default = _react2.default.createClass((_React$createClass = {
     this.setState({ hasAttemptedInput: hasAttemptedInput, value: value });
   }
 }), _defineProperty(_React$createClass, 'setErrorMessage', function setErrorMessage(value, shouldShowError) {
-  var _props2 = this.props;
-  var validator = _props2.validator;
-  var name = _props2.name;
+  var _props4 = this.props;
+  var validator = _props4.validator;
+  var name = _props4.name;
 
 
   if (!validator) {
@@ -301,22 +318,23 @@ exports.default = _react2.default.createClass((_React$createClass = {
   var errorMessage = _state.errorMessage;
   var isFocused = _state.isFocused;
   var shouldShowError = this.state.shouldShowError;
-  var _props3 = this.props;
-  var tooltip = _props3.tooltip;
-  var icon = _props3.icon;
-  var isIconRight = _props3.isIconRight;
-  var name = _props3.name;
-  var disabled = _props3.disabled;
-  var placeholder = _props3.placeholder;
-  var label = _props3.label;
-  var classes = _props3.classes;
-  var required = _props3.required;
-  var autoFocus = _props3.autoFocus;
-  var typeaheadOptions = _props3.typeaheadOptions;
-  var ariaLabel = _props3.ariaLabel;
-  var autoComplete = _props3.autoComplete;
-  var tabIndex = _props3.tabIndex;
-  var isEditable = _props3.isEditable;
+  var _props5 = this.props;
+  var tooltip = _props5.tooltip;
+  var icon = _props5.icon;
+  var isIconRight = _props5.isIconRight;
+  var name = _props5.name;
+  var disabled = _props5.disabled;
+  var placeholder = _props5.placeholder;
+  var label = _props5.label;
+  var classes = _props5.classes;
+  var required = _props5.required;
+  var autoFocus = _props5.autoFocus;
+  var typeaheadOptions = _props5.typeaheadOptions;
+  var ariaLabel = _props5.ariaLabel;
+  var ariaHidden = _props5.ariaHidden;
+  var autoComplete = _props5.autoComplete;
+  var tabIndex = _props5.tabIndex;
+  var isEditable = _props5.isEditable;
   var type = this.props.type;
 
   type = !type || type === 'number' ? 'text' : type;
@@ -357,6 +375,9 @@ exports.default = _react2.default.createClass((_React$createClass = {
       type: type,
       tabIndex: tabIndex,
       'aria-label': ariaLabel,
+      'aria-describedby': shouldShowError ? name + '-error-description' : null,
+      'aria-hidden': ariaHidden,
+      'aria-invalid': shouldShowError,
       ref: function ref(el) {
         return _this3.fancyFieldEl = el;
       },
@@ -371,7 +392,7 @@ exports.default = _react2.default.createClass((_React$createClass = {
       { className: (0, _classnames2.default)("fancy-field__label", { 'fancy-field__label--error': shouldShowError }) },
       shouldShowError ? _react2.default.createElement(
         'span',
-        null,
+        { id: this.props.name + '-error-description' },
         errorMessage
       ) : _react2.default.createElement(
         'span',

@@ -20,7 +20,8 @@ const createComponent = function(props = {}, shouldReturnParent) {
     validator: null,
     value: null,
     classes: '',
-    onChange: () => {},
+    onChange: noop,
+    onBlur: noop,
     tooltip: null,
     required: false,
     readOnly: false,
@@ -158,23 +159,27 @@ context('FancyField', () => {
     function showErrorTest(simulation) {
       const validator = sinon.stub().returns('invalid meow');
       const onChange = sinon.spy();
-      const {parent, component} = createComponent({value: '', validator, onChange}, true);
+      const onBlur = sinon.spy();
+      const {parent, component} = createComponent({value: '', validator, onChange, onBlur}, true);
 
       parent.setState({value: 'meow'});
       simulation(component);
       expect(component.state.shouldShowError).to.be.true;
       expect(component.state.errorMessage).to.equal('invalid meow');
-      expect(onChange.calledOnce).to.be.true;
-      expect(onChange.calledWith('meow')).to.be.true;
+      return { onChange, onBlur };
     }
 
     it('should show error on blur', () => {
-      showErrorTest((component) => Simulate.blur(component.fancyFieldEl));
+      const { onBlur } = showErrorTest((component) => Simulate.blur(component.fancyFieldEl));
+      expect(onBlur.calledOnce).to.be.true;
+      expect(onBlur.calledWith('meow')).to.be.true;
     });
 
     it('should show error on hit of enter', () => {
-      showErrorTest((component) =>
+      const { onChange } = showErrorTest((component) =>
         Simulate.keyDown(component.fancyFieldEl, {key: "Enter", keyCode: 13, which: 13}));
+      expect(onChange.calledOnce).to.be.true;
+      expect(onChange.calledWith('meow')).to.be.true;
     });
 
     it('should call onBlur if passed into component instead of onChange', () => {

@@ -57,6 +57,7 @@ export default React.createClass({
       autoComplete: null,
       typeaheadOptions: [],
       ariaLabel: '',
+      ariaHidden: false,
       tabIndex: ''
     };
   },
@@ -82,6 +83,7 @@ export default React.createClass({
     autoComplete: React.PropTypes.string,
     typeaheadOptions: React.PropTypes.any,
     ariaLabel: React.PropTypes.any,
+    ariaHidden: React.PropTypes.bool,
     tabIndex: React.PropTypes.string
   },
 
@@ -137,7 +139,6 @@ export default React.createClass({
   },
 
   handleBlur(e) {
-    const { onBlur } = this.props;
     // need time for typeahead item to be clicked, before hiding the typeahead
     setTimeout(() => {
       this.setState({
@@ -145,7 +146,7 @@ export default React.createClass({
         arrowSelectedTypeaheadOpt: null
       });
     }, 100);
-    this.handleUserAction(e, onBlur);
+    this.handleUserAction(e, 'blur');
   },
 
   handleFocus(e) {
@@ -153,14 +154,19 @@ export default React.createClass({
   },
 
   handleEnterKeypress(e) {
-    const { typeaheadOptions } = this.props;
-    const isEnter = e.keyCode === 13;
+    const { typeaheadOptions, onChange, onEnter } = this.props;
+    const isEnter = e.key === 'Enter';
     const hasTypeaheadOpts = isImmutable(typeaheadOptions) ? typeaheadOptions.size > 0 : typeaheadOptions.length > 0;
 
     if(this.state.isFocused && hasTypeaheadOpts) {
       this.arrowSelectElementInTypeahead(e);
-    } else if(isEnter && typeof this.props.onChange === 'function') {
-      this.handleUserAction(e);
+    } else if(isEnter) {
+      if(typeof onChange === 'function') {
+        this.handleUserAction(e, 'change');
+      }
+      if(typeof onEnter === 'function') {
+        this.handleUserAction(e, 'enter');
+      }
     }
   },
 
@@ -210,13 +216,19 @@ export default React.createClass({
     return value !== null && value !== undefined && value.toString().length > 0;
   },
 
-  handleUserAction(e, onBlur) {
-    const { name } = this.props;
+  handleUserAction(e, type) {
+    const { name, onChange, onBlur } = this.props;
     const value = e.target.value || '';
-    if(onBlur) {
-      onBlur(value, name);
-    } else {
-      this.props.onChange(value, name);
+    switch(type) {
+      case 'blur':
+        onBlur(value, name);
+        break;
+      case 'change':
+        onChange(value, name);
+        break;
+      case 'enter':
+        onEnter(value, name);
+        break;
     }
     if(!this.state.shouldShowError) {
       this.setState({ shouldShowError: true });
@@ -282,6 +294,7 @@ export default React.createClass({
       autoFocus,
       typeaheadOptions,
       ariaLabel,
+      ariaHidden,
       autoComplete,
       tabIndex,
       isEditable } = this.props;
@@ -320,6 +333,9 @@ export default React.createClass({
              type={type}
              tabIndex={tabIndex}
              aria-label={ariaLabel}
+             aria-describedby={shouldShowError ? `${name}-error-description` : null}
+             aria-hidden={ariaHidden}
+             aria-invalid={shouldShowError}
              ref={(el) => this.fancyFieldEl = el}
              placeholder={placeholder}
              onChange={this.handleChange}
@@ -328,8 +344,9 @@ export default React.createClass({
              autoFocus={autoFocus}
              onKeyDown={this.handleEnterKeypress} />
       <div className={classnames("fancy-field__label", {'fancy-field__label--error': shouldShowError})}>
-       {shouldShowError ? <span>{errorMessage}</span> : <span>{label}</span>}
+        {shouldShowError ? <span id={`${this.props.name}-error-description`}>{errorMessage}</span> : <span>{label}</span>}
       </div>
+
       { hasTypeaheadOpts ?
         <div className={classnames("fancy-field__typeahead", {'fancy-field__typeahead--hidden': !isFocused})}
             ref='fancyFieldTypeaheadContainer'>
