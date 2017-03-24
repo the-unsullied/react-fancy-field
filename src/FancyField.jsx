@@ -34,6 +34,7 @@ function isImmutable(obj) {
 export default React.createClass({
   listEl: null,
   fancyFieldEl: null,
+  resetAriaHidden: null,
 
   getDefaultProps: function() {
     return {
@@ -57,7 +58,7 @@ export default React.createClass({
       autoComplete: null,
       typeaheadOptions: [],
       ariaLabel: '',
-      ariaHidden: false,
+      ariaHidden: undefined,
       tabIndex: ''
     };
   },
@@ -88,7 +89,7 @@ export default React.createClass({
   },
 
   getInitialState() {
-    const { value } = this.props;
+    const { value, ariaHidden } = this.props;
     let stateVal = isNaN(parseFloat(value)) && !value ? '' : value;
     return {
       value: stateVal,
@@ -96,12 +97,16 @@ export default React.createClass({
       errorMessage: '',
       shouldShowError: false,
       isFocused: false,
-      arrowSelectedTypeaheadOpt: null
+      arrowSelectedTypeaheadOpt: null,
+      ariaHidden: ariaHidden === undefined ? false : ariaHidden
     };
   },
 
   componentWillMount() {
     this.validate(this.state.value);
+    this.resetAriaHidden = debounce(() => {
+      this.setState({ ariaHidden: false });
+    }, 200);
   },
 
   componentWillReceiveProps(nextProps) {
@@ -125,6 +130,7 @@ export default React.createClass({
 
   handleChange(e, typeaheadOpt) {
     let value;
+    this.setState({ isUserChange: true });
     if(e === fromTypeahead) {
       value = typeaheadOpt
     } else {
@@ -211,14 +217,10 @@ export default React.createClass({
     }
   },
 
-  valueIsValue(value) {
-    // must be a value other than null or undefined, but can be 0
-    return value !== null && value !== undefined && value.toString().length > 0;
-  },
-
   handleUserAction(e, type) {
     const { name, onChange, onBlur, onEnter } = this.props;
     const value = e.target.value || '';
+    this.setState({ isUserChange: true });
     switch(type) {
       case 'blur':
         onBlur(value, name);
@@ -244,8 +246,37 @@ export default React.createClass({
     const hasAttemptedInput = this.state.hasAttemptedInput || this.valueIsValue(value) || shouldShowError;
     const { validator } = this.props;
     if(hasAttemptedInput) {
+      this.setAriaHidden();
       this.setErrorMessage(value, shouldShowError);
       this.setState({ hasAttemptedInput, value });
+    }
+  },
+
+  componentDidUpdate(prevProps, prevState) {
+    // please reaad comment located @setAriaHidden
+    if(this.props.ariaHidden === undefined) {
+      if(this.state.ariaHidden && prevProps.value !== this.props.value) {
+        this.resetAriaHidden();
+      }
+    }
+  },
+
+  setAriaHidden() {
+    // only update ariaHidden state if user does not explicitly define it
+    // we need to control it since it can programmatically change.
+    // If programatic change, screen reader will pick up change and think user
+    // typed it out (unwanted experience)
+
+    // this is called during componentWillUpdate - props is not current
+    if(this.props.ariaHidden === undefined) {
+      if(this.state.isUserChange) {
+        this.setState({
+          isUserChange: false,
+          ariaHidden: false
+        });
+      } else {
+        this.setState({ ariaHidden: true });
+      }
     }
   },
 
@@ -279,6 +310,7 @@ export default React.createClass({
     const { value,
       hasAttemptedInput,
       errorMessage,
+      ariaHidden,
       isFocused } = this.state;
     let { shouldShowError } = this.state;
 
@@ -294,7 +326,6 @@ export default React.createClass({
       autoFocus,
       typeaheadOptions,
       ariaLabel,
-      ariaHidden,
       autoComplete,
       tabIndex,
       isEditable } = this.props;
@@ -377,3 +408,22 @@ export default React.createClass({
     </div>
   }
 });
+
+// Returns a function, that, as long as it continues to be invoked, will not
+// be triggered. The function will be called after it stops being called for
+// N milliseconds. If `immediate` is passed, trigger the function on the
+// leading edge, instead of the trailing.
+function debounce(func, wait, immediate) {
+	let timeout;
+	return () => {
+		const context = this, args = arguments;
+		const later = () => {
+			timeout = null;
+			if (!immediate) func.apply(context, args);
+		};
+		const callNow = immediate && !timeout;
+		clearTimeout(timeout);
+		timeout = setTimeout(later, wait);
+		if (callNow) func.apply(context, args);
+	};
+};
