@@ -358,7 +358,6 @@ exports.default = _react2.default.createClass({
     var tooltip = _props6.tooltip;
     var icon = _props6.icon;
     var isIconRight = _props6.isIconRight;
-    var name = _props6.name;
     var disabled = _props6.disabled;
     var placeholder = _props6.placeholder;
     var label = _props6.label;
@@ -370,6 +369,12 @@ exports.default = _react2.default.createClass({
     var autoComplete = _props6.autoComplete;
     var tabIndex = _props6.tabIndex;
     var isEditable = _props6.isEditable;
+    var _props$name = this.props.name;
+    var name = _props$name === undefined ? label : _props$name;
+
+    var dashedName = name.split(' ').join('-');
+    var dashedLabel = dashedName + '-label';
+    var errorLabel = dashedName + '-error-description';
     var type = this.props.type;
 
     type = !type || type === 'number' ? 'text' : type;
@@ -393,8 +398,10 @@ exports.default = _react2.default.createClass({
       'div',
       { className: fancyFieldClasses },
       !!tooltip ? _react2.default.createElement(
-        'span',
-        { className: 'fancy-field__tooltip simptip-position-top simptip-multiline', 'data-tooltip': tooltip },
+        'label',
+        { className: 'fancy-field__tooltip simptip-position-top simptip-multiline',
+          'data-tooltip': tooltip,
+          htmlFor: dashedLabel },
         _react2.default.createElement('i', { className: 'unsullied-icon-help' })
       ) : null,
       !!icon ? _react2.default.createElement(
@@ -410,7 +417,8 @@ exports.default = _react2.default.createClass({
         type: type,
         tabIndex: tabIndex,
         'aria-label': ariaLabel,
-        'aria-describedby': shouldShowError ? name + '-error-description' : null,
+        'aria-describedby': shouldShowError ? errorLabel : null,
+        id: dashedLabel,
         'aria-hidden': ariaHidden,
         'aria-invalid': shouldShowError,
         ref: function ref(el) {
@@ -427,7 +435,7 @@ exports.default = _react2.default.createClass({
         { className: (0, _classnames2.default)("fancy-field__label", { 'fancy-field__label--error': shouldShowError }) },
         shouldShowError ? _react2.default.createElement(
           'span',
-          { id: this.props.name + '-error-description' },
+          { id: errorLabel },
           errorMessage
         ) : _react2.default.createElement(
           'span',
