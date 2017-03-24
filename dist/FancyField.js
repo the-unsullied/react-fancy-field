@@ -372,7 +372,9 @@ exports.default = _react2.default.createClass({
     var _props$name = this.props.name;
     var name = _props$name === undefined ? label : _props$name;
 
-    var dashedLabel = name.split(' ').join('-') + '-label';
+    var dashedName = name.split(' ').join('-');
+    var dashedLabel = dashedName + '-label';
+    var errorLabel = dashedName + '-error-description';
     var type = this.props.type;
 
     type = !type || type === 'number' ? 'text' : type;
@@ -415,7 +417,7 @@ exports.default = _react2.default.createClass({
         type: type,
         tabIndex: tabIndex,
         'aria-label': ariaLabel,
-        'aria-describedby': shouldShowError ? name + '-error-description' : null,
+        'aria-describedby': shouldShowError ? errorLabel : null,
         id: dashedLabel,
         'aria-hidden': ariaHidden,
         'aria-invalid': shouldShowError,
@@ -433,7 +435,7 @@ exports.default = _react2.default.createClass({
         { className: (0, _classnames2.default)("fancy-field__label", { 'fancy-field__label--error': shouldShowError }) },
         shouldShowError ? _react2.default.createElement(
           'span',
-          { id: this.props.name + '-error-description' },
+          { id: errorLabel },
           errorMessage
         ) : _react2.default.createElement(
           'span',
