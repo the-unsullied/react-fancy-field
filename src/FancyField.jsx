@@ -317,7 +317,6 @@ export default React.createClass({
     const { tooltip,
       icon,
       isIconRight,
-      name,
       disabled,
       placeholder,
       label,
@@ -329,6 +328,8 @@ export default React.createClass({
       autoComplete,
       tabIndex,
       isEditable } = this.props;
+    const { name = label } = this.props;
+    const dashedLabel = name.split(' ').join('-') + '-label';
     let { type } = this.props;
     type = !type || type === 'number' ? 'text' : type;
 
@@ -350,9 +351,11 @@ export default React.createClass({
 
     return <div className={fancyFieldClasses}>
       {/*http://stackoverflow.com/questions/15738259/disabling-chrome-autofill*/}
-      { !!tooltip ? <span className='fancy-field__tooltip simptip-position-top simptip-multiline' data-tooltip={tooltip}>
+      { !!tooltip ? <label className='fancy-field__tooltip simptip-position-top simptip-multiline'
+          data-tooltip={tooltip}
+          htmlFor={dashedLabel}>
         <i className='unsullied-icon-help'></i>
-      </span> : null }
+      </label> : null }
       { !!icon ? <span className='fancy-field__icon'>
         { icon }
       </span> : null }
@@ -365,6 +368,7 @@ export default React.createClass({
              tabIndex={tabIndex}
              aria-label={ariaLabel}
              aria-describedby={shouldShowError ? `${name}-error-description` : null}
+             id={dashedLabel}
              aria-hidden={ariaHidden}
              aria-invalid={shouldShowError}
              ref={(el) => this.fancyFieldEl = el}

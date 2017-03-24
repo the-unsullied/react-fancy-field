@@ -358,7 +358,6 @@ exports.default = _react2.default.createClass({
     var tooltip = _props6.tooltip;
     var icon = _props6.icon;
     var isIconRight = _props6.isIconRight;
-    var name = _props6.name;
     var disabled = _props6.disabled;
     var placeholder = _props6.placeholder;
     var label = _props6.label;
@@ -370,6 +369,10 @@ exports.default = _react2.default.createClass({
     var autoComplete = _props6.autoComplete;
     var tabIndex = _props6.tabIndex;
     var isEditable = _props6.isEditable;
+    var _props$name = this.props.name;
+    var name = _props$name === undefined ? label : _props$name;
+
+    var dashedLabel = name.split(' ').join('-') + '-label';
     var type = this.props.type;
 
     type = !type || type === 'number' ? 'text' : type;
@@ -393,8 +396,10 @@ exports.default = _react2.default.createClass({
       'div',
       { className: fancyFieldClasses },
       !!tooltip ? _react2.default.createElement(
-        'span',
-        { className: 'fancy-field__tooltip simptip-position-top simptip-multiline', 'data-tooltip': tooltip },
+        'label',
+        { className: 'fancy-field__tooltip simptip-position-top simptip-multiline',
+          'data-tooltip': tooltip,
+          htmlFor: dashedLabel },
         _react2.default.createElement('i', { className: 'unsullied-icon-help' })
       ) : null,
       !!icon ? _react2.default.createElement(
@@ -411,6 +416,7 @@ exports.default = _react2.default.createClass({
         tabIndex: tabIndex,
         'aria-label': ariaLabel,
         'aria-describedby': shouldShowError ? name + '-error-description' : null,
+        id: dashedLabel,
         'aria-hidden': ariaHidden,
         'aria-invalid': shouldShowError,
         ref: function ref(el) {
