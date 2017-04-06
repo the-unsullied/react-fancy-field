@@ -9,6 +9,7 @@ Component that stands in as styled input
 @param {Any} placeholder placeholder of input
 @param {Method || Array} validator If falsy, field is valid. If is string, field is *invalid* and string will be error message. If validator is an Array, it will iterate over all validators in array and display all messages.
 @param {Method} onChange method that is called on change
+@param {Method} onFocus method that is called on focus
 @param {String} tooltip shows a tooltip to left of input value.
 @param {Boolean} required shows that input is required
 @param {Boolean} readOnly determine if input should be read-only.
@@ -48,6 +49,7 @@ export default React.createClass({
       value: null,
       classes: '',
       onChange: () => {},
+      onFocus: () => {},
       tooltip: null,
       required: false,
       readOnly: false,
@@ -74,6 +76,7 @@ export default React.createClass({
     value: React.PropTypes.any,
     classes: React.PropTypes.string,
     onChange: React.PropTypes.func,
+    onFocus: React.PropTypes.func,
     tooltip: React.PropTypes.string,
     required: React.PropTypes.bool,
     readOnly: React.PropTypes.bool,
@@ -157,6 +160,9 @@ export default React.createClass({
 
   handleFocus(e) {
     this.setState({ isFocused: true });
+    if(this.props.onFocus) {
+      this.props.onFocus(value, this.props.name);
+    }
   },
 
   handleEnterKeypress(e) {

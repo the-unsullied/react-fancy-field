@@ -4,7 +4,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; }; //comment
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; //comment
 /**
 Component that stands in as styled input
 @class Fancy Button Component
@@ -15,6 +15,7 @@ Component that stands in as styled input
 @param {Any} placeholder placeholder of input
 @param {Method || Array} validator If falsy, field is valid. If is string, field is *invalid* and string will be error message. If validator is an Array, it will iterate over all validators in array and display all messages.
 @param {Method} onChange method that is called on change
+@param {Method} onFocus method that is called on focus
 @param {String} tooltip shows a tooltip to left of input value.
 @param {Boolean} required shows that input is required
 @param {Boolean} readOnly determine if input should be read-only.
@@ -64,6 +65,7 @@ exports.default = _react2.default.createClass({
       value: null,
       classes: '',
       onChange: function onChange() {},
+      onFocus: function onFocus() {},
       tooltip: null,
       required: false,
       readOnly: false,
@@ -90,6 +92,7 @@ exports.default = _react2.default.createClass({
     value: _react2.default.PropTypes.any,
     classes: _react2.default.PropTypes.string,
     onChange: _react2.default.PropTypes.func,
+    onFocus: _react2.default.PropTypes.func,
     tooltip: _react2.default.PropTypes.string,
     required: _react2.default.PropTypes.bool,
     readOnly: _react2.default.PropTypes.bool,
@@ -105,9 +108,9 @@ exports.default = _react2.default.createClass({
   },
 
   getInitialState: function getInitialState() {
-    var _props = this.props;
-    var value = _props.value;
-    var ariaHidden = _props.ariaHidden;
+    var _props = this.props,
+        value = _props.value,
+        ariaHidden = _props.ariaHidden;
 
     var stateVal = isNaN(parseFloat(value)) && !value ? '' : value;
     return {
@@ -129,10 +132,10 @@ exports.default = _react2.default.createClass({
     }, 200);
   },
   componentWillReceiveProps: function componentWillReceiveProps(nextProps) {
-    var _props2 = this.props;
-    var triggerValidation = _props2.triggerValidation;
-    var value = _props2.value;
-    var typeaheadOptions = _props2.typeaheadOptions;
+    var _props2 = this.props,
+        triggerValidation = _props2.triggerValidation,
+        value = _props2.value,
+        typeaheadOptions = _props2.typeaheadOptions;
 
     var nextTypeaheadOpts = nextProps.typeaheadOptions;
     var shouldShowError = this.state.shouldShowError || triggerValidation !== nextProps.triggerValidation;
@@ -179,12 +182,15 @@ exports.default = _react2.default.createClass({
   },
   handleFocus: function handleFocus(e) {
     this.setState({ isFocused: true });
+    if (this.props.onFocus) {
+      this.props.onFocus(value, this.props.name);
+    }
   },
   handleEnterKeypress: function handleEnterKeypress(e) {
-    var _props3 = this.props;
-    var typeaheadOptions = _props3.typeaheadOptions;
-    var onChange = _props3.onChange;
-    var onEnter = _props3.onEnter;
+    var _props3 = this.props,
+        typeaheadOptions = _props3.typeaheadOptions,
+        onChange = _props3.onChange,
+        onEnter = _props3.onEnter;
 
     var isEnter = e.key === 'Enter';
     var hasTypeaheadOpts = isImmutable(typeaheadOptions) ? typeaheadOptions.size > 0 : typeaheadOptions.length > 0;
@@ -201,8 +207,6 @@ exports.default = _react2.default.createClass({
     }
   },
   arrowSelectElementInTypeahead: function arrowSelectElementInTypeahead(e) {
-    var _this3 = this;
-
     var listEl = this.listEl;
     var typeaheadOptions = this.props.typeaheadOptions;
     var arrowSelectedTypeaheadOpt = this.state.arrowSelectedTypeaheadOpt;
@@ -218,8 +222,8 @@ exports.default = _react2.default.createClass({
     if (isArrowDown || isArrowUp) {
       var selection = void 0;
       if (!!arrowSelectedTypeaheadOpt) {
-        var nextSibling = arrowSelectedTypeaheadOpt.nextSibling;
-        var previousSibling = arrowSelectedTypeaheadOpt.previousSibling;
+        var nextSibling = arrowSelectedTypeaheadOpt.nextSibling,
+            previousSibling = arrowSelectedTypeaheadOpt.previousSibling;
 
         selection = isArrowDown ? nextSibling : previousSibling;
         if (!selection) {
@@ -236,24 +240,22 @@ exports.default = _react2.default.createClass({
     } else if (isEscape) {
       this.handleBlur(e);
     } else if (isEnter) {
-      (function () {
-        var isTypeaheadOptionsImmutable = isImmutable(typeaheadOptions);
-        var id = arrowSelectedTypeaheadOpt.dataset.id;
+      var isTypeaheadOptionsImmutable = isImmutable(typeaheadOptions);
+      var id = arrowSelectedTypeaheadOpt.dataset.id;
 
-        var opt = typeaheadOptions.find(function (opt) {
-          return isTypeaheadOptionsImmutable ? opt.get(idKey) === id : opt[idKey] === id;
-        });
-        _this3.handleChange(fromTypeahead, opt);
-        _this3.setState({ arrowSelectedTypeaheadOpt: null });
-      })();
+      var opt = typeaheadOptions.find(function (opt) {
+        return isTypeaheadOptionsImmutable ? opt.get(idKey) === id : opt[idKey] === id;
+      });
+      this.handleChange(fromTypeahead, opt);
+      this.setState({ arrowSelectedTypeaheadOpt: null });
     }
   },
   handleUserAction: function handleUserAction(e, type) {
-    var _props4 = this.props;
-    var name = _props4.name;
-    var onChange = _props4.onChange;
-    var onBlur = _props4.onBlur;
-    var onEnter = _props4.onEnter;
+    var _props4 = this.props,
+        name = _props4.name,
+        onChange = _props4.onChange,
+        onBlur = _props4.onBlur,
+        onEnter = _props4.onEnter;
 
     var value = e.target.value || '';
     this.setState({ isUserChange: true });
@@ -277,7 +279,7 @@ exports.default = _react2.default.createClass({
     return value !== null && value !== undefined && value.toString().length > 0;
   },
   validate: function validate(value) {
-    var shouldShowError = arguments.length <= 1 || arguments[1] === undefined ? false : arguments[1];
+    var shouldShowError = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
 
     var hasAttemptedInput = this.state.hasAttemptedInput || this.valueIsValue(value) || shouldShowError;
     var validator = this.props.validator;
@@ -315,9 +317,9 @@ exports.default = _react2.default.createClass({
     }
   },
   setErrorMessage: function setErrorMessage(value, shouldShowError) {
-    var _props5 = this.props;
-    var validator = _props5.validator;
-    var name = _props5.name;
+    var _props5 = this.props,
+        validator = _props5.validator,
+        name = _props5.name;
 
 
     if (!validator) {
@@ -345,32 +347,32 @@ exports.default = _react2.default.createClass({
     }
   },
   render: function render() {
-    var _this4 = this;
+    var _this3 = this;
 
-    var _state = this.state;
-    var value = _state.value;
-    var hasAttemptedInput = _state.hasAttemptedInput;
-    var errorMessage = _state.errorMessage;
-    var ariaHidden = _state.ariaHidden;
-    var isFocused = _state.isFocused;
+    var _state = this.state,
+        value = _state.value,
+        hasAttemptedInput = _state.hasAttemptedInput,
+        errorMessage = _state.errorMessage,
+        ariaHidden = _state.ariaHidden,
+        isFocused = _state.isFocused;
     var shouldShowError = this.state.shouldShowError;
-    var _props6 = this.props;
-    var tooltip = _props6.tooltip;
-    var icon = _props6.icon;
-    var isIconRight = _props6.isIconRight;
-    var disabled = _props6.disabled;
-    var placeholder = _props6.placeholder;
-    var label = _props6.label;
-    var classes = _props6.classes;
-    var required = _props6.required;
-    var autoFocus = _props6.autoFocus;
-    var typeaheadOptions = _props6.typeaheadOptions;
-    var ariaLabel = _props6.ariaLabel;
-    var autoComplete = _props6.autoComplete;
-    var tabIndex = _props6.tabIndex;
-    var isEditable = _props6.isEditable;
-    var _props$name = this.props.name;
-    var name = _props$name === undefined ? label : _props$name;
+    var _props6 = this.props,
+        tooltip = _props6.tooltip,
+        icon = _props6.icon,
+        isIconRight = _props6.isIconRight,
+        disabled = _props6.disabled,
+        placeholder = _props6.placeholder,
+        label = _props6.label,
+        classes = _props6.classes,
+        required = _props6.required,
+        autoFocus = _props6.autoFocus,
+        typeaheadOptions = _props6.typeaheadOptions,
+        ariaLabel = _props6.ariaLabel,
+        autoComplete = _props6.autoComplete,
+        tabIndex = _props6.tabIndex,
+        isEditable = _props6.isEditable;
+    var _props$name = this.props.name,
+        name = _props$name === undefined ? label : _props$name;
 
     var dashedName = name.split(' ').join('-');
     var dashedLabel = dashedName + '-label';
@@ -422,7 +424,7 @@ exports.default = _react2.default.createClass({
         'aria-hidden': ariaHidden,
         'aria-invalid': shouldShowError,
         ref: function ref(el) {
-          return _this4.fancyFieldEl = el;
+          return _this3.fancyFieldEl = el;
         },
         placeholder: placeholder,
         onChange: this.handleChange,
@@ -452,7 +454,7 @@ exports.default = _react2.default.createClass({
     );
   },
   renderTypeaheadBody: function renderTypeaheadBody() {
-    var _this5 = this;
+    var _this4 = this;
 
     var typeaheadOptions = this.props.typeaheadOptions;
 
@@ -466,7 +468,7 @@ exports.default = _react2.default.createClass({
       _react2.default.createElement(
         'ul',
         { ref: function ref(listEl) {
-            return _this5.listEl = listEl;
+            return _this4.listEl = listEl;
           } },
         typeaheadOptions.map(function (opt) {
           var id = _isImmutable ? opt.get(idKey) : opt[idKey];
@@ -476,7 +478,7 @@ exports.default = _react2.default.createClass({
             { key: id,
               'data-id': id,
               onClick: function onClick() {
-                return _this5.handleChange(fromTypeahead, opt);
+                return _this4.handleChange(fromTypeahead, opt);
               } },
             label
           );
@@ -492,12 +494,12 @@ exports.default = _react2.default.createClass({
 // leading edge, instead of the trailing.
 
 function debounce(func, wait, immediate) {
-  var _this6 = this,
+  var _this5 = this,
       _arguments = arguments;
 
   var timeout = void 0;
   return function () {
-    var context = _this6,
+    var context = _this5,
         args = _arguments;
     var later = function later() {
       timeout = null;

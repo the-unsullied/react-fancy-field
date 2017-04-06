@@ -62,6 +62,8 @@ npm install react-fancy-field --save
 
 **onChange** {Method} method that is called onChange event.
 
+**onFocus** {Method} method that is called onFocus event.
+
 **tooltip** {String} shows a tooltip to left of input value.
 
 **required** {Boolean} indicator to show that input is required
