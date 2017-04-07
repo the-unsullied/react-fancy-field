@@ -217,18 +217,16 @@ export default React.createClass({
     this.setState({ isUserChange: true });
     switch(type) {
       case 'blur':
-        onBlur(value, name);
+        onBlur && onBlur(value, name);
         break;
       case 'change':
-        onChange(value, name);
+        onChange && onChange(value, name);
         break;
       case 'enter':
-        onEnter(value, name);
+        onEnter && onEnter(value, name);
         break;
       case 'focus':
-        if(onFocus) {
-          onFocus(value, name);
-        }
+        onFocus && onFocus(value, name);
         break;
     }
     if(!this.state.shouldShowError) {
