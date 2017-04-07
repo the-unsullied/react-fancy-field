@@ -132,19 +132,9 @@ export default React.createClass({
   },
 
   handleChange(e, typeaheadOpt) {
-    let value;
     this.setState({ isUserChange: true });
-    if(e === fromTypeahead) {
-      value = typeaheadOpt
-    } else {
-       value = e.target.value;
-       if(this.props.type === 'number') {
-         value = value.replace(/[^0-9\.]+/g,'');
-       }
-    }
     this.handleFocus(e);
-
-    this.props.onChange(value, this.props.name);
+    this.handleUserAction(e, 'change');
   },
 
   handleBlur(e) {
@@ -160,9 +150,7 @@ export default React.createClass({
 
   handleFocus(e) {
     this.setState({ isFocused: true });
-    if(this.props.onFocus) {
-      this.props.onFocus(value, this.props.name);
-    }
+    this.handleUserAction(e, 'focus');
   },
 
   handleEnterKeypress(e) {
@@ -224,8 +212,8 @@ export default React.createClass({
   },
 
   handleUserAction(e, type) {
-    const { name, onChange, onBlur, onEnter } = this.props;
-    const value = e.target.value || '';
+    const { name, onChange, onBlur, onEnter, onFocus } = this.props;
+    const value = this.getValue(e);
     this.setState({ isUserChange: true });
     switch(type) {
       case 'blur':
@@ -237,10 +225,28 @@ export default React.createClass({
       case 'enter':
         onEnter(value, name);
         break;
+      case 'focus':
+        if(onFocus) {
+          onFocus(value, name);
+        }
+        break;
     }
     if(!this.state.shouldShowError) {
       this.setState({ shouldShowError: true });
     }
+  },
+
+  getValue(e) {
+    let value;
+    if(e === fromTypeahead) {
+      value = typeaheadOpt
+    } else {
+       value = e.target.value;
+       if(this.props.type === 'number') {
+         value = value.replace(/[^0-9\.]+/g,'');
+       }
+    }
+    return value;
   },
 
   valueIsValue(value) {

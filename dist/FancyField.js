@@ -154,19 +154,9 @@ exports.default = _react2.default.createClass({
     }
   },
   handleChange: function handleChange(e, typeaheadOpt) {
-    var value = void 0;
     this.setState({ isUserChange: true });
-    if (e === fromTypeahead) {
-      value = typeaheadOpt;
-    } else {
-      value = e.target.value;
-      if (this.props.type === 'number') {
-        value = value.replace(/[^0-9\.]+/g, '');
-      }
-    }
     this.handleFocus(e);
-
-    this.props.onChange(value, this.props.name);
+    this.handleUserAction(e, 'change');
   },
   handleBlur: function handleBlur(e) {
     var _this2 = this;
@@ -182,9 +172,7 @@ exports.default = _react2.default.createClass({
   },
   handleFocus: function handleFocus(e) {
     this.setState({ isFocused: true });
-    if (this.props.onFocus) {
-      this.props.onFocus(value, this.props.name);
-    }
+    this.handleUserAction(e, 'focus');
   },
   handleEnterKeypress: function handleEnterKeypress(e) {
     var _props3 = this.props,
@@ -255,9 +243,10 @@ exports.default = _react2.default.createClass({
         name = _props4.name,
         onChange = _props4.onChange,
         onBlur = _props4.onBlur,
-        onEnter = _props4.onEnter;
+        onEnter = _props4.onEnter,
+        onFocus = _props4.onFocus;
 
-    var value = e.target.value || '';
+    var value = this.getValue(e);
     this.setState({ isUserChange: true });
     switch (type) {
       case 'blur':
@@ -269,10 +258,27 @@ exports.default = _react2.default.createClass({
       case 'enter':
         onEnter(value, name);
         break;
+      case 'focus':
+        if (onFocus) {
+          onFocus(value, name);
+        }
+        break;
     }
     if (!this.state.shouldShowError) {
       this.setState({ shouldShowError: true });
     }
+  },
+  getValue: function getValue(e) {
+    var value = void 0;
+    if (e === fromTypeahead) {
+      value = typeaheadOpt;
+    } else {
+      value = e.target.value;
+      if (this.props.type === 'number') {
+        value = value.replace(/[^0-9\.]+/g, '');
+      }
+    }
+    return value;
   },
   valueIsValue: function valueIsValue(value) {
     // must be a value other than null or undefined, but can be 0
