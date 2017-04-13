@@ -26,6 +26,7 @@ Component that stands in as styled input
 @param {JSX} icon any image that should appear to the left of the field
 @param {Any|String} tabIndex tabIndex for input field
 @param {String} ariaLabel aria-label property on input.
+@param {Boolean} suppressError if true, the component will not show error initially until boolean is true
 */
 
 var _react = require('react');
@@ -77,7 +78,8 @@ exports.default = _react2.default.createClass({
       typeaheadOptions: [],
       ariaLabel: '',
       ariaHidden: undefined,
-      tabIndex: ''
+      tabIndex: '',
+      suppressError: null
     };
   },
 
@@ -104,7 +106,8 @@ exports.default = _react2.default.createClass({
     typeaheadOptions: _react2.default.PropTypes.any,
     ariaLabel: _react2.default.PropTypes.any,
     ariaHidden: _react2.default.PropTypes.bool,
-    tabIndex: _react2.default.PropTypes.string
+    tabIndex: _react2.default.PropTypes.string,
+    suppressError: _react2.default.PropTypes.bool
   },
 
   getInitialState: function getInitialState() {
@@ -284,8 +287,12 @@ exports.default = _react2.default.createClass({
   },
   validate: function validate(value) {
     var shouldShowError = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+    var suppressError = this.props.suppressError;
 
-    var hasAttemptedInput = this.state.hasAttemptedInput || this.valueIsValue(value) || shouldShowError;
+    var hasAttempted = this.valueIsValue(value) || shouldShowError;
+    var triggerHasAttempted = suppressError === null ? hasAttempted : suppressError && hasAttempted;
+    var hasAttemptedInput = this.state.hasAttemptedInput || triggerHasAttempted;
+
     var validator = this.props.validator;
 
     if (hasAttemptedInput) {

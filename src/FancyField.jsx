@@ -20,6 +20,7 @@ Component that stands in as styled input
 @param {JSX} icon any image that should appear to the left of the field
 @param {Any|String} tabIndex tabIndex for input field
 @param {String} ariaLabel aria-label property on input.
+@param {Boolean} suppressError if true, the component will not show error initially until boolean is true
 */
 
 import React from 'react';
@@ -61,7 +62,8 @@ export default React.createClass({
       typeaheadOptions: [],
       ariaLabel: '',
       ariaHidden: undefined,
-      tabIndex: ''
+      tabIndex: '',
+      suppressError: null
     };
   },
 
@@ -88,7 +90,8 @@ export default React.createClass({
     typeaheadOptions: React.PropTypes.any,
     ariaLabel: React.PropTypes.any,
     ariaHidden: React.PropTypes.bool,
-    tabIndex: React.PropTypes.string
+    tabIndex: React.PropTypes.string,
+    suppressError: React.PropTypes.bool
   },
 
   getInitialState() {
@@ -253,7 +256,11 @@ export default React.createClass({
   },
 
   validate(value, shouldShowError = false) {
-    const hasAttemptedInput = this.state.hasAttemptedInput || this.valueIsValue(value) || shouldShowError;
+    const { suppressError } = this.props;
+    const hasAttempted = this.valueIsValue(value) || shouldShowError;
+    const triggerHasAttempted = suppressError === null ? hasAttempted : suppressError && hasAttempted;
+    const hasAttemptedInput = this.state.hasAttemptedInput || triggerHasAttempted;
+
     const { validator } = this.props;
     if(hasAttemptedInput) {
       this.setAriaHidden();
