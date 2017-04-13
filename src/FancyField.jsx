@@ -266,6 +266,8 @@ export default React.createClass({
       this.setAriaHidden();
       this.setErrorMessage(value, shouldShowError);
       this.setState({ hasAttemptedInput, value });
+    } else if (suppressError !== null) {
+      this.setState({ value });
     }
   },
 

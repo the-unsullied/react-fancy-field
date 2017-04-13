@@ -299,6 +299,8 @@ exports.default = _react2.default.createClass({
       this.setAriaHidden();
       this.setErrorMessage(value, shouldShowError);
       this.setState({ hasAttemptedInput: hasAttemptedInput, value: value });
+    } else if (suppressError !== null) {
+      this.setState({ value: value });
     }
   },
   componentDidUpdate: function componentDidUpdate(prevProps, prevState) {
