@@ -399,9 +399,10 @@ export default React.createClass({
              onFocus={this.handleFocus}
              autoFocus={autoFocus}
              onKeyDown={this.handleEnterKeypress} />
-      <div className={classnames("fancy-field__label", {'fancy-field__label--error': shouldShowError})}>
+      <label className={classnames("fancy-field__label", {'fancy-field__label--error': shouldShowError})}
+             htmlFor={dashedLabel}>
         {shouldShowError ? <span id={errorLabel}>{errorMessage}</span> : <span>{label}</span>}
-      </div>
+      </label>
 
       { hasTypeaheadOpts ?
         <div className={classnames("fancy-field__typeahead", {'fancy-field__typeahead--hidden': !isFocused})}

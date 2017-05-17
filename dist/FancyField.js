@@ -446,8 +446,9 @@ exports.default = _react2.default.createClass({
         autoFocus: autoFocus,
         onKeyDown: this.handleEnterKeypress }),
       _react2.default.createElement(
-        'div',
-        { className: (0, _classnames2.default)("fancy-field__label", { 'fancy-field__label--error': shouldShowError }) },
+        'label',
+        { className: (0, _classnames2.default)("fancy-field__label", { 'fancy-field__label--error': shouldShowError }),
+          htmlFor: dashedLabel },
         shouldShowError ? _react2.default.createElement(
           'span',
           { id: errorLabel },
