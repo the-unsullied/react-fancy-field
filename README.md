@@ -1,6 +1,6 @@
 # react-fancy-field
 
-*A modern styled input field with animating effects built for React. Has built in validation effects.*
+*A modern styled input field with animating effects built for React. Has built in validation effects and is built with WCAG a11y in mind.*
 
 ![FancyFieldDemo](https://github.com/the-unsullied/react-fancy-field/blob/demo/fancyfielddemo.gif)
 
