@@ -4,6 +4,8 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; //comment
 /**
 Component that stands in as styled input
@@ -44,9 +46,14 @@ var _immutable2 = _interopRequireDefault(_immutable);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var fromTypeahead = 'FROM_TYPEAHEAD';
+var isIE11 = !window.ActiveXObject && "ActiveXObject" in window;
 
 function isImmutable(obj) {
   return obj !== null && (typeof obj === 'undefined' ? 'undefined' : _typeof(obj)) === "object" && !!obj.toJSON;
+}
+
+function getInputOnChangeProps(handler) {
+  return isIE11 ? { onInput: handler } : { onChange: handler };
 }
 
 exports.default = _react2.default.createClass({
@@ -424,7 +431,7 @@ exports.default = _react2.default.createClass({
         { className: 'fancy-field__icon' },
         icon
       ) : null,
-      _react2.default.createElement('input', { autoComplete: autoComplete || "new-password",
+      _react2.default.createElement('input', _extends({ autoComplete: autoComplete || "new-password",
         className: (0, _classnames2.default)('full-width', 'fancy-field__input', { 'fancy-field__input--error': shouldShowError }),
         name: name,
         value: value,
@@ -439,12 +446,12 @@ exports.default = _react2.default.createClass({
         ref: function ref(el) {
           return _this3.fancyFieldEl = el;
         },
-        placeholder: placeholder,
-        onChange: this.handleChange,
+        placeholder: placeholder
+      }, getInputOnChangeProps(this.handleChange), {
         onBlur: this.handleBlur,
         onFocus: this.handleFocus,
         autoFocus: autoFocus,
-        onKeyDown: this.handleEnterKeypress }),
+        onKeyDown: this.handleEnterKeypress })),
       _react2.default.createElement(
         'div',
         { className: (0, _classnames2.default)("fancy-field__label", { 'fancy-field__label--error': shouldShowError }) },
