@@ -28,9 +28,14 @@ import classnames from 'classnames';
 import immutable, {fromJS} from 'immutable';
 
 const fromTypeahead = 'FROM_TYPEAHEAD';
+const isIE11 = !(window.ActiveXObject) && "ActiveXObject" in window;
 
 function isImmutable(obj) {
   return obj !== null && typeof obj === "object" && !!obj.toJSON;
+}
+
+function getInputOnChangeProps(handler) {
+  return isIE11 ? { onInput: handler } : { onChange: handler };
 }
 
 export default React.createClass({
@@ -394,6 +399,7 @@ export default React.createClass({
              aria-invalid={shouldShowError}
              ref={(el) => this.fancyFieldEl = el}
              placeholder={placeholder}
+             {...getInputOnChangeProps(this.handleChange)}
              onChange={this.handleChange}
              onBlur={this.handleBlur}
              onFocus={this.handleFocus}
