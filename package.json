@@ -1,6 +1,6 @@
 {
   "name": "react-fancy-field",
-  "version": "0.3.19",
+  "version": "0.3.20",
   "description": "A modern styled input field with animating effects built for React.",
   "main": "./dist/FancyField.js",
   "repository": {
