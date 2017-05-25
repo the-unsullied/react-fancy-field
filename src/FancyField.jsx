@@ -400,7 +400,6 @@ export default React.createClass({
              ref={(el) => this.fancyFieldEl = el}
              placeholder={placeholder}
              {...getInputOnChangeProps(this.handleChange)}
-             onChange={this.handleChange}
              onBlur={this.handleBlur}
              onFocus={this.handleFocus}
              autoFocus={autoFocus}
