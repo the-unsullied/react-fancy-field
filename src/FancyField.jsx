@@ -399,7 +399,7 @@ export default React.createClass({
              aria-invalid={shouldShowError}
              ref={(el) => this.fancyFieldEl = el}
              placeholder={placeholder}
-             {...getInputOnChangeProps(this.handleChange)}
+             onInput={this.handleChange}
              onBlur={this.handleBlur}
              onFocus={this.handleFocus}
              autoFocus={autoFocus}
