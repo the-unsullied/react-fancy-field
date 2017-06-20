@@ -1,6 +1,6 @@
 {
   "name": "react-fancy-field",
-  "version": "0.3.20",
+  "version": "0.3.23",
   "description": "A modern styled input field with animating effects built for React.",
   "main": "./dist/FancyField.js",
   "repository": {
@@ -39,19 +39,20 @@
     "karma": "^1.0.0",
     "karma-browserify": "^5.0.5",
     "karma-chai-sinon": "^0.1.5",
-    "karma-chrome-launcher": "^1.0.1",
+    "karma-chrome-launcher": "^2.1.1",
     "karma-mocha": "^1.0.1",
-    "karma-phantomjs-launcher": "^1.0.1",
     "mocha": "^2.5.3",
     "node-sass": "^3.4.2",
     "react": "^15.3.0",
-    "react-addons-test-utils": "^15.3.1",
+    "react-addons-test-utils": "^15.4.1",
     "react-dom": "^15.3.0",
     "sinon": "^1.17.4",
     "sinon-chai": "^2.8.0",
     "watchify": "^3.7.0"
   },
   "dependencies": {
+    "babel-preset-airbnb": "^2.3.2",
+    "enzyme": "2.8.0",
     "immutable": "^3.8.1"
   }
 }

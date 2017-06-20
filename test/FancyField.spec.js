@@ -1,14 +1,12 @@
-/* */
-"format cjs";
 import React from 'react';
-import { findDOMNode } from 'react-dom';
-import { renderIntoDocument, findRenderedComponentWithType, Simulate } from 'react-addons-test-utils';
+import { Simulate } from 'react-addons-test-utils';
 import FancyField from './../dist/FancyField';
+import { mount } from 'enzyme';
 import {fromJS, List, Map} from 'immutable';
 
 const noop = () => {};
 
-const createComponent = function(props = {}, shouldReturnParent) {
+const createComponent = function(props = {}) {
 
   const state = Object.assign({
     name: '',
@@ -29,49 +27,43 @@ const createComponent = function(props = {}, shouldReturnParent) {
     typeaheadOptions: []
   }, props);
 
-  const Parent = React.createFactory(React.createClass({
-    getInitialState() { return state; },
-    render() { return <FancyField {...this.state} /> }
-  }));
-
-  const parentComponent = renderIntoDocument(Parent());
-  const component = findRenderedComponentWithType(parentComponent, FancyField);
-
-  return shouldReturnParent ? { parent: parentComponent, component } : component;
+  return mount( <FancyField {...state} /> );
 };
+
+const fancyFieldSelector = '.fancy-field__input';
 
 context('FancyField', () => {
   describe('initial load', () => {
     it('should load', () => {
-      const component = createComponent();
-      expect(component.fancyFieldEl).to.exist;
+      const wrapper = createComponent();
+      expect(wrapper.instance().fancyFieldEl).to.exist;
     });
     it('should have fancy-field--has-content class if there is a value', () => {
-      const component = createComponent({ value: 'banana'});
-      expect(component.fancyFieldEl.parentNode.classList.contains('fancy-field--has-content')).to.be.true;
+      const wrapper = createComponent({ value: 'banana'});
+      expect(wrapper.instance().fancyFieldEl.parentNode.classList.contains('fancy-field--has-content')).to.be.true;
     });
     it('should have disabled property if disabled', () => {
-      const component = createComponent({disabled: true});
-      expect(component.fancyFieldEl.hasAttribute('disabled')).to.be.true;
+      const wrapper = createComponent({disabled: true});
+      expect(wrapper.instance().fancyFieldEl.hasAttribute('disabled')).to.be.true;
     });
 
     it('should be readonly if readonly is true', () => {
-      const {parent, component} = createComponent({readOnly: false}, true);
-      expect(component.fancyFieldEl.hasAttribute('readonly')).to.be.false;
-      parent.setState({readOnly: true});
-      expect(component.fancyFieldEl.hasAttribute('readonly')).to.be.true;
+      const wrapper = createComponent({readOnly: false});
+      expect(wrapper.instance().fancyFieldEl.hasAttribute('readonly')).to.be.false;
+      wrapper.setProps({ readOnly: true });
+      expect(wrapper.instance().fancyFieldEl.hasAttribute('readonly')).to.be.true;
     });
 
     describe('has typeaheadOptions', () => {
       it('should display them', () => {
-        const component = createComponent({ typeaheadOptions: [{
+        const wrapper = createComponent({ typeaheadOptions: [{
           id: '1', label: 'meow'
         }, {
           id: '2', label: 'orange'
         }]});
-        expect(component.refs.fancyFieldTypeaheadContainer).to.exist;
+        expect(wrapper.instance().refs.fancyFieldTypeaheadContainer).to.exist;
 
-        const typeaheadItems = component.refs.fancyFieldTypeaheadContainer.querySelectorAll('li');
+        const typeaheadItems = wrapper.instance().refs.fancyFieldTypeaheadContainer.querySelectorAll('li');
         expect(typeaheadItems.length).to.equal(2);
         expect(typeaheadItems[0].textContent).to.equal('meow');
         expect(typeaheadItems[1].textContent).to.equal('orange');
@@ -80,15 +72,15 @@ context('FancyField', () => {
       });
 
       it('should display immutable lists', () => {
-        const component = createComponent({ typeaheadOptions: fromJS([{
+        const wrapper = createComponent({ typeaheadOptions: fromJS([{
             id: '1', label: 'meow'
           }, {
             id: '2', label: 'orange'
           }])
         });
-        expect(component.refs.fancyFieldTypeaheadContainer).to.exist;
+        expect(wrapper.instance().refs.fancyFieldTypeaheadContainer).to.exist;
 
-        const typeaheadItems = component.refs.fancyFieldTypeaheadContainer.querySelectorAll('li');
+        const typeaheadItems = wrapper.instance().refs.fancyFieldTypeaheadContainer.querySelectorAll('li');
         expect(typeaheadItems.length).to.equal(2);
         expect(typeaheadItems[0].textContent).to.equal('meow');
         expect(typeaheadItems[1].textContent).to.equal('orange');
@@ -101,9 +93,9 @@ context('FancyField', () => {
   describe('user actions', () => {
     it('should call onChange when value is updated', () => {
       const onChange = sinon.spy();
-      const component = createComponent({ onChange });
-      component.setState({value: 'meow'});
-      Simulate.change(component.fancyFieldEl);
+      const wrapper = createComponent({ onChange });
+      wrapper.setState({value: 'meow'});
+      wrapper.find(fancyFieldSelector).simulate('change');
       expect(onChange.calledOnce).to.be.true;
       expect(onChange.calledWith('meow')).to.be.true;
     });
@@ -111,33 +103,33 @@ context('FancyField', () => {
     context('type is number', () => {
       it('should replace all non digits if type=number', () => {
         const onChange = sinon.spy();
-        const component = createComponent({ onChange, type: 'number' });
+        const wrapper = createComponent({ onChange, type: 'number' });
 
-        component.setState({value: 'meow567'});
-        Simulate.change(component.fancyFieldEl);
+        wrapper.setState({value: 'meow567'});
+        wrapper.find(fancyFieldSelector).simulate('change');
         expect(onChange.calledOnce).to.be.true;
         expect(onChange.calledWith('567')).to.be.true;
       });
     });
 
     it('should call validation when this.props.value is updated', () => {
-      const {parent, component} = createComponent({value: ''}, true);
-      expect(component.state.hasAttemptedInput).to.be.false;
-      expect(component.state.value).to.equal('');
-      parent.setState({value: 'meow'});
-      expect(component.state.hasAttemptedInput).to.be.true;
-      expect(component.state.value).to.equal('meow');
+      const wrapper = createComponent({value: ''});
+      expect(wrapper.state().hasAttemptedInput).to.be.false;
+      expect(wrapper.state().value).to.equal('');
+      wrapper.setProps({value: 'meow'});
+      expect(wrapper.state().hasAttemptedInput).to.be.true;
+      expect(wrapper.state().value).to.equal('meow');
     });
 
     it('should also pass through validator if there is a validator when this.props.value is updated', () => {
       const validator = sinon.stub().returns('invalid meow');
-      const {parent, component} = createComponent({value: '', validator}, true);
+      const wrapper = createComponent({value: '', validator});
 
-      parent.setState({value: 'meow'});
+      wrapper.setProps({value: 'meow'});
       expect(validator.calledOnce).to.be.true;
       expect(validator.calledWith('meow')).to.be.true;
-      expect(component.state.errorMessage).to.equal('invalid meow');
-      expect(component.state.shouldShowError).to.be.false;
+      expect(wrapper.state().errorMessage).to.equal('invalid meow');
+      expect(wrapper.state().shouldShowError).to.be.false;
     });
 
     it('should also pass through multiple validator if there is an array of validators when this.props.value is updated', () => {
@@ -145,53 +137,53 @@ context('FancyField', () => {
       const validator2 = sinon.stub().returns('invalid orange');
       const validator = [validator1, validator2];
 
-      const {parent, component} = createComponent({value: '', validator}, true);
+      const wrapper = createComponent({value: '', validator});
 
-      parent.setState({value: 'meow'});
+      wrapper.setProps({value: 'meow'});
       expect(validator1.calledOnce).to.be.true;
       expect(validator2.calledOnce).to.be.true;
       expect(validator1.calledWith('meow')).to.be.true;
       expect(validator2.calledWith('meow')).to.be.true;
-      expect(component.state.errorMessage).to.equal('invalid orange');
-      expect(component.state.shouldShowError).to.be.false;
+      expect(wrapper.state().errorMessage).to.equal('invalid orange');
+      expect(wrapper.state().shouldShowError).to.be.false;
     });
 
     function showErrorTest(simulation) {
       const validator = sinon.stub().returns('invalid meow');
       const onChange = sinon.spy();
       const onBlur = sinon.spy();
-      const {parent, component} = createComponent({value: '', validator, onChange, onBlur}, true);
+      const wrapper = createComponent({value: '', validator, onChange, onBlur});
 
-      parent.setState({value: 'meow'});
-      simulation(component);
-      expect(component.state.shouldShowError).to.be.true;
-      expect(component.state.errorMessage).to.equal('invalid meow');
+      wrapper.setProps({value: 'meow'});
+      simulation(wrapper);
+      expect(wrapper.state().shouldShowError).to.be.true;
+      expect(wrapper.state().errorMessage).to.equal('invalid meow');
       return { onChange, onBlur };
     }
 
     it('should show error on blur', () => {
-      const { onBlur } = showErrorTest((component) => Simulate.blur(component.fancyFieldEl));
+      const { onBlur } = showErrorTest((wrapper) => wrapper.find(fancyFieldSelector).simulate('blur'));
       expect(onBlur.calledOnce).to.be.true;
       expect(onBlur.calledWith('meow')).to.be.true;
     });
 
     it('should show error on hit of enter', () => {
-      const { onChange } = showErrorTest((component) =>
-        Simulate.keyDown(component.fancyFieldEl, {key: "Enter", keyCode: 13, which: 13}));
+      const { onChange } = showErrorTest((wrapper) =>
+      wrapper.find(fancyFieldSelector).simulate('keyDown', {key: "Enter", keyCode: 13, which: 13}));
       expect(onChange.calledOnce).to.be.true;
       expect(onChange.calledWith('meow')).to.be.true;
     });
 
-    it('should call onBlur if passed into component instead of onChange', () => {
+    it('should call onBlur if passed into wrapper instead of onChange', () => {
       const validator = sinon.stub().returns('invalid meow');
       const onBlur = sinon.spy();
       const onChange = sinon.spy();
-      const {parent, component} = createComponent({value: '', validator, onBlur, onChange}, true);
+      const wrapper = createComponent({value: '', validator, onBlur, onChange});
 
-      parent.setState({value: 'meow'});
-      Simulate.blur(component.fancyFieldEl);
-      expect(component.state.shouldShowError).to.be.true;
-      expect(component.state.errorMessage).to.equal('invalid meow');
+      wrapper.setProps({value: 'meow'});
+      wrapper.find(fancyFieldSelector).simulate('blur');
+      expect(wrapper.state().shouldShowError).to.be.true;
+      expect(wrapper.state().errorMessage).to.equal('invalid meow');
       expect(onChange.called).to.be.false;
       expect(onBlur.calledOnce).to.be.true;
       expect(onBlur.calledWith('meow')).to.be.true;
@@ -200,63 +192,63 @@ context('FancyField', () => {
     it('should show show the error message in place of label', () => {
       const validator = sinon.stub().returns('invalid meow');
       const onChange = sinon.spy();
-      const {parent, component} = createComponent({value: '', validator, onChange}, true);
+      const wrapper = createComponent({value: '', validator, onChange});
 
-      parent.setState({value: 'meow'});
-      Simulate.blur(component.fancyFieldEl);
-      const errorMessage = findDOMNode(component).querySelector('.fancy-field__label--error');
-      expect(errorMessage).to.exist;
-      expect(errorMessage.textContent).to.equal('invalid meow');
+      wrapper.setProps({value: 'meow'});
+      wrapper.find(fancyFieldSelector).simulate('blur');
+      const errorMessage = wrapper.find('.fancy-field__label--error');
+      expect(errorMessage).to.have.length(1);
+      expect(errorMessage.text()).to.equal('invalid meow');
     });
 
     describe('typeaheadOptions', () => {
       it('should give class active to different option items when arrow up and down through items', () => {
-        const component = createComponent({ typeaheadOptions: fromJS([{
+        const wrapper = createComponent({ typeaheadOptions: fromJS([{
             id: '1', label: 'meow'
           }, {
             id: '2', label: 'orange'
           }])
         });
-        const { fancyFieldTypeaheadContainer } = component.refs;
-        const fancyField = component.fancyFieldEl;
+        const { fancyFieldTypeaheadContainer } = wrapper.instance().refs;
+        const fancyField = wrapper.instance().fancyFieldEl;
         const typeaheadItems = fancyFieldTypeaheadContainer.querySelectorAll('li');
-        Simulate.focus(fancyField);
-        expect(component.state.isFocused).to.be.true;
-        Simulate.keyDown(fancyField, {keyCode: 40});
+        wrapper.find(fancyFieldSelector).simulate('focus');
+        expect(wrapper.state().isFocused).to.be.true;
+        wrapper.find(fancyFieldSelector).simulate('keyDown', {keyCode: 40});
         expect(typeaheadItems[0].classList.contains('fancy-field__typeahead-opt--active')).to.be.true;
         expect(typeaheadItems[1].classList.contains('fancy-field__typeahead-opt--active')).to.be.false;
-        Simulate.keyDown(fancyField, {keyCode: 40});
+        wrapper.find(fancyFieldSelector).simulate('keyDown', {keyCode: 40});
         expect(typeaheadItems[0].classList.contains('fancy-field__typeahead-opt--active')).to.be.false;
         expect(typeaheadItems[1].classList.contains('fancy-field__typeahead-opt--active')).to.be.true;
-        Simulate.keyDown(fancyField, {keyCode: 38});
+        wrapper.find(fancyFieldSelector).simulate('keyDown', {keyCode: 38});
         expect(typeaheadItems[0].classList.contains('fancy-field__typeahead-opt--active')).to.be.true;
         expect(typeaheadItems[1].classList.contains('fancy-field__typeahead-opt--active')).to.be.false;
-        Simulate.keyDown(fancyField, {keyCode: 38});
+        wrapper.find(fancyFieldSelector).simulate('keyDown', {keyCode: 38});
         expect(typeaheadItems[0].classList.contains('fancy-field__typeahead-opt--active')).to.be.true;
         expect(typeaheadItems[1].classList.contains('fancy-field__typeahead-opt--active')).to.be.false;
-        Simulate.keyDown(fancyField, {keyCode: 38});
+        wrapper.find(fancyFieldSelector).simulate('keyDown', {keyCode: 38});
         expect(typeaheadItems[0].classList.contains('fancy-field__typeahead-opt--active')).to.be.true;
         expect(typeaheadItems[1].classList.contains('fancy-field__typeahead-opt--active')).to.be.false;
       });
 
       it('should hide the typeahead options if user clicks escape', (done) => {
-        const component = createComponent({ typeaheadOptions: fromJS([{
+        const wrapper = createComponent({ typeaheadOptions: fromJS([{
             id: '1', label: 'meow'
           }, {
             id: '2', label: 'orange'
           }])
         });
-        const { fancyFieldTypeaheadContainer } = component.refs;
-        const fancyField = component.fancyFieldEl;
+        const { fancyFieldTypeaheadContainer } = wrapper.instance().refs;
+        const fancyField = wrapper.instance().fancyFieldEl;
         const typeaheadItems = fancyFieldTypeaheadContainer.querySelectorAll('li');
-        Simulate.focus(fancyField);
-        Simulate.keyDown(fancyField, {keyCode: 40});
+        wrapper.find(fancyFieldSelector).simulate('focus');
+        wrapper.find(fancyFieldSelector).simulate('keyDown', {keyCode: 40});
         expect(typeaheadItems[0].classList.contains('fancy-field__typeahead-opt--active')).to.be.true;
         expect(typeaheadItems[1].classList.contains('fancy-field__typeahead-opt--active')).to.be.false;
-        Simulate.keyDown(fancyField, {keyCode: 27});
+        wrapper.find(fancyFieldSelector).simulate('keyDown', {keyCode: 27});
         setTimeout(() => {
           expect(fancyFieldTypeaheadContainer.classList.contains('fancy-field__typeahead--hidden')).to.be.true;
-          expect(component.state.isFocused).to.be.false;
+          expect(wrapper.state().isFocused).to.be.false;
           done();
         }, 200);
       });
@@ -264,64 +256,63 @@ context('FancyField', () => {
 
       it('should select item on item click', () => {
         const onChange = sinon.spy();
-        const component = createComponent({ onChange, typeaheadOptions: fromJS([{
+        const wrapper = createComponent({ onChange, typeaheadOptions: fromJS([{
             id: '1', label: 'meow'
           }, {
             id: '2', label: 'orange'
           }])
         });
-        const { fancyFieldTypeaheadContainer } = component.refs;
-        const fancyField = component.fancyFieldEl;
-        const typeaheadItems = fancyFieldTypeaheadContainer.querySelectorAll('li');
-        Simulate.focus(fancyField);
-        Simulate.click(typeaheadItems[0]);
+        const fancyField = wrapper.find(fancyFieldSelector);
+        const typeaheadItems = wrapper.find('.fancy-field__typeahead li');
+        fancyField.simulate('focus');
+        typeaheadItems.first().simulate('click');
         expect(onChange.calledOnce).to.be.true;
-        expect(onChange.calledWith(component.props.typeaheadOptions.get(0), '')).to.be.true;
+        expect(onChange.calledWith(wrapper.props().typeaheadOptions.get(0), '')).to.be.true;
       });
 
       it('should select item on item arrow down, then enter press', () => {
         const onChange = sinon.spy();
-        const component = createComponent({ onChange, typeaheadOptions: fromJS([{
+        const wrapper = createComponent({ onChange, typeaheadOptions: fromJS([{
             id: '1', label: 'meow'
           }, {
             id: '2', label: 'orange'
           }])
         });
-        const { fancyFieldTypeaheadContainer } = component.refs;
-        const fancyField = component.fancyFieldEl;
+        const { fancyFieldTypeaheadContainer } = wrapper.instance().refs;
+        const fancyField = wrapper.instance().fancyFieldEl;
         const typeaheadItems = fancyFieldTypeaheadContainer.querySelectorAll('li');
-        Simulate.focus(fancyField);
-        Simulate.keyDown(fancyField, {keyCode: 40});
-        Simulate.keyDown(fancyField, {keyCode: 13});
+        wrapper.find(fancyFieldSelector).simulate('focus');
+        wrapper.find(fancyFieldSelector).simulate('keyDown', {keyCode: 40});
+        wrapper.find(fancyFieldSelector).simulate('keyDown', {keyCode: 13});
         expect(onChange.calledOnce).to.be.true;
-        expect(onChange.calledWith(component.props.typeaheadOptions.get(0), '')).to.be.true;
+        expect(onChange.calledWith(wrapper.props().typeaheadOptions.get(0), '')).to.be.true;
       });
 
       it('should update the arrowSelectedTypeaheadOpt when typeaheadOptions change or are empty', () => {
-        const {parent, component} = createComponent({ typeaheadOptions: fromJS([{
+        const wrapper = createComponent({ typeaheadOptions: fromJS([{
             id: '1', label: 'meow'
           }, {
             id: '2', label: 'orange'
           }])
-        }, true);
-        const { fancyFieldTypeaheadContainer } = component.refs;
-        const fancyField = component.fancyFieldEl;
+        });
+        const { fancyFieldTypeaheadContainer } = wrapper.instance().refs;
+        const fancyField = wrapper.instance().fancyFieldEl;
 
-        Simulate.focus(fancyField);
-        Simulate.keyDown(fancyField, {keyCode: 40});
-        expect(component.state.arrowSelectedTypeaheadOpt.dataset.id).to.equal('1');
-        parent.setState({ typeaheadOptions: fromJS([{
+        wrapper.find(fancyFieldSelector).simulate('focus');
+        wrapper.find(fancyFieldSelector).simulate('keyDown', {keyCode: 40});
+        expect(wrapper.state().arrowSelectedTypeaheadOpt.dataset.id).to.equal('1');
+        wrapper.setProps({ typeaheadOptions: fromJS([{
             id: '11', label: 'woof'
           }, {
             id: '12', label: 'apple'
           }])
         });
-        expect(component.state.arrowSelectedTypeaheadOpt).to.be.null;
-        Simulate.focus(fancyField);
-        Simulate.keyDown(fancyField, {keyCode: 40});
-        expect(component.state.arrowSelectedTypeaheadOpt.dataset.id).to.equal('11');
-        parent.setState({ typeaheadOptions: null });
-        expect(component.state.arrowSelectedTypeaheadOpt).to.be.null;
+        expect(wrapper.state().arrowSelectedTypeaheadOpt).to.be.null;
+        wrapper.find(fancyFieldSelector).simulate('focus');
+        wrapper.find(fancyFieldSelector).simulate('keyDown', {keyCode: 40});
+        expect(wrapper.state().arrowSelectedTypeaheadOpt.dataset.id).to.equal('11');
+        wrapper.setProps({ typeaheadOptions: null });
+        expect(wrapper.state().arrowSelectedTypeaheadOpt).to.be.null;
       });
     });
 
@@ -329,9 +320,9 @@ context('FancyField', () => {
   describe('tooltip', () => {
     it('should show the tooltip', () => {
       const tooltip = 'hello my friends this is a tooltip';
-      const component = createComponent({tooltip});
-      const tooltipNode = findDOMNode(component).querySelector('.fancy-field__tooltip');
-      expect(tooltipNode).to.exist;
+      const wrapper = createComponent({tooltip});
+      const tooltipNode = wrapper.find('.fancy-field__tooltip');
+      expect(tooltipNode).to.have.length(1);
     });
   });
 
