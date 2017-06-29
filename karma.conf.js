@@ -32,11 +32,23 @@ module.exports = function(config) {
       'test/**/*.+(js|jsx)': ['browserify']
     },
 
+    babelPreprocessor: {
+      options: {
+        presets: ['airbnb']
+      }
+    },
+
     browserify: {
       debug: true,
+      transform: [
+        ['babelify', { presets: ['airbnb'] }]
+      ],
       configure: function(bundle) {
-        bundle.once('prebundle', function() {
+        bundle.on('prebundle', function() {
           bundle.transform('babelify');
+          bundle.external('react/addons');
+          bundle.external('react/lib/ReactContext');
+          bundle.external('react/lib/ExecutionEnvironment');
         });
       }
     },
@@ -66,7 +78,7 @@ module.exports = function(config) {
 
     // start these browsers
     // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
-    browsers: [config.debug ? 'Chrome' : 'PhantomJS'],
+    browsers: [config.debug ? 'Chrome' : 'Chrome_headless'],
 
 
     // Continuous Integration mode
@@ -75,10 +87,20 @@ module.exports = function(config) {
 
     plugins: [
       'karma-mocha',
-      'karma-phantomjs-launcher',
       'karma-chrome-launcher',
       'karma-chai-sinon',
       'karma-browserify'
-    ]
+    ],
+
+    customLaunchers: {
+      Chrome_headless: {
+        base: 'Chrome',
+        flags: [
+          '--headless',
+          '--disable-gpu',
+          '--remote-debugging-port=9222'
+        ]
+      }
+    }
   })
 }

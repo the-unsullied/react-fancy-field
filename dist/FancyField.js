@@ -60,6 +60,7 @@ exports.default = _react2.default.createClass({
   listEl: null,
   fancyFieldEl: null,
   resetAriaHidden: null,
+  displayName: 'FancyField',
 
   getDefaultProps: function getDefaultProps() {
     return {
@@ -166,7 +167,7 @@ exports.default = _react2.default.createClass({
   handleChange: function handleChange(e, typeaheadOpt) {
     this.setState({ isUserChange: true });
     this.handleFocus(e);
-    this.handleUserAction(e, 'change');
+    this.handleUserAction(e, 'change', typeaheadOpt);
   },
   handleBlur: function handleBlur(e) {
     var _this2 = this;
@@ -249,6 +250,7 @@ exports.default = _react2.default.createClass({
     }
   },
   handleUserAction: function handleUserAction(e, type) {
+    var typeaheadOpt = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
     var _props4 = this.props,
         name = _props4.name,
         onChange = _props4.onChange,
@@ -256,7 +258,7 @@ exports.default = _react2.default.createClass({
         onEnter = _props4.onEnter,
         onFocus = _props4.onFocus;
 
-    var value = this.getValue(e);
+    var value = this.getValue(e, typeaheadOpt);
     this.setState({ isUserChange: true });
     switch (type) {
       case 'blur':
@@ -276,7 +278,7 @@ exports.default = _react2.default.createClass({
       this.setState({ shouldShowError: true });
     }
   },
-  getValue: function getValue(e) {
+  getValue: function getValue(e, typeaheadOpt) {
     var value = void 0;
     if (e === fromTypeahead) {
       value = typeaheadOpt;
@@ -452,24 +454,38 @@ exports.default = _react2.default.createClass({
         onFocus: this.handleFocus,
         autoFocus: autoFocus,
         onKeyDown: this.handleEnterKeypress })),
-      _react2.default.createElement(
-        'div',
-        { className: (0, _classnames2.default)("fancy-field__label", { 'fancy-field__label--error': shouldShowError }) },
-        shouldShowError ? _react2.default.createElement(
-          'span',
-          { id: errorLabel },
-          errorMessage
-        ) : _react2.default.createElement(
-          'span',
-          null,
-          label
-        )
-      ),
+      this.renderLabel(dashedLabel, shouldShowError, errorLabel),
       hasTypeaheadOpts ? _react2.default.createElement(
         'div',
         { className: (0, _classnames2.default)("fancy-field__typeahead", { 'fancy-field__typeahead--hidden': !isFocused }),
           ref: 'fancyFieldTypeaheadContainer' },
         this.renderTypeaheadBody()
+      ) : null
+    );
+  },
+  renderLabel: function renderLabel(dashedLabel, shouldShowError, errorLabel) {
+    var errorMessage = this.state.errorMessage;
+    var label = this.props.label;
+
+    return _react2.default.createElement(
+      'div',
+      null,
+      _react2.default.createElement(
+        'label',
+        { className: (0, _classnames2.default)("fancy-field__label", { 'fancy-field__label--error': shouldShowError }),
+          id: shouldShowError ? errorLabel : '',
+          htmlFor: shouldShowError ? '' : dashedLabel },
+        _react2.default.createElement(
+          'span',
+          null,
+          shouldShowError ? errorMessage : label
+        )
+      ),
+      shouldShowError ? _react2.default.createElement(
+        'span',
+        { htmlFor: dashedLabel,
+          className: 'fancy-field__visuallyhidden' },
+        label
       ) : null
     );
   },

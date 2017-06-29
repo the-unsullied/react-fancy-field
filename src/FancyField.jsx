@@ -42,6 +42,7 @@ export default React.createClass({
   listEl: null,
   fancyFieldEl: null,
   resetAriaHidden: null,
+  displayName: 'FancyField',
 
   getDefaultProps: function() {
     return {
@@ -142,7 +143,7 @@ export default React.createClass({
   handleChange(e, typeaheadOpt) {
     this.setState({ isUserChange: true });
     this.handleFocus(e);
-    this.handleUserAction(e, 'change');
+    this.handleUserAction(e, 'change', typeaheadOpt);
   },
 
   handleBlur(e) {
@@ -219,9 +220,9 @@ export default React.createClass({
     }
   },
 
-  handleUserAction(e, type) {
+  handleUserAction(e, type, typeaheadOpt = {}) {
     const { name, onChange, onBlur, onEnter, onFocus } = this.props;
-    const value = this.getValue(e);
+    const value = this.getValue(e, typeaheadOpt);
     this.setState({ isUserChange: true });
     switch(type) {
       case 'blur':
@@ -242,7 +243,7 @@ export default React.createClass({
     }
   },
 
-  getValue(e) {
+  getValue(e, typeaheadOpt) {
     let value;
     if(e === fromTypeahead) {
       value = typeaheadOpt
@@ -404,9 +405,8 @@ export default React.createClass({
              onFocus={this.handleFocus}
              autoFocus={autoFocus}
              onKeyDown={this.handleEnterKeypress} />
-      <div className={classnames("fancy-field__label", {'fancy-field__label--error': shouldShowError})}>
-        {shouldShowError ? <span id={errorLabel}>{errorMessage}</span> : <span>{label}</span>}
-      </div>
+
+           { this.renderLabel(dashedLabel, shouldShowError, errorLabel) }
 
       { hasTypeaheadOpts ?
         <div className={classnames("fancy-field__typeahead", {'fancy-field__typeahead--hidden': !isFocused})}
@@ -415,6 +415,25 @@ export default React.createClass({
         </div>
       : null}
     </div>
+  },
+
+  renderLabel(dashedLabel, shouldShowError, errorLabel) {
+    const { errorMessage } = this.state;
+    const { label } = this.props;
+    return (
+      <div>
+        <label className={classnames("fancy-field__label", {'fancy-field__label--error': shouldShowError})}
+               id={shouldShowError ? errorLabel : ''}
+               htmlFor={shouldShowError ? '' : dashedLabel}>
+          <span>{shouldShowError ? errorMessage : label}</span>
+        </label>
+        {
+          shouldShowError ?
+          <span htmlFor={dashedLabel}
+            className='fancy-field__visuallyhidden'>{label}</span> : null
+        }
+      </div>
+    );
   },
 
   renderTypeaheadBody() {
