@@ -418,13 +418,15 @@ export default React.createClass({
   },
 
   renderLabel(dashedLabel, shouldShowError, errorLabel) {
-    const { errorMessage } = this.state;
+    const { errorMessage, hasAttemptedInput } = this.state;
     const { label } = this.props;
     return (
       <div>
         <label className={classnames("fancy-field__label", {'fancy-field__label--error': shouldShowError})}
                id={shouldShowError ? errorLabel : ''}
-               htmlFor={shouldShowError ? '' : dashedLabel}>
+               htmlFor={shouldShowError ? '' : dashedLabel}
+               aria-hidden={!hasAttemptedInput}
+        >
           <span>{shouldShowError ? errorMessage : label}</span>
         </label>
         {
