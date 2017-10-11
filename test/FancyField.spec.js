@@ -1,8 +1,7 @@
 import React from 'react';
-import { Simulate } from 'react-addons-test-utils';
-import FancyField from './../dist/FancyField';
 import { mount } from 'enzyme';
-import {fromJS, List, Map} from 'immutable';
+import {fromJS} from 'immutable';
+import FancyField from './../dist/FancyField';
 
 const noop = () => {};
 

@@ -6,6 +6,8 @@ Object.defineProperty(exports, "__esModule", {
 
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; //comment
 /**
 Component that stands in as styled input
@@ -35,6 +37,10 @@ var _react = require('react');
 
 var _react2 = _interopRequireDefault(_react);
 
+var _propTypes = require('prop-types');
+
+var _propTypes2 = _interopRequireDefault(_propTypes);
+
 var _classnames = require('classnames');
 
 var _classnames2 = _interopRequireDefault(_classnames);
@@ -44,6 +50,12 @@ var _immutable = require('immutable');
 var _immutable2 = _interopRequireDefault(_immutable);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 var fromTypeahead = 'FROM_TYPEAHEAD';
 var isIE11 = !window.ActiveXObject && "ActiveXObject" in window;
@@ -56,75 +68,22 @@ function getInputOnChangeProps(handler) {
   return isIE11 ? { onInput: handler } : { onChange: handler };
 }
 
-exports.default = _react2.default.createClass({
-  listEl: null,
-  fancyFieldEl: null,
-  resetAriaHidden: null,
-  displayName: 'FancyField',
+var _class = function (_React$Component) {
+  _inherits(_class, _React$Component);
 
-  getDefaultProps: function getDefaultProps() {
-    return {
-      name: '',
-      type: 'text',
-      triggerValidation: 0,
-      label: '',
-      disabled: false,
-      placeholder: '',
-      validator: null,
-      value: null,
-      classes: '',
-      onChange: function onChange() {},
-      onFocus: function onFocus() {},
-      tooltip: null,
-      required: false,
-      readOnly: false,
-      isEditable: false,
-      icon: null,
-      isIconRight: false,
-      autoFocus: false,
-      autoComplete: null,
-      typeaheadOptions: [],
-      ariaLabel: '',
-      ariaHidden: undefined,
-      tabIndex: '',
-      suppressError: null
-    };
-  },
+  function _class(props) {
+    _classCallCheck(this, _class);
 
-  propTypes: {
-    name: _react2.default.PropTypes.string,
-    type: _react2.default.PropTypes.string,
-    triggerValidation: _react2.default.PropTypes.number,
-    label: _react2.default.PropTypes.any,
-    placeholder: _react2.default.PropTypes.any,
-    disabled: _react2.default.PropTypes.bool,
-    validator: _react2.default.PropTypes.any,
-    value: _react2.default.PropTypes.any,
-    classes: _react2.default.PropTypes.string,
-    onChange: _react2.default.PropTypes.func,
-    onFocus: _react2.default.PropTypes.func,
-    tooltip: _react2.default.PropTypes.string,
-    required: _react2.default.PropTypes.bool,
-    readOnly: _react2.default.PropTypes.bool,
-    isEditable: _react2.default.PropTypes.bool,
-    icon: _react2.default.PropTypes.any,
-    isIconRight: _react2.default.PropTypes.bool,
-    autoFocus: _react2.default.PropTypes.bool,
-    autoComplete: _react2.default.PropTypes.string,
-    typeaheadOptions: _react2.default.PropTypes.any,
-    ariaLabel: _react2.default.PropTypes.any,
-    ariaHidden: _react2.default.PropTypes.bool,
-    tabIndex: _react2.default.PropTypes.string,
-    suppressError: _react2.default.PropTypes.bool
-  },
+    var _this = _possibleConstructorReturn(this, (_class.__proto__ || Object.getPrototypeOf(_class)).call(this, props));
 
-  getInitialState: function getInitialState() {
-    var _props = this.props,
-        value = _props.value,
-        ariaHidden = _props.ariaHidden;
+    _initialiseProps.call(_this);
+
+    var value = props.value,
+        ariaHidden = props.ariaHidden;
 
     var stateVal = isNaN(parseFloat(value)) && !value ? '' : value;
-    return {
+
+    _this.state = {
       value: stateVal,
       hasAttemptedInput: false,
       errorMessage: '',
@@ -133,60 +92,246 @@ exports.default = _react2.default.createClass({
       arrowSelectedTypeaheadOpt: null,
       ariaHidden: ariaHidden === undefined ? false : ariaHidden
     };
-  },
-  componentWillMount: function componentWillMount() {
-    var _this = this;
+    return _this;
+  }
 
-    this.validate(this.state.value);
-    this.resetAriaHidden = debounce(function () {
-      _this.setState({ ariaHidden: false });
-    }, 200);
-  },
-  componentWillReceiveProps: function componentWillReceiveProps(nextProps) {
-    var _props2 = this.props,
-        triggerValidation = _props2.triggerValidation,
-        value = _props2.value,
-        typeaheadOptions = _props2.typeaheadOptions;
+  _createClass(_class, [{
+    key: 'componentWillMount',
+    value: function componentWillMount() {
+      var _this2 = this;
 
-    var nextTypeaheadOpts = nextProps.typeaheadOptions;
-    var shouldShowError = this.state.shouldShowError || triggerValidation !== nextProps.triggerValidation;
-    var hasTypeaheadOpts = !!typeaheadOptions && (isImmutable(typeaheadOptions) ? typeaheadOptions.size > 0 : typeaheadOptions.length > 0);
-    var willHaveTypeaheadOpts = !!nextTypeaheadOpts && (isImmutable(nextTypeaheadOpts) ? nextTypeaheadOpts.size > 0 : nextTypeaheadOpts.length > 0);
-    var hasEmptyTypeaheadOpts = hasTypeaheadOpts && !willHaveTypeaheadOpts;
-    var isSameTypeaheadOpts = _immutable2.default.is((0, _immutable.fromJS)(typeaheadOptions), (0, _immutable.fromJS)(nextTypeaheadOpts));
-
-    if (value !== nextProps.value || shouldShowError) {
-      var nextVal = nextProps.value;
-      var _value = this.valueIsValue(nextVal) ? nextVal : '';
-      this.validate(_value, shouldShowError);
+      this.validate(this.state.value);
+      this.resetAriaHidden = debounce(function () {
+        _this2.setState({ ariaHidden: false });
+      }, 200);
     }
-    if (hasEmptyTypeaheadOpts || !isSameTypeaheadOpts) {
-      this.setState({ arrowSelectedTypeaheadOpt: null });
-    }
-  },
-  handleChange: function handleChange(e, typeaheadOpt) {
-    this.setState({ isUserChange: true });
-    this.handleFocus(e);
-    this.handleUserAction(e, 'change', typeaheadOpt);
-  },
-  handleBlur: function handleBlur(e) {
-    var _this2 = this;
+  }, {
+    key: 'componentWillReceiveProps',
+    value: function componentWillReceiveProps(nextProps) {
+      var _props = this.props,
+          triggerValidation = _props.triggerValidation,
+          value = _props.value,
+          typeaheadOptions = _props.typeaheadOptions;
 
+      var nextTypeaheadOpts = nextProps.typeaheadOptions;
+      var shouldShowError = this.state.shouldShowError || triggerValidation !== nextProps.triggerValidation;
+      var hasTypeaheadOpts = !!typeaheadOptions && (isImmutable(typeaheadOptions) ? typeaheadOptions.size > 0 : typeaheadOptions.length > 0);
+      var willHaveTypeaheadOpts = !!nextTypeaheadOpts && (isImmutable(nextTypeaheadOpts) ? nextTypeaheadOpts.size > 0 : nextTypeaheadOpts.length > 0);
+      var hasEmptyTypeaheadOpts = hasTypeaheadOpts && !willHaveTypeaheadOpts;
+      var isSameTypeaheadOpts = _immutable2.default.is((0, _immutable.fromJS)(typeaheadOptions), (0, _immutable.fromJS)(nextTypeaheadOpts));
+
+      if (value !== nextProps.value || shouldShowError) {
+        var nextVal = nextProps.value;
+        var _value = this.valueIsValue(nextVal) ? nextVal : '';
+        this.validate(_value, shouldShowError);
+      }
+      if (hasEmptyTypeaheadOpts || !isSameTypeaheadOpts) {
+        this.setState({ arrowSelectedTypeaheadOpt: null });
+      }
+    }
+  }, {
+    key: 'componentDidUpdate',
+    value: function componentDidUpdate(prevProps, prevState) {
+      // please reaad comment located @setAriaHidden
+      if (this.props.ariaHidden === undefined) {
+        if (this.state.ariaHidden && prevProps.value !== this.props.value) {
+          this.resetAriaHidden();
+        }
+      }
+    }
+  }, {
+    key: 'render',
+    value: function render() {
+      var _this3 = this;
+
+      var _state = this.state,
+          value = _state.value,
+          hasAttemptedInput = _state.hasAttemptedInput,
+          errorMessage = _state.errorMessage,
+          ariaHidden = _state.ariaHidden,
+          isFocused = _state.isFocused;
+      var shouldShowError = this.state.shouldShowError;
+      var _props2 = this.props,
+          tooltip = _props2.tooltip,
+          icon = _props2.icon,
+          isIconRight = _props2.isIconRight,
+          disabled = _props2.disabled,
+          placeholder = _props2.placeholder,
+          label = _props2.label,
+          classes = _props2.classes,
+          required = _props2.required,
+          autoFocus = _props2.autoFocus,
+          typeaheadOptions = _props2.typeaheadOptions,
+          ariaLabel = _props2.ariaLabel,
+          autoComplete = _props2.autoComplete,
+          tabIndex = _props2.tabIndex,
+          isEditable = _props2.isEditable;
+      var _props$name = this.props.name,
+          name = _props$name === undefined ? label : _props$name;
+
+      var dashedName = name.split(' ').join('-');
+      var dashedLabel = dashedName + '-label';
+      var errorLabel = dashedName + '-error-description';
+      var type = this.props.type;
+
+      type = !type || type === 'number' ? 'text' : type;
+
+      shouldShowError = shouldShowError && !!errorMessage.length && !disabled;
+      var hasTypeaheadOpts = typeaheadOptions && (isImmutable(typeaheadOptions) ? typeaheadOptions.size > 0 : typeaheadOptions.length > 0);
+      var hasIcon = !!tooltip || !!icon;
+
+      var fancyFieldClasses = (0, _classnames2.default)('fancy-field', classes, {
+        'fancy-field--has-content': hasAttemptedInput,
+        'has-icon': hasIcon,
+        'has-icon--right': hasIcon && isIconRight,
+        'required': required && !disabled,
+        'is-editable': isEditable,
+        'has-typeahead': hasTypeaheadOpts
+      });
+
+      this.setupReadonly();
+
+      return _react2.default.createElement(
+        'div',
+        { className: fancyFieldClasses },
+        !!tooltip ? _react2.default.createElement(
+          'label',
+          { className: 'fancy-field__tooltip simptip-position-top simptip-multiline',
+            'data-tooltip': tooltip,
+            htmlFor: dashedLabel },
+          _react2.default.createElement('i', { className: 'unsullied-icon-help' })
+        ) : null,
+        !!icon ? _react2.default.createElement(
+          'span',
+          { className: 'fancy-field__icon' },
+          icon
+        ) : null,
+        _react2.default.createElement('input', _extends({ autoComplete: autoComplete || "new-password",
+          className: (0, _classnames2.default)('full-width', 'fancy-field__input', { 'fancy-field__input--error': shouldShowError }),
+          name: name,
+          value: value,
+          disabled: disabled,
+          type: type,
+          tabIndex: tabIndex,
+          'aria-label': ariaLabel,
+          'aria-describedby': shouldShowError ? errorLabel : null,
+          id: dashedLabel,
+          'aria-hidden': ariaHidden,
+          'aria-invalid': shouldShowError,
+          ref: function ref(el) {
+            return _this3.fancyFieldEl = el;
+          },
+          placeholder: placeholder
+        }, getInputOnChangeProps(this.handleChange), {
+          onBlur: this.handleBlur,
+          onFocus: this.handleFocus,
+          autoFocus: autoFocus,
+          onKeyDown: this.handleEnterKeypress })),
+        this.renderLabel(dashedLabel, shouldShowError, errorLabel),
+        hasTypeaheadOpts ? _react2.default.createElement(
+          'div',
+          { className: (0, _classnames2.default)("fancy-field__typeahead", { 'fancy-field__typeahead--hidden': !isFocused }),
+            ref: 'fancyFieldTypeaheadContainer' },
+          this.renderTypeaheadBody()
+        ) : null
+      );
+    }
+  }]);
+
+  return _class;
+}(_react2.default.Component);
+
+// Returns a function, that, as long as it continues to be invoked, will not
+// be triggered. The function will be called after it stops being called for
+// N milliseconds. If `immediate` is passed, trigger the function on the
+// leading edge, instead of the trailing.
+
+
+_class.displayName = 'FancyField';
+_class.defaultProps = {
+  name: '',
+  type: 'text',
+  triggerValidation: 0,
+  label: '',
+  disabled: false,
+  placeholder: '',
+  validator: null,
+  value: null,
+  classes: '',
+  onChange: function onChange() {},
+  onFocus: function onFocus() {},
+  tooltip: null,
+  required: false,
+  readOnly: false,
+  isEditable: false,
+  icon: null,
+  isIconRight: false,
+  autoFocus: false,
+  autoComplete: null,
+  typeaheadOptions: [],
+  ariaLabel: '',
+  ariaHidden: undefined,
+  tabIndex: '',
+  suppressError: null
+};
+_class.propTypes = {
+  name: _propTypes2.default.string,
+  type: _propTypes2.default.string,
+  triggerValidation: _propTypes2.default.number,
+  label: _propTypes2.default.any,
+  placeholder: _propTypes2.default.any,
+  disabled: _propTypes2.default.bool,
+  validator: _propTypes2.default.any,
+  value: _propTypes2.default.any,
+  classes: _propTypes2.default.string,
+  onChange: _propTypes2.default.func,
+  onFocus: _propTypes2.default.func,
+  tooltip: _propTypes2.default.string,
+  required: _propTypes2.default.bool,
+  readOnly: _propTypes2.default.bool,
+  isEditable: _propTypes2.default.bool,
+  icon: _propTypes2.default.any,
+  isIconRight: _propTypes2.default.bool,
+  autoFocus: _propTypes2.default.bool,
+  autoComplete: _propTypes2.default.string,
+  typeaheadOptions: _propTypes2.default.any,
+  ariaLabel: _propTypes2.default.any,
+  ariaHidden: _propTypes2.default.bool,
+  tabIndex: _propTypes2.default.string,
+  suppressError: _propTypes2.default.bool
+};
+
+var _initialiseProps = function _initialiseProps() {
+  var _this4 = this;
+
+  this.listEl = null;
+  this.fancyFieldEl = null;
+  this.resetAriaHidden = null;
+
+  this.handleChange = function (e, typeaheadOpt) {
+    _this4.setState({ isUserChange: true });
+    _this4.handleFocus(e);
+    _this4.handleUserAction(e, 'change', typeaheadOpt);
+  };
+
+  this.handleBlur = function (e) {
     // need time for typeahead item to be clicked, before hiding the typeahead
     setTimeout(function () {
-      _this2.setState({
+      _this4.setState({
         isFocused: false,
         arrowSelectedTypeaheadOpt: null
       });
     }, 100);
-    this.handleUserAction(e, 'blur');
-  },
-  handleFocus: function handleFocus(e) {
-    this.setState({ isFocused: true });
-    this.handleUserAction(e, 'focus');
-  },
-  handleEnterKeypress: function handleEnterKeypress(e) {
-    var _props3 = this.props,
+    _this4.handleUserAction(e, 'blur');
+  };
+
+  this.handleFocus = function (e) {
+    _this4.setState({ isFocused: true });
+    _this4.handleUserAction(e, 'focus');
+  };
+
+  this.handleEnterKeypress = function (e) {
+    var _props3 = _this4.props,
         typeaheadOptions = _props3.typeaheadOptions,
         onChange = _props3.onChange,
         onEnter = _props3.onEnter;
@@ -194,23 +339,24 @@ exports.default = _react2.default.createClass({
     var isEnter = e.key === 'Enter';
     var hasTypeaheadOpts = isImmutable(typeaheadOptions) ? typeaheadOptions.size > 0 : typeaheadOptions.length > 0;
 
-    if (this.state.isFocused && hasTypeaheadOpts) {
-      this.arrowSelectElementInTypeahead(e);
+    if (_this4.state.isFocused && hasTypeaheadOpts) {
+      _this4.arrowSelectElementInTypeahead(e);
     } else if (isEnter) {
       if (typeof onChange === 'function') {
-        this.handleUserAction(e, 'change');
+        _this4.handleUserAction(e, 'change');
       }
       if (typeof onEnter === 'function') {
-        this.handleUserAction(e, 'enter');
+        _this4.handleUserAction(e, 'enter');
       }
     }
-  },
-  arrowSelectElementInTypeahead: function arrowSelectElementInTypeahead(e) {
-    var listEl = this.listEl;
-    var typeaheadOptions = this.props.typeaheadOptions;
-    var arrowSelectedTypeaheadOpt = this.state.arrowSelectedTypeaheadOpt;
+  };
 
-    var idKey = this.props.idKey || 'id';
+  this.arrowSelectElementInTypeahead = function (e) {
+    var listEl = _this4.listEl;
+    var typeaheadOptions = _this4.props.typeaheadOptions;
+    var arrowSelectedTypeaheadOpt = _this4.state.arrowSelectedTypeaheadOpt;
+
+    var idKey = _this4.props.idKey || 'id';
     var isArrowDown = e.keyCode === 40;
     var isArrowUp = e.keyCode === 38;
     var isEscape = e.keyCode === 27;
@@ -235,9 +381,9 @@ exports.default = _react2.default.createClass({
       }
       selection.className = activeClassName;
       selection.scrollIntoView();
-      this.setState({ arrowSelectedTypeaheadOpt: selection });
+      _this4.setState({ arrowSelectedTypeaheadOpt: selection });
     } else if (isEscape) {
-      this.handleBlur(e);
+      _this4.handleBlur(e);
     } else if (isEnter) {
       var isTypeaheadOptionsImmutable = isImmutable(typeaheadOptions);
       var id = arrowSelectedTypeaheadOpt.dataset.id;
@@ -245,21 +391,22 @@ exports.default = _react2.default.createClass({
       var opt = typeaheadOptions.find(function (opt) {
         return isTypeaheadOptionsImmutable ? opt.get(idKey) === id : opt[idKey] === id;
       });
-      this.handleChange(fromTypeahead, opt);
-      this.setState({ arrowSelectedTypeaheadOpt: null });
+      _this4.handleChange(fromTypeahead, opt);
+      _this4.setState({ arrowSelectedTypeaheadOpt: null });
     }
-  },
-  handleUserAction: function handleUserAction(e, type) {
+  };
+
+  this.handleUserAction = function (e, type) {
     var typeaheadOpt = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
-    var _props4 = this.props,
+    var _props4 = _this4.props,
         name = _props4.name,
         onChange = _props4.onChange,
         onBlur = _props4.onBlur,
         onEnter = _props4.onEnter,
         onFocus = _props4.onFocus;
 
-    var value = this.getValue(e, typeaheadOpt);
-    this.setState({ isUserChange: true });
+    var value = _this4.getValue(e, typeaheadOpt);
+    _this4.setState({ isUserChange: true });
     switch (type) {
       case 'blur':
         onBlur && onBlur(value, name);
@@ -274,72 +421,69 @@ exports.default = _react2.default.createClass({
         onFocus && onFocus(value, name);
         break;
     }
-    if (!this.state.shouldShowError) {
-      this.setState({ shouldShowError: true });
+    if (!_this4.state.shouldShowError) {
+      _this4.setState({ shouldShowError: true });
     }
-  },
-  getValue: function getValue(e, typeaheadOpt) {
+  };
+
+  this.getValue = function (e, typeaheadOpt) {
     var value = void 0;
     if (e === fromTypeahead) {
       value = typeaheadOpt;
     } else {
       value = e.target.value;
-      if (this.props.type === 'number') {
+      if (_this4.props.type === 'number') {
         value = value.replace(/[^0-9\.]+/g, '');
       }
     }
     return value;
-  },
-  valueIsValue: function valueIsValue(value) {
+  };
+
+  this.valueIsValue = function (value) {
     // must be a value other than null or undefined, but can be 0
     return value !== null && value !== undefined && value.toString().length > 0;
-  },
-  validate: function validate(value) {
+  };
+
+  this.validate = function (value) {
     var shouldShowError = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
-    var suppressError = this.props.suppressError;
+    var suppressError = _this4.props.suppressError;
 
-    var hasAttempted = this.valueIsValue(value) || shouldShowError;
+    var hasAttempted = _this4.valueIsValue(value) || shouldShowError;
     var triggerHasAttempted = suppressError === null ? hasAttempted : suppressError && hasAttempted;
-    var hasAttemptedInput = this.state.hasAttemptedInput || triggerHasAttempted;
+    var hasAttemptedInput = _this4.state.hasAttemptedInput || triggerHasAttempted;
 
-    var validator = this.props.validator;
+    var validator = _this4.props.validator;
 
     if (hasAttemptedInput) {
-      this.setAriaHidden();
-      this.setErrorMessage(value, shouldShowError);
-      this.setState({ hasAttemptedInput: hasAttemptedInput, value: value });
+      _this4.setAriaHidden();
+      _this4.setErrorMessage(value, shouldShowError);
+      _this4.setState({ hasAttemptedInput: hasAttemptedInput, value: value });
     } else if (suppressError !== null) {
-      this.setState({ value: value });
+      _this4.setState({ value: value });
     }
-  },
-  componentDidUpdate: function componentDidUpdate(prevProps, prevState) {
-    // please reaad comment located @setAriaHidden
-    if (this.props.ariaHidden === undefined) {
-      if (this.state.ariaHidden && prevProps.value !== this.props.value) {
-        this.resetAriaHidden();
-      }
-    }
-  },
-  setAriaHidden: function setAriaHidden() {
+  };
+
+  this.setAriaHidden = function () {
     // only update ariaHidden state if user does not explicitly define it
     // we need to control it since it can programmatically change.
     // If programatic change, screen reader will pick up change and think user
     // typed it out (unwanted experience)
 
     // this is called during componentWillUpdate - props is not current
-    if (this.props.ariaHidden === undefined) {
-      if (this.state.isUserChange) {
-        this.setState({
+    if (_this4.props.ariaHidden === undefined) {
+      if (_this4.state.isUserChange) {
+        _this4.setState({
           isUserChange: false,
           ariaHidden: false
         });
       } else {
-        this.setState({ ariaHidden: true });
+        _this4.setState({ ariaHidden: true });
       }
     }
-  },
-  setErrorMessage: function setErrorMessage(value, shouldShowError) {
-    var _props5 = this.props,
+  };
+
+  this.setErrorMessage = function (value, shouldShowError) {
+    var _props5 = _this4.props,
         validator = _props5.validator,
         name = _props5.name;
 
@@ -354,118 +498,25 @@ exports.default = _react2.default.createClass({
       return message ? message : error;
     }, '');
 
-    shouldShowError = shouldShowError || this.state.shouldShowError;
-    this.setState({ errorMessage: errorMessage, shouldShowError: shouldShowError });
-  },
-  setupReadonly: function setupReadonly() {
-    var readOnly = this.props.readOnly;
+    shouldShowError = shouldShowError || _this4.state.shouldShowError;
+    _this4.setState({ errorMessage: errorMessage, shouldShowError: shouldShowError });
+  };
 
-    if (this.fancyFieldEl) {
+  this.setupReadonly = function () {
+    var readOnly = _this4.props.readOnly;
+
+    if (_this4.fancyFieldEl) {
       if (readOnly) {
-        this.fancyFieldEl.setAttribute('readonly', 'readonly');
+        _this4.fancyFieldEl.setAttribute('readonly', 'readonly');
       } else {
-        this.fancyFieldEl.removeAttribute('readonly');
+        _this4.fancyFieldEl.removeAttribute('readonly');
       }
     }
-  },
-  render: function render() {
-    var _this3 = this;
+  };
 
-    var _state = this.state,
-        value = _state.value,
-        hasAttemptedInput = _state.hasAttemptedInput,
-        errorMessage = _state.errorMessage,
-        ariaHidden = _state.ariaHidden,
-        isFocused = _state.isFocused;
-    var shouldShowError = this.state.shouldShowError;
-    var _props6 = this.props,
-        tooltip = _props6.tooltip,
-        icon = _props6.icon,
-        isIconRight = _props6.isIconRight,
-        disabled = _props6.disabled,
-        placeholder = _props6.placeholder,
-        label = _props6.label,
-        classes = _props6.classes,
-        required = _props6.required,
-        autoFocus = _props6.autoFocus,
-        typeaheadOptions = _props6.typeaheadOptions,
-        ariaLabel = _props6.ariaLabel,
-        autoComplete = _props6.autoComplete,
-        tabIndex = _props6.tabIndex,
-        isEditable = _props6.isEditable;
-    var _props$name = this.props.name,
-        name = _props$name === undefined ? label : _props$name;
-
-    var dashedName = name.split(' ').join('-');
-    var dashedLabel = dashedName + '-label';
-    var errorLabel = dashedName + '-error-description';
-    var type = this.props.type;
-
-    type = !type || type === 'number' ? 'text' : type;
-
-    shouldShowError = shouldShowError && !!errorMessage.length && !disabled;
-    var hasTypeaheadOpts = typeaheadOptions && (isImmutable(typeaheadOptions) ? typeaheadOptions.size > 0 : typeaheadOptions.length > 0);
-    var hasIcon = !!tooltip || !!icon;
-
-    var fancyFieldClasses = (0, _classnames2.default)('fancy-field', classes, {
-      'fancy-field--has-content': hasAttemptedInput,
-      'has-icon': hasIcon,
-      'has-icon--right': hasIcon && isIconRight,
-      'required': required && !disabled,
-      'is-editable': isEditable,
-      'has-typeahead': hasTypeaheadOpts
-    });
-
-    this.setupReadonly();
-
-    return _react2.default.createElement(
-      'div',
-      { className: fancyFieldClasses },
-      !!tooltip ? _react2.default.createElement(
-        'label',
-        { className: 'fancy-field__tooltip simptip-position-top simptip-multiline',
-          'data-tooltip': tooltip,
-          htmlFor: dashedLabel },
-        _react2.default.createElement('i', { className: 'unsullied-icon-help' })
-      ) : null,
-      !!icon ? _react2.default.createElement(
-        'span',
-        { className: 'fancy-field__icon' },
-        icon
-      ) : null,
-      _react2.default.createElement('input', _extends({ autoComplete: autoComplete || "new-password",
-        className: (0, _classnames2.default)('full-width', 'fancy-field__input', { 'fancy-field__input--error': shouldShowError }),
-        name: name,
-        value: value,
-        disabled: disabled,
-        type: type,
-        tabIndex: tabIndex,
-        'aria-label': ariaLabel,
-        'aria-describedby': shouldShowError ? errorLabel : null,
-        id: dashedLabel,
-        'aria-hidden': ariaHidden,
-        'aria-invalid': shouldShowError,
-        ref: function ref(el) {
-          return _this3.fancyFieldEl = el;
-        },
-        placeholder: placeholder
-      }, getInputOnChangeProps(this.handleChange), {
-        onBlur: this.handleBlur,
-        onFocus: this.handleFocus,
-        autoFocus: autoFocus,
-        onKeyDown: this.handleEnterKeypress })),
-      this.renderLabel(dashedLabel, shouldShowError, errorLabel),
-      hasTypeaheadOpts ? _react2.default.createElement(
-        'div',
-        { className: (0, _classnames2.default)("fancy-field__typeahead", { 'fancy-field__typeahead--hidden': !isFocused }),
-          ref: 'fancyFieldTypeaheadContainer' },
-        this.renderTypeaheadBody()
-      ) : null
-    );
-  },
-  renderLabel: function renderLabel(dashedLabel, shouldShowError, errorLabel) {
-    var errorMessage = this.state.errorMessage;
-    var label = this.props.label;
+  this.renderLabel = function (dashedLabel, shouldShowError, errorLabel) {
+    var errorMessage = _this4.state.errorMessage;
+    var label = _this4.props.label;
 
     return _react2.default.createElement(
       'div',
@@ -488,14 +539,13 @@ exports.default = _react2.default.createClass({
         label
       ) : null
     );
-  },
-  renderTypeaheadBody: function renderTypeaheadBody() {
-    var _this4 = this;
+  };
 
-    var typeaheadOptions = this.props.typeaheadOptions;
+  this.renderTypeaheadBody = function () {
+    var typeaheadOptions = _this4.props.typeaheadOptions;
 
-    var idKey = this.props.idKey || 'id';
-    var labelKey = this.props.labelKey || 'label';
+    var idKey = _this4.props.idKey || 'id';
+    var labelKey = _this4.props.labelKey || 'label';
     var _isImmutable = isImmutable(typeaheadOptions);
 
     return _react2.default.createElement(
@@ -521,14 +571,10 @@ exports.default = _react2.default.createClass({
         })
       )
     );
-  }
-});
+  };
+};
 
-// Returns a function, that, as long as it continues to be invoked, will not
-// be triggered. The function will be called after it stops being called for
-// N milliseconds. If `immediate` is passed, trigger the function on the
-// leading edge, instead of the trailing.
-
+exports.default = _class;
 function debounce(func, wait, immediate) {
   var _this5 = this,
       _arguments = arguments;
@@ -546,5 +592,5 @@ function debounce(func, wait, immediate) {
     timeout = setTimeout(later, wait);
     if (callNow) func.apply(context, args);
   };
-};
+}
 module.exports = exports['default'];
