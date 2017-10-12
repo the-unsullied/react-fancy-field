@@ -24,6 +24,7 @@ Component that stands in as styled input
 */
 
 import React from 'react';
+import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import immutable, {fromJS} from 'immutable';
 
@@ -38,72 +39,69 @@ function getInputOnChangeProps(handler) {
   return isIE11 ? { onInput: handler } : { onChange: handler };
 }
 
-export default React.createClass({
-  listEl: null,
-  fancyFieldEl: null,
-  resetAriaHidden: null,
-  displayName: 'FancyField',
+export default class extends React.Component {
+  static displayName = 'FancyField';
 
-  getDefaultProps: function() {
-    return {
-      name: '',
-      type: 'text',
-      triggerValidation: 0,
-      label: '',
-      disabled: false,
-      placeholder: '',
-      validator: null,
-      value: null,
-      classes: '',
-      onChange: () => {},
-      onFocus: () => {},
-      tooltip: null,
-      required: false,
-      readOnly: false,
-      isEditable: false,
-      icon: null,
-      isIconRight: false,
-      autoFocus: false,
-      autoComplete: null,
-      typeaheadOptions: [],
-      ariaLabel: '',
-      ariaHidden: undefined,
-      tabIndex: '',
-      suppressError: null
-    };
-  },
+  static defaultProps = {
+    name: '',
+    type: 'text',
+    triggerValidation: 0,
+    label: '',
+    disabled: false,
+    placeholder: '',
+    validator: null,
+    value: null,
+    classes: '',
+    onChange: () => {},
+    onFocus: () => {},
+    tooltip: null,
+    required: false,
+    readOnly: false,
+    isEditable: false,
+    icon: null,
+    isIconRight: false,
+    autoFocus: false,
+    autoComplete: null,
+    typeaheadOptions: [],
+    ariaLabel: '',
+    ariaHidden: undefined,
+    tabIndex: '',
+    suppressError: null
+  };
 
-  propTypes: {
-    name: React.PropTypes.string,
-    type: React.PropTypes.string,
-    triggerValidation: React.PropTypes.number,
-    label: React.PropTypes.any,
-    placeholder: React.PropTypes.any,
-    disabled: React.PropTypes.bool,
-    validator: React.PropTypes.any,
-    value: React.PropTypes.any,
-    classes: React.PropTypes.string,
-    onChange: React.PropTypes.func,
-    onFocus: React.PropTypes.func,
-    tooltip: React.PropTypes.string,
-    required: React.PropTypes.bool,
-    readOnly: React.PropTypes.bool,
-    isEditable: React.PropTypes.bool,
-    icon: React.PropTypes.any,
-    isIconRight: React.PropTypes.bool,
-    autoFocus: React.PropTypes.bool,
-    autoComplete: React.PropTypes.string,
-    typeaheadOptions: React.PropTypes.any,
-    ariaLabel: React.PropTypes.any,
-    ariaHidden: React.PropTypes.bool,
-    tabIndex: React.PropTypes.string,
-    suppressError: React.PropTypes.bool
-  },
+  static propTypes = {
+    name: PropTypes.string,
+    type: PropTypes.string,
+    triggerValidation: PropTypes.number,
+    label: PropTypes.any,
+    placeholder: PropTypes.any,
+    disabled: PropTypes.bool,
+    validator: PropTypes.any,
+    value: PropTypes.any,
+    classes: PropTypes.string,
+    onChange: PropTypes.func,
+    onFocus: PropTypes.func,
+    tooltip: PropTypes.string,
+    required: PropTypes.bool,
+    readOnly: PropTypes.bool,
+    isEditable: PropTypes.bool,
+    icon: PropTypes.any,
+    isIconRight: PropTypes.bool,
+    autoFocus: PropTypes.bool,
+    autoComplete: PropTypes.string,
+    typeaheadOptions: PropTypes.any,
+    ariaLabel: PropTypes.any,
+    ariaHidden: PropTypes.bool,
+    tabIndex: PropTypes.string,
+    suppressError: PropTypes.bool
+  };
 
-  getInitialState() {
-    const { value, ariaHidden } = this.props;
+  constructor(props) {
+    super(props);
+    const { value, ariaHidden } = props;
     let stateVal = isNaN(parseFloat(value)) && !value ? '' : value;
-    return {
+
+    this.state = {
       value: stateVal,
       hasAttemptedInput: false,
       errorMessage: '',
@@ -112,14 +110,18 @@ export default React.createClass({
       arrowSelectedTypeaheadOpt: null,
       ariaHidden: ariaHidden === undefined ? false : ariaHidden
     };
-  },
+  }
+
+  listEl = null;
+  fancyFieldEl = null;
+  resetAriaHidden = null;
 
   componentWillMount() {
     this.validate(this.state.value);
     this.resetAriaHidden = debounce(() => {
       this.setState({ ariaHidden: false });
     }, 200);
-  },
+  }
 
   componentWillReceiveProps(nextProps) {
     const { triggerValidation, value, typeaheadOptions } = this.props;
@@ -138,15 +140,15 @@ export default React.createClass({
     if(hasEmptyTypeaheadOpts || !isSameTypeaheadOpts) {
       this.setState({ arrowSelectedTypeaheadOpt: null });
     }
-  },
+  }
 
-  handleChange(e, typeaheadOpt) {
+  handleChange = (e, typeaheadOpt) => {
     this.setState({ isUserChange: true });
     this.handleFocus(e);
     this.handleUserAction(e, 'change', typeaheadOpt);
-  },
+  };
 
-  handleBlur(e) {
+  handleBlur = (e) => {
     // need time for typeahead item to be clicked, before hiding the typeahead
     setTimeout(() => {
       this.setState({
@@ -155,14 +157,14 @@ export default React.createClass({
       });
     }, 100);
     this.handleUserAction(e, 'blur');
-  },
+  };
 
-  handleFocus(e) {
+  handleFocus = (e) => {
     this.setState({ isFocused: true });
     this.handleUserAction(e, 'focus');
-  },
+  };
 
-  handleEnterKeypress(e) {
+  handleEnterKeypress = (e) => {
     const { typeaheadOptions, onChange, onEnter } = this.props;
     const isEnter = e.key === 'Enter';
     const hasTypeaheadOpts = isImmutable(typeaheadOptions) ? typeaheadOptions.size > 0 : typeaheadOptions.length > 0;
@@ -177,9 +179,9 @@ export default React.createClass({
         this.handleUserAction(e, 'enter');
       }
     }
-  },
+  };
 
-  arrowSelectElementInTypeahead(e) {
+  arrowSelectElementInTypeahead = (e) => {
     const { listEl } = this;
     const { typeaheadOptions } = this.props;
     const { arrowSelectedTypeaheadOpt } = this.state;
@@ -218,9 +220,9 @@ export default React.createClass({
       this.handleChange(fromTypeahead, opt);
       this.setState({ arrowSelectedTypeaheadOpt: null });
     }
-  },
+  };
 
-  handleUserAction(e, type, typeaheadOpt = {}) {
+  handleUserAction = (e, type, typeaheadOpt = {}) => {
     const { name, onChange, onBlur, onEnter, onFocus } = this.props;
     const value = this.getValue(e, typeaheadOpt);
     this.setState({ isUserChange: true });
@@ -241,9 +243,9 @@ export default React.createClass({
     if(!this.state.shouldShowError) {
       this.setState({ shouldShowError: true });
     }
-  },
+  };
 
-  getValue(e, typeaheadOpt) {
+  getValue = (e, typeaheadOpt) => {
     let value;
     if(e === fromTypeahead) {
       value = typeaheadOpt
@@ -254,14 +256,14 @@ export default React.createClass({
        }
     }
     return value;
-  },
+  };
 
-  valueIsValue(value) {
+  valueIsValue = (value) => {
     // must be a value other than null or undefined, but can be 0
     return value !== null && value !== undefined && value.toString().length > 0;
-  },
+  };
 
-  validate(value, shouldShowError = false) {
+  validate = (value, shouldShowError = false) => {
     const { suppressError } = this.props;
     const hasAttempted = this.valueIsValue(value) || shouldShowError;
     const triggerHasAttempted = suppressError === null ? hasAttempted : suppressError && hasAttempted;
@@ -275,7 +277,7 @@ export default React.createClass({
     } else if (suppressError !== null) {
       this.setState({ value });
     }
-  },
+  };
 
   componentDidUpdate(prevProps, prevState) {
     // please reaad comment located @setAriaHidden
@@ -284,9 +286,9 @@ export default React.createClass({
         this.resetAriaHidden();
       }
     }
-  },
+  }
 
-  setAriaHidden() {
+  setAriaHidden = () => {
     // only update ariaHidden state if user does not explicitly define it
     // we need to control it since it can programmatically change.
     // If programatic change, screen reader will pick up change and think user
@@ -303,9 +305,9 @@ export default React.createClass({
         this.setState({ ariaHidden: true });
       }
     }
-  },
+  };
 
-  setErrorMessage(value, shouldShowError) {
+  setErrorMessage = (value, shouldShowError) => {
     let { validator, name } = this.props;
 
     if(!validator) { return }
@@ -318,9 +320,9 @@ export default React.createClass({
 
     shouldShowError = shouldShowError || this.state.shouldShowError;
     this.setState({ errorMessage, shouldShowError });
-  },
+  };
 
-  setupReadonly() {
+  setupReadonly = () => {
     const { readOnly } = this.props;
     if(this.fancyFieldEl) {
       if(readOnly) {
@@ -329,7 +331,7 @@ export default React.createClass({
         this.fancyFieldEl.removeAttribute('readonly');
       }
     }
-  },
+  };
 
   render() {
     const { value,
@@ -415,9 +417,9 @@ export default React.createClass({
         </div>
       : null}
     </div>
-  },
+  }
 
-  renderLabel(dashedLabel, shouldShowError, errorLabel) {
+  renderLabel = (dashedLabel, shouldShowError, errorLabel) => {
     const { errorMessage } = this.state;
     const { label } = this.props;
     return (
@@ -434,9 +436,9 @@ export default React.createClass({
         }
       </div>
     );
-  },
+  };
 
-  renderTypeaheadBody() {
+  renderTypeaheadBody = () => {
     const { typeaheadOptions } = this.props;
     const idKey = this.props.idKey || 'id';
     const labelKey = this.props.labelKey || 'label';
@@ -455,8 +457,8 @@ export default React.createClass({
         })}
       </ul>
     </div>
-  }
-});
+  };
+}
 
 // Returns a function, that, as long as it continues to be invoked, will not
 // be triggered. The function will be called after it stops being called for
@@ -475,4 +477,4 @@ function debounce(func, wait, immediate) {
 		timeout = setTimeout(later, wait);
 		if (callNow) func.apply(context, args);
 	};
-};
+}
