@@ -108,7 +108,10 @@ export default class extends React.Component {
       shouldShowError: false,
       isFocused: false,
       arrowSelectedTypeaheadOpt: null,
-      ariaHidden: ariaHidden === undefined ? false : ariaHidden
+      ariaHidden: ariaHidden === undefined ? false : ariaHidden,
+      // Issue: https://github.com/facebook/react/issues/955
+      // Solution: https://gist.github.com/thebigredgeek/a9bb9d48d300f69ecd332f24d2a3b2ab#file-input-js-L32
+      currentPosition: (props.value || '').length
     };
   }
 
@@ -143,7 +146,10 @@ export default class extends React.Component {
   }
 
   handleChange = (e, typeaheadOpt) => {
-    this.setState({ isUserChange: true });
+    this.setState({
+      isUserChange: true,
+      currentPosition: e.target && e.target.selectionEnd
+    });
     this.handleFocus(e);
     this.handleUserAction(e, 'change', typeaheadOpt);
   };
@@ -281,6 +287,8 @@ export default class extends React.Component {
 
   componentDidUpdate(prevProps, prevState) {
     // please reaad comment located @setAriaHidden
+    const { currentPosition } = this.state;
+    this.fancyFieldEl.setSelectionRange(currentPosition, currentPosition);
     if(this.props.ariaHidden === undefined) {
       if(this.state.ariaHidden && prevProps.value !== this.props.value) {
         this.resetAriaHidden();

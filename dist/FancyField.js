@@ -90,7 +90,10 @@ var _class = function (_React$Component) {
       shouldShowError: false,
       isFocused: false,
       arrowSelectedTypeaheadOpt: null,
-      ariaHidden: ariaHidden === undefined ? false : ariaHidden
+      ariaHidden: ariaHidden === undefined ? false : ariaHidden,
+      // Issue: https://github.com/facebook/react/issues/955
+      // Solution: https://gist.github.com/thebigredgeek/a9bb9d48d300f69ecd332f24d2a3b2ab#file-input-js-L32
+      currentPosition: (props.value || '').length
     };
     return _this;
   }
@@ -133,6 +136,9 @@ var _class = function (_React$Component) {
     key: 'componentDidUpdate',
     value: function componentDidUpdate(prevProps, prevState) {
       // please reaad comment located @setAriaHidden
+      var currentPosition = this.state.currentPosition;
+
+      this.fancyFieldEl.setSelectionRange(currentPosition, currentPosition);
       if (this.props.ariaHidden === undefined) {
         if (this.state.ariaHidden && prevProps.value !== this.props.value) {
           this.resetAriaHidden();
@@ -309,7 +315,10 @@ var _initialiseProps = function _initialiseProps() {
   this.resetAriaHidden = null;
 
   this.handleChange = function (e, typeaheadOpt) {
-    _this4.setState({ isUserChange: true });
+    _this4.setState({
+      isUserChange: true,
+      currentPosition: e.target && e.target.selectionEnd
+    });
     _this4.handleFocus(e);
     _this4.handleUserAction(e, 'change', typeaheadOpt);
   };
