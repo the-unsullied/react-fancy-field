@@ -138,6 +138,7 @@ var _class = function (_React$Component) {
       // please reaad comment located @setAriaHidden
       var currentPosition = this.state.currentPosition;
 
+      if (this.fancyFieldEl.type === 'hidden') return;
       this.fancyFieldEl.setSelectionRange(currentPosition, currentPosition);
       if (this.props.ariaHidden === undefined) {
         if (this.state.ariaHidden && prevProps.value !== this.props.value) {

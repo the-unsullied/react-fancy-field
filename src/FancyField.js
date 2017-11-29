@@ -288,6 +288,7 @@ export default class extends React.Component {
   componentDidUpdate(prevProps, prevState) {
     // please reaad comment located @setAriaHidden
     const { currentPosition } = this.state;
+    if(this.fancyFieldEl.type === 'hidden') return;
     this.fancyFieldEl.setSelectionRange(currentPosition, currentPosition);
     if(this.props.ariaHidden === undefined) {
       if(this.state.ariaHidden && prevProps.value !== this.props.value) {
