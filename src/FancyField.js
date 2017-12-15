@@ -157,13 +157,10 @@ export default class extends React.Component {
   };
 
   handleBlur = (e) => {
-    // need time for typeahead item to be clicked, before hiding the typeahead
-    setTimeout(() => {
-      this.setState({
-        isFocused: false,
-        arrowSelectedTypeaheadOpt: null
-      });
-    }, 100);
+    this.setState({
+      isFocused: false,
+      arrowSelectedTypeaheadOpt: null
+    });
     this.handleUserAction(e, 'blur');
   };
 
