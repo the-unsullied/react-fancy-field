@@ -329,13 +329,10 @@ var _initialiseProps = function _initialiseProps() {
   };
 
   this.handleBlur = function (e) {
-    // need time for typeahead item to be clicked, before hiding the typeahead
-    setTimeout(function () {
-      _this4.setState({
-        isFocused: false,
-        arrowSelectedTypeaheadOpt: null
-      });
-    }, 100);
+    _this4.setState({
+      isFocused: false,
+      arrowSelectedTypeaheadOpt: null
+    });
     _this4.handleUserAction(e, 'blur');
   };
 
