@@ -1,32 +1,32 @@
 //comment
 /**
-Component that stands in as styled input
-@class Fancy Button Component
-@param {String} name name of input
-@param {String} type type of input (text, number, etc..)
-@param {Integer} triggerValidation updating counter to trigger validation
-@param {Any} label label of input
-@param {Any} placeholder placeholder of input
-@param {Method || Array} validator If falsy, field is valid. If is string, field is *invalid* and string will be error message. If validator is an Array, it will iterate over all validators in array and display all messages.
-@param {Method} onChange method that is called on change
-@param {Method} onFocus method that is called on focus
-@param {String} tooltip shows a tooltip to left of input value.
-@param {Boolean} required shows that input is required
-@param {Boolean} readOnly determine if input should be read-only.
-@param {Boolean} isEditable will make field look editable by giving the border a blue underline.
-@param {Boolean} isIconRight puts icon to right instead of left
-@param {Boolean} autoFocus will autofocus on input if true
-@param {String} autocomplete name field
-@param {JSX} icon any image that should appear to the left of the field
-@param {Any|String} tabIndex tabIndex for input field
-@param {String} ariaLabel aria-label property on input.
-@param {Boolean} suppressError if true, the component will not show error initially until boolean is true
-*/
+ Component that stands in as styled input
+ @class Fancy Button Component
+ @param {String} name name of input
+ @param {String} type type of input (text, number, etc..)
+ @param {Integer} triggerValidation updating counter to trigger validation
+ @param {Any} label label of input
+ @param {Any} placeholder placeholder of input
+ @param {Method || Array} validator If falsy, field is valid. If is string, field is *invalid* and string will be error message. If validator is an Array, it will iterate over all validators in array and display all messages.
+ @param {Method} onChange method that is called on change
+ @param {Method} onFocus method that is called on focus
+ @param {String} tooltip shows a tooltip to left of input value.
+ @param {Boolean} required shows that input is required
+ @param {Boolean} readOnly determine if input should be read-only.
+ @param {Boolean} isEditable will make field look editable by giving the border a blue underline.
+ @param {Boolean} isIconRight puts icon to right instead of left
+ @param {Boolean} autoFocus will autofocus on input if true
+ @param {String} autocomplete name field
+ @param {JSX} icon any image that should appear to the left of the field
+ @param {Any|String} tabIndex tabIndex for input field
+ @param {String} ariaLabel aria-label property on input.
+ @param {Boolean} suppressError if true, the component will not show error initially until boolean is true
+ */
 
 import React from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
-import immutable, {fromJS} from 'immutable';
+import immutable, { fromJS } from 'immutable';
 
 const fromTypeahead = 'FROM_TYPEAHEAD';
 const isIE11 = !(window.ActiveXObject) && "ActiveXObject" in window;
@@ -52,8 +52,10 @@ export default class extends React.Component {
     validator: null,
     value: null,
     classes: '',
-    onChange: () => {},
-    onFocus: () => {},
+    onChange: () => {
+    },
+    onFocus: () => {
+    },
     tooltip: null,
     required: false,
     readOnly: false,
@@ -131,16 +133,16 @@ export default class extends React.Component {
     const nextTypeaheadOpts = nextProps.typeaheadOptions;
     const shouldShowError = this.state.shouldShowError || triggerValidation !== nextProps.triggerValidation;
     const hasTypeaheadOpts = !!typeaheadOptions && (isImmutable(typeaheadOptions) ? typeaheadOptions.size > 0 : typeaheadOptions.length > 0);
-    const willHaveTypeaheadOpts = !!nextTypeaheadOpts && (isImmutable(nextTypeaheadOpts) ?  nextTypeaheadOpts.size > 0 : nextTypeaheadOpts.length > 0);
+    const willHaveTypeaheadOpts = !!nextTypeaheadOpts && (isImmutable(nextTypeaheadOpts) ? nextTypeaheadOpts.size > 0 : nextTypeaheadOpts.length > 0);
     const hasEmptyTypeaheadOpts = hasTypeaheadOpts && !willHaveTypeaheadOpts;
     const isSameTypeaheadOpts = immutable.is(fromJS(typeaheadOptions), fromJS(nextTypeaheadOpts));
 
-    if(value !== nextProps.value || shouldShowError) {
+    if (value !== nextProps.value || shouldShowError) {
       const nextVal = nextProps.value;
       let value = this.valueIsValue(nextVal) ? nextVal : '';
       this.validate(value, shouldShowError);
     }
-    if(hasEmptyTypeaheadOpts || !isSameTypeaheadOpts) {
+    if (hasEmptyTypeaheadOpts || !isSameTypeaheadOpts) {
       this.setState({ arrowSelectedTypeaheadOpt: null });
     }
   }
@@ -175,13 +177,13 @@ export default class extends React.Component {
     const isEnter = e.key === 'Enter';
     const hasTypeaheadOpts = isImmutable(typeaheadOptions) ? typeaheadOptions.size > 0 : typeaheadOptions.length > 0;
 
-    if(this.state.isFocused && hasTypeaheadOpts) {
+    if (this.state.isFocused && hasTypeaheadOpts) {
       this.arrowSelectElementInTypeahead(e);
-    } else if(isEnter) {
-      if(typeof onChange === 'function') {
+    } else if (isEnter) {
+      if (typeof onChange === 'function') {
         this.handleUserAction(e, 'change');
       }
-      if(typeof onEnter === 'function') {
+      if (typeof onEnter === 'function') {
         this.handleUserAction(e, 'enter');
       }
     }
@@ -199,12 +201,12 @@ export default class extends React.Component {
     const listItems = listEl.querySelectorAll('li');
     const activeClassName = 'fancy-field__typeahead-opt--active';
 
-    if(isArrowDown || isArrowUp) {
+    if (isArrowDown || isArrowUp) {
       let selection;
-      if(!!arrowSelectedTypeaheadOpt) {
+      if (!!arrowSelectedTypeaheadOpt) {
         const { nextSibling, previousSibling } = arrowSelectedTypeaheadOpt
         selection = isArrowDown ? nextSibling : previousSibling;
-        if(!selection) {
+        if (!selection) {
           return;
         }
         arrowSelectedTypeaheadOpt.className = '';
@@ -215,9 +217,9 @@ export default class extends React.Component {
       selection.className = activeClassName;
       selection.scrollIntoView();
       this.setState({ arrowSelectedTypeaheadOpt: selection });
-    } else if(isEscape) {
+    } else if (isEscape) {
       this.handleBlur(e);
-    } else if(isEnter) {
+    } else if (isEnter) {
       const isTypeaheadOptionsImmutable = isImmutable(typeaheadOptions);
       const { id } = arrowSelectedTypeaheadOpt.dataset;
       const opt = typeaheadOptions.find(opt => {
@@ -232,7 +234,7 @@ export default class extends React.Component {
     const { name, onChange, onBlur, onEnter, onFocus } = this.props;
     const value = this.getValue(e, typeaheadOpt);
     this.setState({ isUserChange: true });
-    switch(type) {
+    switch (type) {
       case 'blur':
         onBlur && onBlur(value, name);
         break;
@@ -246,20 +248,20 @@ export default class extends React.Component {
         onFocus && onFocus(value, name);
         break;
     }
-    if(!this.state.shouldShowError) {
+    if (!this.state.shouldShowError) {
       this.setState({ shouldShowError: true });
     }
   };
 
   getValue = (e, typeaheadOpt) => {
     let value;
-    if(e === fromTypeahead) {
+    if (e === fromTypeahead) {
       value = typeaheadOpt
     } else {
-       value = e.target.value;
-       if(this.props.type === 'number') {
-         value = value.replace(/[^0-9\.]+/g,'');
-       }
+      value = e.target.value;
+      if (this.props.type === 'number') {
+        value = value.replace(/[^0-9\.]+/g, '');
+      }
     }
     return value;
   };
@@ -276,7 +278,7 @@ export default class extends React.Component {
     const hasAttemptedInput = this.state.hasAttemptedInput || triggerHasAttempted;
 
     const { validator } = this.props;
-    if(hasAttemptedInput) {
+    if (hasAttemptedInput) {
       this.setAriaHidden();
       this.setErrorMessage(value, shouldShowError);
       this.setState({ hasAttemptedInput, value });
@@ -288,10 +290,14 @@ export default class extends React.Component {
   componentDidUpdate(prevProps, prevState) {
     // please reaad comment located @setAriaHidden
     const { currentPosition } = this.state;
-    if(this.fancyFieldEl.type === 'hidden') return;
-    this.fancyFieldEl.setSelectionRange(currentPosition, currentPosition);
-    if(this.props.ariaHidden === undefined) {
-      if(this.state.ariaHidden && prevProps.value !== this.props.value) {
+    if (this.fancyFieldEl.type === 'hidden') {
+      return;
+    }
+    if (this.state.isFocused) {
+      this.fancyFieldEl.setSelectionRange(currentPosition, currentPosition);
+    }
+    if (this.props.ariaHidden === undefined) {
+      if (this.state.ariaHidden && prevProps.value !== this.props.value) {
         this.resetAriaHidden();
       }
     }
@@ -304,8 +310,8 @@ export default class extends React.Component {
     // typed it out (unwanted experience)
 
     // this is called during componentWillUpdate - props is not current
-    if(this.props.ariaHidden === undefined) {
-      if(this.state.isUserChange) {
+    if (this.props.ariaHidden === undefined) {
+      if (this.state.isUserChange) {
         this.setState({
           isUserChange: false,
           ariaHidden: false
@@ -319,7 +325,9 @@ export default class extends React.Component {
   setErrorMessage = (value, shouldShowError) => {
     let { validator, name } = this.props;
 
-    if(!validator) { return }
+    if (!validator) {
+      return
+    }
 
     validator = Array.isArray(validator) ? validator : [validator];
     const errorMessage = validator.reduce((error, _validator) => {
@@ -333,8 +341,8 @@ export default class extends React.Component {
 
   setupReadonly = () => {
     const { readOnly } = this.props;
-    if(this.fancyFieldEl) {
-      if(readOnly) {
+    if (this.fancyFieldEl) {
+      if (readOnly) {
         this.fancyFieldEl.setAttribute('readonly', 'readonly');
       } else {
         this.fancyFieldEl.removeAttribute('readonly');
@@ -343,27 +351,31 @@ export default class extends React.Component {
   };
 
   render() {
-    const { value,
-      hasAttemptedInput,
-      errorMessage,
-      ariaHidden,
-      isFocused } = this.state;
+    const {
+            value,
+            hasAttemptedInput,
+            errorMessage,
+            ariaHidden,
+            isFocused
+          } = this.state;
     let { shouldShowError } = this.state;
 
-    const { tooltip,
-      icon,
-      isIconRight,
-      disabled,
-      placeholder,
-      label,
-      classes,
-      required,
-      autoFocus,
-      typeaheadOptions,
-      ariaLabel,
-      autoComplete,
-      tabIndex,
-      isEditable } = this.props;
+    const {
+            tooltip,
+            icon,
+            isIconRight,
+            disabled,
+            placeholder,
+            label,
+            classes,
+            required,
+            autoFocus,
+            typeaheadOptions,
+            ariaLabel,
+            autoComplete,
+            tabIndex,
+            isEditable
+          } = this.props;
     const { name = label } = this.props;
     const dashedName = name.split(' ').join('-');
     const dashedLabel = `${dashedName}-label`;
@@ -389,16 +401,16 @@ export default class extends React.Component {
 
     return <div className={fancyFieldClasses}>
       {/*http://stackoverflow.com/questions/15738259/disabling-chrome-autofill*/}
-      { !!tooltip ? <label className='fancy-field__tooltip simptip-position-top simptip-multiline'
-          data-tooltip={tooltip}
-          htmlFor={dashedLabel}>
+      {!!tooltip ? <label className='fancy-field__tooltip simptip-position-top simptip-multiline'
+                          data-tooltip={tooltip}
+                          htmlFor={dashedLabel}>
         <i className='unsullied-icon-help'></i>
-      </label> : null }
-      { !!icon ? <span className='fancy-field__icon'>
-        { icon }
-      </span> : null }
+      </label> : null}
+      {!!icon ? <span className='fancy-field__icon'>
+        {icon}
+      </span> : null}
       <input autoComplete={autoComplete || "new-password"}
-             className={classnames('full-width', 'fancy-field__input', {'fancy-field__input--error': shouldShowError})}
+             className={classnames('full-width', 'fancy-field__input', { 'fancy-field__input--error': shouldShowError })}
              name={name}
              value={value}
              disabled={disabled}
@@ -417,14 +429,14 @@ export default class extends React.Component {
              autoFocus={autoFocus}
              onKeyDown={this.handleEnterKeypress} />
 
-           { this.renderLabel(dashedLabel, shouldShowError, errorLabel) }
+      {this.renderLabel(dashedLabel, shouldShowError, errorLabel)}
 
-      { hasTypeaheadOpts ?
-        <div className={classnames("fancy-field__typeahead", {'fancy-field__typeahead--hidden': !isFocused})}
-            ref='fancyFieldTypeaheadContainer'>
-          { this.renderTypeaheadBody() }
+      {hasTypeaheadOpts ?
+        <div className={classnames("fancy-field__typeahead", { 'fancy-field__typeahead--hidden': !isFocused })}
+             ref='fancyFieldTypeaheadContainer'>
+          {this.renderTypeaheadBody()}
         </div>
-      : null}
+        : null}
     </div>
   }
 
@@ -433,15 +445,15 @@ export default class extends React.Component {
     const { label } = this.props;
     return (
       <div>
-        <label className={classnames("fancy-field__label", {'fancy-field__label--error': shouldShowError})}
+        <label className={classnames("fancy-field__label", { 'fancy-field__label--error': shouldShowError })}
                id={shouldShowError ? errorLabel : ''}
                htmlFor={shouldShowError ? '' : dashedLabel}>
           <span>{shouldShowError ? errorMessage : label}</span>
         </label>
         {
           shouldShowError ?
-          <span htmlFor={dashedLabel}
-            className='fancy-field__visuallyhidden'>{label}</span> : null
+            <span htmlFor={dashedLabel}
+                  className='fancy-field__visuallyhidden'>{label}</span> : null
         }
       </div>
     );
@@ -459,9 +471,9 @@ export default class extends React.Component {
           const id = _isImmutable ? opt.get(idKey) : opt[idKey];
           const label = _isImmutable ? opt.get(labelKey) : opt[labelKey];
           return <li key={id}
-            data-id={id}
-            onClick={() => this.handleChange(fromTypeahead, opt)}>
-            { label }
+                     data-id={id}
+                     onClick={() => this.handleChange(fromTypeahead, opt)}>
+            {label}
           </li>
         })}
       </ul>
@@ -474,16 +486,20 @@ export default class extends React.Component {
 // N milliseconds. If `immediate` is passed, trigger the function on the
 // leading edge, instead of the trailing.
 function debounce(func, wait, immediate) {
-	let timeout;
-	return () => {
-		const context = this, args = arguments;
-		const later = () => {
-			timeout = null;
-			if (!immediate) func.apply(context, args);
-		};
-		const callNow = immediate && !timeout;
-		clearTimeout(timeout);
-		timeout = setTimeout(later, wait);
-		if (callNow) func.apply(context, args);
-	};
+  let timeout;
+  return () => {
+    const context = this, args = arguments;
+    const later = () => {
+      timeout = null;
+      if (!immediate) {
+        func.apply(context, args);
+      }
+    };
+    const callNow = immediate && !timeout;
+    clearTimeout(timeout);
+    timeout = setTimeout(later, wait);
+    if (callNow) {
+      func.apply(context, args);
+    }
+  };
 }

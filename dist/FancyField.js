@@ -10,28 +10,28 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; //comment
 /**
-Component that stands in as styled input
-@class Fancy Button Component
-@param {String} name name of input
-@param {String} type type of input (text, number, etc..)
-@param {Integer} triggerValidation updating counter to trigger validation
-@param {Any} label label of input
-@param {Any} placeholder placeholder of input
-@param {Method || Array} validator If falsy, field is valid. If is string, field is *invalid* and string will be error message. If validator is an Array, it will iterate over all validators in array and display all messages.
-@param {Method} onChange method that is called on change
-@param {Method} onFocus method that is called on focus
-@param {String} tooltip shows a tooltip to left of input value.
-@param {Boolean} required shows that input is required
-@param {Boolean} readOnly determine if input should be read-only.
-@param {Boolean} isEditable will make field look editable by giving the border a blue underline.
-@param {Boolean} isIconRight puts icon to right instead of left
-@param {Boolean} autoFocus will autofocus on input if true
-@param {String} autocomplete name field
-@param {JSX} icon any image that should appear to the left of the field
-@param {Any|String} tabIndex tabIndex for input field
-@param {String} ariaLabel aria-label property on input.
-@param {Boolean} suppressError if true, the component will not show error initially until boolean is true
-*/
+ Component that stands in as styled input
+ @class Fancy Button Component
+ @param {String} name name of input
+ @param {String} type type of input (text, number, etc..)
+ @param {Integer} triggerValidation updating counter to trigger validation
+ @param {Any} label label of input
+ @param {Any} placeholder placeholder of input
+ @param {Method || Array} validator If falsy, field is valid. If is string, field is *invalid* and string will be error message. If validator is an Array, it will iterate over all validators in array and display all messages.
+ @param {Method} onChange method that is called on change
+ @param {Method} onFocus method that is called on focus
+ @param {String} tooltip shows a tooltip to left of input value.
+ @param {Boolean} required shows that input is required
+ @param {Boolean} readOnly determine if input should be read-only.
+ @param {Boolean} isEditable will make field look editable by giving the border a blue underline.
+ @param {Boolean} isIconRight puts icon to right instead of left
+ @param {Boolean} autoFocus will autofocus on input if true
+ @param {String} autocomplete name field
+ @param {JSX} icon any image that should appear to the left of the field
+ @param {Any|String} tabIndex tabIndex for input field
+ @param {String} ariaLabel aria-label property on input.
+ @param {Boolean} suppressError if true, the component will not show error initially until boolean is true
+ */
 
 var _react = require('react');
 
@@ -138,8 +138,12 @@ var _class = function (_React$Component) {
       // please reaad comment located @setAriaHidden
       var currentPosition = this.state.currentPosition;
 
-      if (this.fancyFieldEl.type === 'hidden') return;
-      this.fancyFieldEl.setSelectionRange(currentPosition, currentPosition);
+      if (this.fancyFieldEl.type === 'hidden') {
+        return;
+      }
+      if (this.state.isFocused) {
+        this.fancyFieldEl.setSelectionRange(currentPosition, currentPosition);
+      }
       if (this.props.ariaHidden === undefined) {
         if (this.state.ariaHidden && prevProps.value !== this.props.value) {
           this.resetAriaHidden();
@@ -595,12 +599,16 @@ function debounce(func, wait, immediate) {
         args = _arguments;
     var later = function later() {
       timeout = null;
-      if (!immediate) func.apply(context, args);
+      if (!immediate) {
+        func.apply(context, args);
+      }
     };
     var callNow = immediate && !timeout;
     clearTimeout(timeout);
     timeout = setTimeout(later, wait);
-    if (callNow) func.apply(context, args);
+    if (callNow) {
+      func.apply(context, args);
+    }
   };
 }
 module.exports = exports['default'];
