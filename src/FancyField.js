@@ -39,7 +39,7 @@ function getInputOnChangeProps(handler) {
   return isIE11 ? { onInput: handler } : { onChange: handler };
 }
 
-export default class extends React.PureComponent {
+export default class extends React.Component {
   static displayName = 'FancyField';
 
   static defaultProps = {
@@ -150,11 +150,14 @@ export default class extends React.PureComponent {
   shouldComponentUpdate(nextState, nextProps) {
     const { disabled: oldDisabled, typeaheadOptions: oldOptions, triggerValidation: oldTrigger, value: oldValue } = this.props;
     const { disabled, typeaheadOptions, triggerValidation, value } = nextProps;
+    const { isFocused: oldIsFocused } = this.state;
+    const { isFocused } = nextState;
 
-    return oldValue !== value && oldValue !== undefined ||
+    return (oldValue !== value && oldValue !== undefined ||
            (oldDisabled !== disabled && disabled === false || disabled === true) ||
            typeaheadOptions !== oldOptions  && typeaheadOptions||
-           triggerValidation !== oldTrigger && triggerValidation;
+           triggerValidation !== oldTrigger && triggerValidation ||
+           oldIsFocused !== isFocused && isFocused !== undefined) || false;
   }
 
   handleChange = (e, typeaheadOpt) => {

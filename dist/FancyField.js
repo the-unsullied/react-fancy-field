@@ -68,8 +68,8 @@ function getInputOnChangeProps(handler) {
   return isIE11 ? { onInput: handler } : { onChange: handler };
 }
 
-var _class = function (_React$PureComponent) {
-  _inherits(_class, _React$PureComponent);
+var _class = function (_React$Component) {
+  _inherits(_class, _React$Component);
 
   function _class(props) {
     _classCallCheck(this, _class);
@@ -144,9 +144,11 @@ var _class = function (_React$PureComponent) {
           typeaheadOptions = nextProps.typeaheadOptions,
           triggerValidation = nextProps.triggerValidation,
           value = nextProps.value;
+      var oldIsFocused = this.state.isFocused;
+      var isFocused = nextState.isFocused;
 
 
-      return oldValue !== value && oldValue !== undefined || oldDisabled !== disabled && disabled === false || disabled === true || typeaheadOptions !== oldOptions && typeaheadOptions || triggerValidation !== oldTrigger && triggerValidation;
+      return oldValue !== value && oldValue !== undefined || oldDisabled !== disabled && disabled === false || disabled === true || typeaheadOptions !== oldOptions && typeaheadOptions || triggerValidation !== oldTrigger && triggerValidation || oldIsFocused !== isFocused && isFocused !== undefined || false;
     }
   }, {
     key: 'componentDidUpdate',
@@ -266,7 +268,7 @@ var _class = function (_React$PureComponent) {
   }]);
 
   return _class;
-}(_react2.default.PureComponent);
+}(_react2.default.Component);
 
 // Returns a function, that, as long as it continues to be invoked, will not
 // be triggered. The function will be called after it stops being called for
