@@ -39,7 +39,7 @@ function getInputOnChangeProps(handler) {
   return isIE11 ? { onInput: handler } : { onChange: handler };
 }
 
-export default class extends React.Component {
+export default class extends React.PureComponent {
   static displayName = 'FancyField';
 
   static defaultProps = {
@@ -147,6 +147,16 @@ export default class extends React.Component {
     }
   }
 
+  shouldComponentUpdate(nextState, nextProps) {
+    const { disabled: oldDisabled, typeaheadOptions: oldOptions, triggerValidation: oldTrigger, value: oldValue } = this.props;
+    const { disabled, typeaheadOptions, triggerValidation, value } = nextProps;
+
+    return oldValue !== value && oldValue !== undefined ||
+           (oldDisabled !== disabled && disabled === false || disabled === true) ||
+           typeaheadOptions !== oldOptions  && typeaheadOptions||
+           triggerValidation !== oldTrigger && triggerValidation;
+  }
+
   handleChange = (e, typeaheadOpt) => {
     this.setState({
       isUserChange: true,
@@ -201,7 +211,7 @@ export default class extends React.Component {
     if (isArrowDown || isArrowUp) {
       let selection;
       if (!!arrowSelectedTypeaheadOpt) {
-        const { nextSibling, previousSibling } = arrowSelectedTypeaheadOpt
+        const { nextSibling, previousSibling } = arrowSelectedTypeaheadOpt;
         selection = isArrowDown ? nextSibling : previousSibling;
         if (!selection) {
           return;
@@ -274,7 +284,6 @@ export default class extends React.Component {
     const triggerHasAttempted = suppressError === null ? hasAttempted : suppressError && hasAttempted;
     const hasAttemptedInput = this.state.hasAttemptedInput || triggerHasAttempted;
 
-    const { validator } = this.props;
     if (hasAttemptedInput) {
       this.setAriaHidden();
       this.setErrorMessage(value, shouldShowError);

@@ -68,8 +68,8 @@ function getInputOnChangeProps(handler) {
   return isIE11 ? { onInput: handler } : { onChange: handler };
 }
 
-var _class = function (_React$Component) {
-  _inherits(_class, _React$Component);
+var _class = function (_React$PureComponent) {
+  _inherits(_class, _React$PureComponent);
 
   function _class(props) {
     _classCallCheck(this, _class);
@@ -133,6 +133,22 @@ var _class = function (_React$Component) {
       }
     }
   }, {
+    key: 'shouldComponentUpdate',
+    value: function shouldComponentUpdate(nextState, nextProps) {
+      var _props2 = this.props,
+          oldDisabled = _props2.disabled,
+          oldOptions = _props2.typeaheadOptions,
+          oldTrigger = _props2.triggerValidation,
+          oldValue = _props2.value;
+      var disabled = nextProps.disabled,
+          typeaheadOptions = nextProps.typeaheadOptions,
+          triggerValidation = nextProps.triggerValidation,
+          value = nextProps.value;
+
+
+      return oldValue !== value && oldValue !== undefined || oldDisabled !== disabled && disabled === false || disabled === true || typeaheadOptions !== oldOptions && typeaheadOptions || triggerValidation !== oldTrigger && triggerValidation;
+    }
+  }, {
     key: 'componentDidUpdate',
     value: function componentDidUpdate(prevProps, prevState) {
       // please reaad comment located @setAriaHidden
@@ -162,21 +178,21 @@ var _class = function (_React$Component) {
           ariaHidden = _state.ariaHidden,
           isFocused = _state.isFocused;
       var shouldShowError = this.state.shouldShowError;
-      var _props2 = this.props,
-          tooltip = _props2.tooltip,
-          icon = _props2.icon,
-          isIconRight = _props2.isIconRight,
-          disabled = _props2.disabled,
-          placeholder = _props2.placeholder,
-          label = _props2.label,
-          classes = _props2.classes,
-          required = _props2.required,
-          autoFocus = _props2.autoFocus,
-          typeaheadOptions = _props2.typeaheadOptions,
-          ariaLabel = _props2.ariaLabel,
-          autoComplete = _props2.autoComplete,
-          tabIndex = _props2.tabIndex,
-          isEditable = _props2.isEditable;
+      var _props3 = this.props,
+          tooltip = _props3.tooltip,
+          icon = _props3.icon,
+          isIconRight = _props3.isIconRight,
+          disabled = _props3.disabled,
+          placeholder = _props3.placeholder,
+          label = _props3.label,
+          classes = _props3.classes,
+          required = _props3.required,
+          autoFocus = _props3.autoFocus,
+          typeaheadOptions = _props3.typeaheadOptions,
+          ariaLabel = _props3.ariaLabel,
+          autoComplete = _props3.autoComplete,
+          tabIndex = _props3.tabIndex,
+          isEditable = _props3.isEditable;
       var _props$name = this.props.name,
           name = _props$name === undefined ? label : _props$name;
 
@@ -250,7 +266,7 @@ var _class = function (_React$Component) {
   }]);
 
   return _class;
-}(_react2.default.Component);
+}(_react2.default.PureComponent);
 
 // Returns a function, that, as long as it continues to be invoked, will not
 // be triggered. The function will be called after it stops being called for
@@ -342,10 +358,10 @@ var _initialiseProps = function _initialiseProps() {
   };
 
   this.handleEnterKeypress = function (e) {
-    var _props3 = _this4.props,
-        typeaheadOptions = _props3.typeaheadOptions,
-        onChange = _props3.onChange,
-        onEnter = _props3.onEnter;
+    var _props4 = _this4.props,
+        typeaheadOptions = _props4.typeaheadOptions,
+        onChange = _props4.onChange,
+        onEnter = _props4.onEnter;
 
     var isEnter = e.key === 'Enter';
     var hasTypeaheadOpts = isImmutable(typeaheadOptions) ? typeaheadOptions.size > 0 : typeaheadOptions.length > 0;
@@ -409,12 +425,12 @@ var _initialiseProps = function _initialiseProps() {
 
   this.handleUserAction = function (e, type) {
     var typeaheadOpt = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
-    var _props4 = _this4.props,
-        name = _props4.name,
-        onChange = _props4.onChange,
-        onBlur = _props4.onBlur,
-        onEnter = _props4.onEnter,
-        onFocus = _props4.onFocus;
+    var _props5 = _this4.props,
+        name = _props5.name,
+        onChange = _props5.onChange,
+        onBlur = _props5.onBlur,
+        onEnter = _props5.onEnter,
+        onFocus = _props5.onFocus;
 
     var value = _this4.getValue(e, typeaheadOpt);
     _this4.setState({ isUserChange: true });
@@ -463,8 +479,6 @@ var _initialiseProps = function _initialiseProps() {
     var triggerHasAttempted = suppressError === null ? hasAttempted : suppressError && hasAttempted;
     var hasAttemptedInput = _this4.state.hasAttemptedInput || triggerHasAttempted;
 
-    var validator = _this4.props.validator;
-
     if (hasAttemptedInput) {
       _this4.setAriaHidden();
       _this4.setErrorMessage(value, shouldShowError);
@@ -494,9 +508,9 @@ var _initialiseProps = function _initialiseProps() {
   };
 
   this.setErrorMessage = function (value, shouldShowError) {
-    var _props5 = _this4.props,
-        validator = _props5.validator,
-        name = _props5.name;
+    var _props6 = _this4.props,
+        validator = _props6.validator,
+        name = _props6.name;
 
 
     if (!validator) {
