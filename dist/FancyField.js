@@ -137,10 +137,12 @@ var _class = function (_React$Component) {
     value: function shouldComponentUpdate(nextState, nextProps) {
       var _props2 = this.props,
           oldDisabled = _props2.disabled,
+          oldLabel = _props2.label,
           oldOptions = _props2.typeaheadOptions,
           oldTrigger = _props2.triggerValidation,
           oldValue = _props2.value;
       var disabled = nextProps.disabled,
+          label = nextProps.label,
           typeaheadOptions = nextProps.typeaheadOptions,
           triggerValidation = nextProps.triggerValidation,
           value = nextProps.value;
@@ -148,7 +150,7 @@ var _class = function (_React$Component) {
       var isFocused = nextState.isFocused;
 
 
-      return oldValue !== value && oldValue !== undefined || oldDisabled !== disabled && disabled === false || disabled === true || typeaheadOptions !== oldOptions && typeaheadOptions || triggerValidation !== oldTrigger && triggerValidation || oldIsFocused !== isFocused && isFocused !== undefined || false;
+      return oldLabel !== label || oldValue !== value && oldValue !== undefined || oldDisabled !== disabled && disabled === false || disabled === true || typeaheadOptions !== oldOptions && typeaheadOptions || triggerValidation !== oldTrigger && triggerValidation || oldIsFocused !== isFocused && isFocused !== undefined || false;
     }
   }, {
     key: 'componentDidUpdate',
