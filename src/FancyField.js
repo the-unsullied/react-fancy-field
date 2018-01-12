@@ -148,12 +148,12 @@ export default class extends React.Component {
   }
 
   shouldComponentUpdate(nextState, nextProps) {
-    const { disabled: oldDisabled, typeaheadOptions: oldOptions, triggerValidation: oldTrigger, value: oldValue } = this.props;
-    const { disabled, typeaheadOptions, triggerValidation, value } = nextProps;
+    const { disabled: oldDisabled, label: oldLabel, typeaheadOptions: oldOptions, triggerValidation: oldTrigger, value: oldValue } = this.props;
+    const { disabled, label, typeaheadOptions, triggerValidation, value } = nextProps;
     const { isFocused: oldIsFocused } = this.state;
     const { isFocused } = nextState;
 
-    return (oldValue !== value && oldValue !== undefined ||
+    return (oldLabel !== label || oldValue !== value && oldValue !== undefined ||
            (oldDisabled !== disabled && disabled === false || disabled === true) ||
            typeaheadOptions !== oldOptions  && typeaheadOptions||
            triggerValidation !== oldTrigger && triggerValidation ||
